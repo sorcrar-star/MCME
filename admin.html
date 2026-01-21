@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Panel Admin | MCME</title>
+
+  <link rel="stylesheet" href="assets/css/reset.css" />
+  <link rel="stylesheet" href="assets/css/variables.css" />
+  <link rel="stylesheet" href="assets/css/base.css" />
+</head>
+
+<body style="padding:2rem">
+
+<h2>Usuarios pendientes</h2>
+
+<ul id="users"></ul>
+
+<script>
+const ADMIN_EMAIL = "demo@correo.com"; // mismo que backend
+
+async function loadUsers() {
+  const res = await fetch(
+    "https://mcme-backend.onrender.com/api/admin/pending",
+    {
+      headers: {
+        "x-admin-email": ADMIN_EMAIL
+      }
+    }
+  );
+
+  const users = await res.json();
+  const ul = document.getElementById("users");
+  ul.innerHTML = "";
+
+  users.forEach(u => {
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <b>${u.username}</b> (${u.email})
+      <button onclick="approve('${u.email}')">Aprobar</button>
+      <button onclick="reject('${u.email}')">Rechazar</button>
+    `;
+    ul.appendChild(li);
+  });
+}
+
+async function approve(email) {
+  await fetch(
+    "https://mcme-backend.onrender.com/api/admin/approve",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-admin-email": ADMIN_EMAIL
+      },
+      body: JSON.stringify({ email })
+    }
+  );
+  loadUsers();
+}
+
+async function reject(email) {
+  await fetch(
+    "https://mcme-backend.onrender.com/api/admin/reject",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-admin-email": ADMIN_EMAIL
+      },
+      body: JSON.stringify({ email })
+    }
+  );
+  loadUsers();
+}
+
+loadUsers();
+</script>
+
+</body>
+</html>
