@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registro | Biblioteca Médica</title>
+
+  <link rel="stylesheet" href="assets/css/reset.css" />
+  <link rel="stylesheet" href="assets/css/variables.css" />
+  <link rel="stylesheet" href="assets/css/base.css" />
+  <link rel="stylesheet" href="assets/css/layout.css" />
+  <link rel="stylesheet" href="assets/css/components.css" />
+</head>
+
+<body class="login-page">
+
+<main class="login-container">
+  <img src="assets/images/mcme-logo.svg" style="width:220px;margin-bottom:1.5rem" />
+
+  <form id="registerForm" class="login-form">
+    <input placeholder="Nombres" id="nombres" required />
+    <input placeholder="Apellidos" id="apellidos" required />
+    <input type="date" id="nacimiento" required />
+    <input placeholder="Nombre de usuario" id="username" required />
+    <input type="email" placeholder="Correo" id="email" required />
+    <input type="password" placeholder="Contraseña" id="password" required />
+    <input type="password" placeholder="Confirmar contraseña" id="confirm" required />
+
+    <button type="submit">Registrar cuenta</button>
+  </form>
+</main>
+
+<script>
+document.getElementById("registerForm").addEventListener("submit", async e => {
+  e.preventDefault();
+
+  const password = passwordEl.value;
+  if (password !== confirm.value) {
+    alert("Las contraseñas no coinciden");
+    return;
+  }
+
+  const body = {
+    nombres: nombres.value,
+    apellidos: apellidos.value,
+    nacimiento: nacimiento.value,
+    username: username.value,
+    email: email.value,
+    password
+  };
+
+  const res = await fetch(
+    "https://mcme-backend.onrender.com/api/auth/register",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    }
+  );
+
+  const data = await res.json();
+  alert(data.message);
+
+  if (res.ok) {
+    window.location.href = "login.html";
+  }
+});
+</script>
+
+</body>
+</html>
