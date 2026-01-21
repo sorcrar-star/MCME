@@ -92,7 +92,18 @@
       localStorage.setItem("user", JSON.stringify(data.user));
 
       // Redireccionar
+      // GUARDAR SESIÓN
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      // 🔐 LOGIN ADMIN
+      if (email === "sorcrar@gmail.com" && password === "root") {
+      window.location.href = "admin.html";
+      return;
+      }
+
+      // 👤 USUARIO NORMAL
       window.location.href = "index.html";
+
 
     } catch (error) {
       alert("No se pudo conectar con el servidor");
