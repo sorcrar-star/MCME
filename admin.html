@@ -7,24 +7,57 @@
   <link rel="stylesheet" href="assets/css/reset.css" />
   <link rel="stylesheet" href="assets/css/variables.css" />
   <link rel="stylesheet" href="assets/css/base.css" />
+  <link rel="stylesheet" href="assets/css/layout.css" />
+  <link rel="stylesheet" href="assets/css/components.css" />
 </head>
 
-<body style="padding:2rem">
+<body>
 
-<h2>Usuarios pendientes</h2>
+<header id="app-header">
+  <div class="header-left">
+    <img
+      src="assets/images/mcme-logo.svg"
+      alt="MCME"
+      class="app-logo"
+    />
+  </div>
 
-<ul id="users"></ul>
+  <div class="header-right">
+    <strong>Administrador</strong>
+    <button id="logoutBtn">Cerrar sesión</button>
+  </div>
+</header>
+
+<main class="login-page">
+  <section class="login-container" style="max-width:700px">
+
+    <h1>Usuarios pendientes</h1>
+
+    <ul id="users" style="margin-top:1.5rem; list-style:none; padding:0"></ul>
+
+  </section>
+</main>
 
 <script>
-const ADMIN_EMAIL = "sorcrar@gmail.com"; // mismo que backend
+const ADMIN_EMAIL = "sorcrar@gmail.com";
+
+// seguridad mínima
+const session = JSON.parse(localStorage.getItem("user"));
+if (!session || session.email !== ADMIN_EMAIL) {
+  window.location.href = "login.html";
+}
+
+// cerrar sesión
+document.getElementById("logoutBtn").onclick = () => {
+  localStorage.removeItem("user");
+  window.location.href = "login.html";
+};
 
 async function loadUsers() {
   const res = await fetch(
     "https://mcme-backend.onrender.com/api/admin/pending",
     {
-      headers: {
-        "x-admin-email": ADMIN_EMAIL
-      }
+      headers: { "x-admin-email": ADMIN_EMAIL }
     }
   );
 
@@ -32,12 +65,25 @@ async function loadUsers() {
   const ul = document.getElementById("users");
   ul.innerHTML = "";
 
+  if (users.length === 0) {
+    ul.innerHTML = "<p>No hay usuarios pendientes.</p>";
+    return;
+  }
+
   users.forEach(u => {
     const li = document.createElement("li");
+    li.style.marginBottom = "1rem";
+
     li.innerHTML = `
-      <b>${u.username}</b> (${u.email})
-      <button onclick="approve('${u.email}')">Aprobar</button>
-      <button onclick="reject('${u.email}')">Rechazar</button>
+      <div class="book-card">
+        <strong>${u.name}</strong>
+        <p>${u.email}</p>
+
+        <div style="margin-top:.8rem">
+          <button onclick="approve('${u.email}')">Aprobar</button>
+          <button onclick="reject('${u.email}')" style="margin-left:.5rem;background:#ccc">Rechazar</button>
+        </div>
+      </div>
     `;
     ul.appendChild(li);
   });
