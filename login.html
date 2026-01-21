@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login | Biblioteca Médica</title>
+
+  <link rel="stylesheet" href="assets/css/reset.css" />
+  <link rel="stylesheet" href="assets/css/variables.css" />
+  <link rel="stylesheet" href="assets/css/base.css" />
+  <link rel="stylesheet" href="assets/css/layout.css" />
+  <link rel="stylesheet" href="assets/css/components.css" />
+</head>
+
+<body class="login-page">
+
+  <main class="login-container">
+    <img
+  src="assets/images/mcme-logo.svg"
+  alt="MCME"
+  style="width: 220px; margin-bottom: 1.5rem;"
+/>
+
+
+    <form id="loginForm" class="login-form">
+      <input
+        type="email"
+        id="email"
+        placeholder="Correo académico"
+        required
+      />
+
+      <input
+        type="password"
+        id="password"
+        placeholder="Contraseña"
+        required
+      />
+
+      <button type="submit">Entrar</button>
+    </form>
+
+    <p class="login-note">
+      Acceso académico simulado (frontend)
+    </p>
+  </main>
+
+  <script>
+  const form = document.getElementById("loginForm");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    try {
+      const response = await fetch("http://localhost:3001/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await response.json();
+
+      // ❌ Usuario pendiente
+      if (response.status === 403) {
+        alert(data.message);
+        return;
+      }
+
+      // ❌ Error general
+      if (!response.ok) {
+        alert(data.message || "Error al iniciar sesión");
+        return;
+      }
+
+      // ✅ Login correcto
+      alert("Bienvenido " + data.user.name);
+
+      // Guardar sesión
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      // Redireccionar
+      window.location.href = "index.html";
+
+    } catch (error) {
+      alert("No se pudo conectar con el servidor");
+    }
+  });
+</script>
+
+
+</body>
+</html>

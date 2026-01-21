@@ -1,0 +1,39 @@
+.app-container {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: 100vh;
+}
+
+.app-main {
+  padding: 2rem 3rem;
+}
+
+#app-sidebar {
+  background: var(--bg-sidebar);
+  padding: 2rem 1.5rem;
+  box-shadow: var(--shadow-soft);
+}
+
+#app-header {
+  padding: 1.5rem 3rem;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-soft);
+}
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #eef4fb, #f8fbff);
+}
+
+.login-container {
+  background: var(--bg-card);
+  padding: 3rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+}

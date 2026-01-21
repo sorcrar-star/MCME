@@ -1,0 +1,397 @@
+/* ======================================================
+   HEADER
+====================================================== */
+
+#app-header {
+  background: var(--color-white);
+  padding: 1.25rem 2.5rem;
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#app-header h1 {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+#logoutBtn {
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 0.5rem 1.1rem;
+  border-radius: 999px;
+  transition: var(--transition-normal);
+}
+
+#logoutBtn:hover {
+  background: var(--color-accent);
+  transform: translateY(-1px);
+}
+
+/* ======================================================
+   SIDEBAR – BASE
+====================================================== */
+
+#app-sidebar {
+  background: var(--color-white);
+  padding: 2rem 1.5rem;
+  box-shadow: var(--shadow-soft);
+}
+
+#app-sidebar ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+/* ======================================================
+   SIDEBAR – NODO CARPETA
+====================================================== */
+
+.sidebar-folder {
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+
+  margin: 2px 0;
+  padding: 0.55rem 0.9rem;
+  border-radius: 10px;
+
+  color: #2c3e50;
+  font-size: 0.95rem;
+  font-weight: 400;
+
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    transform 0.15s ease;
+}
+
+/* Hover suave */
+.sidebar-folder:hover {
+  background-color: rgba(15, 76, 129, 0.08);
+}
+
+/* Click físico */
+.sidebar-folder:active {
+  transform: scale(0.97);
+}
+
+/* Activo (solo el nodo) */
+.sidebar-folder.active {
+  background-color: rgba(15, 76, 129, 0.14);
+  color: #0f4c81;
+  font-weight: 600;
+  overflow: visible;
+}
+
+/* Indicador lateral médico */
+.sidebar-folder.active::before {
+  content: "";
+  position: absolute;
+  left: -8px;
+  top: 6px;
+  bottom: 6px;
+  width: 4px;
+  background-color: #0f4c81;
+  border-radius: 4px;
+}
+
+/* ======================================================
+   SIDEBAR – FILA INTERNA
+====================================================== */
+
+.sidebar-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sidebar-label {
+  flex: 1;
+  color: inherit;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+/* ======================================================
+   SIDEBAR – FLECHAS
+====================================================== */
+
+.sidebar-arrow {
+  font-size: 0.75rem;
+  width: 14px;
+  text-align: center;
+  color: #6b7280;
+  cursor: pointer;
+}
+
+.sidebar-folder:not(.has-children) .sidebar-arrow {
+  visibility: hidden;
+}
+
+/* ======================================================
+   SIDEBAR – SUBCARPETAS
+====================================================== */
+
+.sidebar-subfolders {
+  margin-left: 1rem;
+  margin-top: 0.25rem;
+
+  overflow: hidden;
+  max-height: 1000px;
+  opacity: 1;
+  transform: translateY(0);
+
+  transition:
+    max-height 0.35s ease,
+    opacity 0.25s ease,
+    transform 0.25s ease;
+}
+
+/* Estado colapsado */
+.sidebar-subfolders.collapsed {
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
+/* Hijos siempre con color base */
+.sidebar-subfolders .sidebar-folder {
+  color: #2c3e50;
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
+/* ======================================================
+   BOOK GRID
+====================================================== */
+
+.books-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+/* ======================================================
+   BOOK CARD
+====================================================== */
+
+.book-card {
+  background: var(--color-white);
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-soft);
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  min-height: 180px;
+
+  transition: var(--transition-slow);
+  animation: fadeIn 0.4s ease;
+}
+
+.book-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+
+.book-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+}
+
+.book-card h3 {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.book-card p {
+  font-size: 0.85rem;
+  color: var(--color-muted);
+  margin: 0;
+}
+
+.book-card a {
+  margin-top: auto;
+  align-self: flex-start;
+
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+
+  transition: var(--transition-fast);
+}
+
+.book-card a:hover {
+  background: var(--color-primary);
+  color: white;
+}
+
+/* ======================================================
+   FAVORITOS
+====================================================== */
+
+.favorite-btn {
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  color: var(--color-accent);
+  transition: transform var(--transition-fast);
+}
+
+.favorite-btn:hover {
+  transform: scale(1.2);
+}
+
+/* ======================================================
+   SEARCH
+====================================================== */
+
+#search-input {
+  padding: 0.75rem 1rem;
+  border-radius: 999px;
+  border: 1px solid #ddd;
+  transition: var(--transition-fast);
+}
+
+#search-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
+}
+
+/* ======================================================
+   BREADCRUMBS
+====================================================== */
+
+.breadcrumbs {
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+
+.breadcrumb-item {
+  cursor: pointer;
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+.breadcrumb-item:hover {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
+.separator {
+  margin: 0 0.25rem;
+  color: var(--color-muted);
+}
+
+/* ======================================================
+   LOGIN
+====================================================== */
+
+.login-page {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-soft),
+    var(--color-bg)
+  );
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-container {
+  background: var(--color-white);
+  padding: 2.5rem 3rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-soft);
+  max-width: 420px;
+  width: 100%;
+  animation: fadeIn 0.6s ease;
+}
+
+.login-container h1 {
+  text-align: center;
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.login-form input {
+  padding: 0.8rem 1rem;
+  border-radius: 999px;
+  border: 1px solid #ddd;
+}
+
+.login-form input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
+}
+
+.login-form button {
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 0.8rem;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.login-form button:hover {
+  background: var(--color-accent);
+}
+
+/* ======================================================
+   ANIMATIONS
+====================================================== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* ===== HEADER LOGO (INDEX) ===== */
+
+#app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+#app-header .app-logo {
+  height: 50px;   /* pequeño, clínico */
+  width: auto;
+}

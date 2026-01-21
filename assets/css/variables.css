@@ -1,0 +1,22 @@
+:root {
+  /* Brand */
+  --color-primary: #0F4C81;
+  --color-primary-soft: #E6F0F8;
+  --color-accent: #2FA4A9;
+
+  /* Neutral */
+  --color-bg: #F5F7FA;
+  --color-white: #FFFFFF;
+  --color-text: #2E2E2E;
+  --color-muted: #6B7280;
+
+  /* UI */
+  --border-radius: 14px;
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.45s ease;
+
+  /* Shadows */
+  --shadow-soft: 0 8px 24px rgba(15, 76, 129, 0.08);
+  --shadow-hover: 0 12px 32px rgba(15, 76, 129, 0.14);
+}

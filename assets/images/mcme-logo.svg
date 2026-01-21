@@ -1,0 +1,57 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 420 120"
+  role="img"
+  aria-label="MCME Logo"
+>
+  <defs>
+    <linearGradient id="mcmeGradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0F4C5C"/>
+      <stop offset="100%" stop-color="#3BAEA0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Icon -->
+  <g transform="translate(10,20)">
+    <rect
+      x="0"
+      y="0"
+      width="80"
+      height="80"
+      rx="18"
+      fill="url(#mcmeGradient)"
+    />
+    <path
+      d="M40 18
+         V62
+         M18 40
+         H62"
+      stroke="white"
+      stroke-width="8"
+      stroke-linecap="round"
+    />
+  </g>
+
+  <!-- Text -->
+  <text
+    x="120"
+    y="62"
+    font-family="Inter, system-ui, sans-serif"
+    font-size="44"
+    font-weight="700"
+    fill="#0F4C5C"
+  >
+    MCME
+  </text>
+
+  <text
+    x="120"
+    y="90"
+    font-family="Inter, system-ui, sans-serif"
+    font-size="16"
+    letter-spacing="0.18em"
+    fill="#6B7280"
+  >
+    MEDICAL CLINICAL MASTERY ENGINE
+  </text>
+</svg>
