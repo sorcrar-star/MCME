@@ -31,9 +31,13 @@
 <main class="login-page">
   <section class="login-container" style="max-width:700px">
 
+    <!-- USUARIOS PENDIENTES -->
     <h1>Usuarios pendientes</h1>
-
     <ul id="users" style="margin-top:1.5rem; list-style:none; padding:0"></ul>
+
+    <!-- USUARIOS APROBADOS -->
+    <h1 style="margin-top:2rem">Usuarios aprobados</h1>
+    <ul id="approvedUsers" style="margin-top:1.5rem; list-style:none; padding:0"></ul>
 
   </section>
 </main>
@@ -41,7 +45,9 @@
 <script>
 const ADMIN_EMAIL = "sorcrar@gmail.com";
 
-// seguridad mínima
+// ==========================
+// SEGURIDAD BÁSICA
+// ==========================
 const session = JSON.parse(localStorage.getItem("user"));
 if (!session || session.email !== ADMIN_EMAIL) {
   window.location.href = "login.html";
@@ -53,6 +59,9 @@ document.getElementById("logoutBtn").onclick = () => {
   window.location.href = "login.html";
 };
 
+// ==========================
+// USUARIOS PENDIENTES
+// ==========================
 async function loadUsers() {
   const res = await fetch(
     "https://mcme-backend.onrender.com/api/admin/pending",
@@ -81,7 +90,9 @@ async function loadUsers() {
 
         <div style="margin-top:.8rem">
           <button onclick="approve('${u.email}')">Aprobar</button>
-          <button onclick="reject('${u.email}')" style="margin-left:.5rem;background:#ccc">Rechazar</button>
+          <button onclick="reject('${u.email}')" style="margin-left:.5rem;background:#ccc">
+            Rechazar
+          </button>
         </div>
       </div>
     `;
@@ -102,6 +113,7 @@ async function approve(email) {
     }
   );
   loadUsers();
+  loadApprovedUsers();
 }
 
 async function reject(email) {
@@ -119,7 +131,65 @@ async function reject(email) {
   loadUsers();
 }
 
+// ==========================
+// USUARIOS APROBADOS
+// ==========================
+async function loadApprovedUsers() {
+  const res = await fetch(
+    "https://mcme-backend.onrender.com/api/admin/approved",
+    {
+      headers: { "x-admin-email": ADMIN_EMAIL }
+    }
+  );
+
+  const users = await res.json();
+  const ul = document.getElementById("approvedUsers");
+  ul.innerHTML = "";
+
+  if (users.length === 0) {
+    ul.innerHTML = "<p>No hay usuarios aprobados.</p>";
+    return;
+  }
+
+  users.forEach(u => {
+    const li = document.createElement("li");
+    li.style.marginBottom = "1rem";
+
+    li.innerHTML = `
+      <div class="book-card">
+        <strong>${u.name}</strong>
+        <p>${u.email}</p>
+        <button
+          onclick="revoke('${u.email}')"
+          style="margin-top:.5rem;background:#e74c3c;color:#fff">
+          Quitar acceso
+        </button>
+      </div>
+    `;
+    ul.appendChild(li);
+  });
+}
+
+async function revoke(email) {
+  await fetch(
+    "https://mcme-backend.onrender.com/api/admin/revoke",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-admin-email": ADMIN_EMAIL
+      },
+      body: JSON.stringify({ email })
+    }
+  );
+  loadApprovedUsers();
+}
+
+// ==========================
+// INICIO
+// ==========================
 loadUsers();
+loadApprovedUsers();
 </script>
 
 </body>
