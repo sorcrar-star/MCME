@@ -3,6 +3,7 @@
 
 import { isFavorite, toggleFavorite } from "../services/favorites.service.js";
 import { openNotesPanel } from "./book-notes.component.js";
+import { openPdfModal } from "../main.js";
 
 export function renderBookCard(book) {
   const article = document.createElement("article");
@@ -16,7 +17,7 @@ export function renderBookCard(book) {
 
       <div class="card-actions">
         <button class="notes-btn" title="Notas">📝</button>
-        <button class="favorite-btn">
+        <button class="favorite-btn" title="Favorito">
           ${favorite ? "★" : "☆"}
         </button>
       </div>
@@ -33,50 +34,34 @@ export function renderBookCard(book) {
      FAVORITOS
   ========================== */
   const favBtn = article.querySelector(".favorite-btn");
-  if (favBtn) {
-    favBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
+  favBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
 
-      const active = toggleFavorite(book.id);
-      favBtn.textContent = active ? "★" : "☆";
+    const active = toggleFavorite(book.id);
+    favBtn.textContent = active ? "★" : "☆";
 
-      document.dispatchEvent(
-        new CustomEvent("favorites:updated")
-      );
-    });
-  }
+    document.dispatchEvent(
+      new CustomEvent("favorites:updated")
+    );
+  });
 
   /* ==========================
-     NOTAS
+     NOTAS (desde tarjeta)
   ========================== */
   const notesBtn = article.querySelector(".notes-btn");
-  if (notesBtn) {
-    notesBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      openNotesPanel(book);
-    });
-  }
+  notesBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    openNotesPanel(book);
+  });
 
   /* ==========================
-     PDF
+     PDF (pantalla completa)
   ========================== */
   const pdfBtn = article.querySelector(".pdf-open-btn");
-  if (pdfBtn) {
-    pdfBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-
-      const viewer = document.getElementById("pdfViewer");
-      const frame = document.getElementById("pdfFrame");
-      const title = document.getElementById("pdfTitle");
-
-      if (!viewer || !frame || !title) return;
-
-      frame.src = book.pdfUrl;
-      title.textContent = book.title;
-
-      viewer.classList.remove("hidden");
-    });
-  }
+  pdfBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    openPdfModal(book);
+  });
 
   return article;
 }
