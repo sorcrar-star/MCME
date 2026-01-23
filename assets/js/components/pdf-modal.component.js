@@ -7,29 +7,35 @@ let currentPdfBook = null;
 export function openPdfModal(book) {
   currentPdfBook = book;
 
-  const modal = document.getElementById("pdfModal");
-  const frame = document.getElementById("pdfModalFrame");
-  const title = document.getElementById("pdfModalTitle");
+  const viewer = document.getElementById("pdfViewer");
+  const frame = document.getElementById("pdfFrame");
+  const title = document.getElementById("pdfTitle");
 
-  if (!modal || !frame || !title) return;
+  if (!viewer || !frame || !title) {
+    console.warn("PDF Viewer DOM no encontrado");
+    return;
+  }
 
   title.textContent = book.title;
   frame.src = book.pdfUrl;
 
-  modal.classList.remove("hidden");
+  viewer.classList.remove("hidden");
 }
 
-// cerrar PDF
+// Eventos del visor PDF
 document.addEventListener("click", (e) => {
-  if (e.target.id === "closePdfModal") {
-    const modal = document.getElementById("pdfModal");
-    const frame = document.getElementById("pdfModalFrame");
+  // cerrar PDF
+  if (e.target.id === "closePdfBtn") {
+    const viewer = document.getElementById("pdfViewer");
+    const frame = document.getElementById("pdfFrame");
 
-    frame.src = "";
-    modal.classList.add("hidden");
+    if (frame) frame.src = "";
+    if (viewer) viewer.classList.add("hidden");
+
     currentPdfBook = null;
   }
 
+  // abrir notas desde PDF
   if (e.target.id === "openNotesFromPdf") {
     if (currentPdfBook) {
       openNotesPanel(currentPdfBook);
