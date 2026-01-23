@@ -25,10 +25,8 @@ export function renderBookCard(book) {
     <p>${book.collection} · ${book.year}</p>
 
     <button class="pdf-open-btn">
-  Abrir PDF
-</button>
-
-
+      Abrir PDF
+    </button>
   `;
 
   // ⭐ Favoritos
@@ -51,20 +49,20 @@ export function renderBookCard(book) {
     openNotesPanel(book);
   });
 
-// 📄 Abrir PDF embebido
-const pdfBtn = article.querySelector(".pdf-link-btn");
-pdfBtn.addEventListener("click", (e) => {
-  e.stopPropagation();
+  // 📄 Abrir PDF
+  const pdfBtn = article.querySelector(".pdf-open-btn");
+  pdfBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
 
-  const viewer = document.getElementById("pdfViewer");
-  const frame = document.getElementById("pdfFrame");
-  const title = document.getElementById("pdfTitle");
+    const viewer = document.getElementById("pdfViewer");
+    const frame = document.getElementById("pdfFrame");
+    const title = document.getElementById("pdfTitle");
 
-  frame.src = book.pdfUrl;
-  title.textContent = book.title;
+    frame.src = book.pdfUrl;
+    title.textContent = book.title;
 
-  viewer.classList.remove("hidden");
-});
+    viewer.classList.remove("hidden");
+  });
 
   return article;
 }
