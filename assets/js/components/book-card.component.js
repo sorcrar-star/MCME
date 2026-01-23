@@ -59,11 +59,12 @@ export function renderBookCard(book) {
      PDF (pantalla completa)
   ========================== */
   const pdfBtn = article.querySelector(".pdf-open-btn");
-
   pdfBtn.addEventListener("click", (e) => {
   e.stopPropagation();
-  openPdfViewer(book);
+  console.log("CLICK PDF", book);
+  openPdfModal(book);
   });
+
 
   return article;
 }
