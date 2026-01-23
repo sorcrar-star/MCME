@@ -31,19 +31,30 @@
 <main class="login-page">
   <section class="login-container" style="max-width:700px">
 
+    <!-- ===================== -->
     <!-- USUARIOS PENDIENTES -->
+    <!-- ===================== -->
     <h1>Usuarios pendientes</h1>
     <ul id="users" style="margin-top:1.5rem; list-style:none; padding:0"></ul>
 
+    <!-- ===================== -->
     <!-- USUARIOS APROBADOS -->
+    <!-- ===================== -->
     <h1 style="margin-top:2rem">Usuarios aprobados</h1>
     <ul id="approvedUsers" style="margin-top:1.5rem; list-style:none; padding:0"></ul>
+
+    <!-- ===================== -->
+    <!-- USUARIOS SUSPENDIDOS -->
+    <!-- ===================== -->
+    <h1 style="margin-top:2rem">Usuarios suspendidos</h1>
+    <ul id="suspendedUsers" style="margin-top:1.5rem; list-style:none; padding:0"></ul>
 
   </section>
 </main>
 
 <script>
 const ADMIN_EMAIL = "sorcrar@gmail.com";
+const API = "https://mcme-backend.onrender.com/api/admin";
 
 // ==========================
 // SEGURIDAD BÁSICA
@@ -63,12 +74,9 @@ document.getElementById("logoutBtn").onclick = () => {
 // USUARIOS PENDIENTES
 // ==========================
 async function loadUsers() {
-  const res = await fetch(
-    "https://mcme-backend.onrender.com/api/admin/pending",
-    {
-      headers: { "x-admin-email": ADMIN_EMAIL }
-    }
-  );
+  const res = await fetch(`${API}/pending`, {
+    headers: { "x-admin-email": ADMIN_EMAIL }
+  });
 
   const users = await res.json();
   const ul = document.getElementById("users");
@@ -87,7 +95,6 @@ async function loadUsers() {
       <div class="book-card">
         <strong>${u.name}</strong>
         <p>${u.email}</p>
-
         <div style="margin-top:.8rem">
           <button onclick="approve('${u.email}')">Aprobar</button>
           <button onclick="reject('${u.email}')" style="margin-left:.5rem;background:#ccc">
@@ -101,33 +108,32 @@ async function loadUsers() {
 }
 
 async function approve(email) {
-  await fetch(
-    "https://mcme-backend.onrender.com/api/admin/approve",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-admin-email": ADMIN_EMAIL
-      },
-      body: JSON.stringify({ email })
-    }
-  );
+  await fetch(`${API}/approve`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-admin-email": ADMIN_EMAIL
+    },
+    body: JSON.stringify({ email })
+  });
+
   loadUsers();
   loadApprovedUsers();
 }
 
+// ==========================
+// RECHAZAR
+// ==========================
 async function reject(email) {
-  await fetch(
-    "https://mcme-backend.onrender.com/api/admin/reject",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-admin-email": ADMIN_EMAIL
-      },
-      body: JSON.stringify({ email })
-    }
-  );
+  await fetch(`${API}/reject`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-admin-email": ADMIN_EMAIL
+    },
+    body: JSON.stringify({ email })
+  });
+
   loadUsers();
 }
 
@@ -135,12 +141,9 @@ async function reject(email) {
 // USUARIOS APROBADOS
 // ==========================
 async function loadApprovedUsers() {
-  const res = await fetch(
-    "https://mcme-backend.onrender.com/api/admin/approved",
-    {
-      headers: { "x-admin-email": ADMIN_EMAIL }
-    }
-  );
+  const res = await fetch(`${API}/approved`, {
+    headers: { "x-admin-email": ADMIN_EMAIL }
+  });
 
   const users = await res.json();
   const ul = document.getElementById("approvedUsers");
@@ -171,17 +174,66 @@ async function loadApprovedUsers() {
 }
 
 async function revoke(email) {
-  await fetch(
-    "https://mcme-backend.onrender.com/api/admin/revoke",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-admin-email": ADMIN_EMAIL
-      },
-      body: JSON.stringify({ email })
-    }
-  );
+  await fetch(`${API}/revoke`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-admin-email": ADMIN_EMAIL
+    },
+    body: JSON.stringify({ email })
+  });
+
+  loadApprovedUsers();
+  loadSuspendedUsers();
+}
+
+// ==========================
+// USUARIOS SUSPENDIDOS
+// ==========================
+async function loadSuspendedUsers() {
+  const res = await fetch(`${API}/suspended`, {
+    headers: { "x-admin-email": ADMIN_EMAIL }
+  });
+
+  const users = await res.json();
+  const ul = document.getElementById("suspendedUsers");
+  ul.innerHTML = "";
+
+  if (users.length === 0) {
+    ul.innerHTML = "<p>No hay usuarios suspendidos.</p>";
+    return;
+  }
+
+  users.forEach(u => {
+    const li = document.createElement("li");
+    li.style.marginBottom = "1rem";
+
+    li.innerHTML = `
+      <div class="book-card">
+        <strong>${u.name}</strong>
+        <p>${u.email}</p>
+        <button
+          onclick="reactivate('${u.email}')"
+          style="margin-top:.5rem;background:#2ecc71;color:#fff">
+          Reactivar acceso
+        </button>
+      </div>
+    `;
+    ul.appendChild(li);
+  });
+}
+
+async function reactivate(email) {
+  await fetch(`${API}/reactivate`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-admin-email": ADMIN_EMAIL
+    },
+    body: JSON.stringify({ email })
+  });
+
+  loadSuspendedUsers();
   loadApprovedUsers();
 }
 
@@ -190,6 +242,7 @@ async function revoke(email) {
 // ==========================
 loadUsers();
 loadApprovedUsers();
+loadSuspendedUsers();
 </script>
 
 </body>
