@@ -3,7 +3,8 @@
 
 import { isFavorite, toggleFavorite } from "../services/favorites.service.js";
 import { openNotesPanel } from "./book-notes.component.js";
-import { openPdfModal } from "../main.js";
+import { openPdfViewer } from "./pdf-viewer.component.js";
+
 
 export function renderBookCard(book) {
   const article = document.createElement("article");
@@ -58,9 +59,10 @@ export function renderBookCard(book) {
      PDF (pantalla completa)
   ========================== */
   const pdfBtn = article.querySelector(".pdf-open-btn");
+
   pdfBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    openPdfModal(book);
+  e.stopPropagation();
+  openPdfViewer(book);
   });
 
   return article;
