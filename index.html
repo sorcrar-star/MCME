@@ -49,14 +49,18 @@
 
     <!-- Visor PDF -->
     <section id="pdfViewer" class="pdf-viewer hidden">
-      <header class="pdf-header">
-        <span id="pdfTitle"></span>
-        <button id="closePdfBtn">Cerrar</button>
-      </header>
+  <header class="pdf-header">
+    <span id="pdfTitle"></span>
 
-      <iframe id="pdfFrame"></iframe>
-    </section>
-  </section>
+    <div class="pdf-actions">
+      <button id="openNotesFromPdf">📝 Notas</button>
+      <button id="closePdfBtn">✕ Cerrar</button>
+    </div>
+  </header>
+
+  <iframe id="pdfFrame"></iframe>
+</section>
+
 </main>
 
   </div>
