@@ -15,55 +15,56 @@
 </head>
 
 <body>
+
+  <!-- HEADER -->
   <header id="app-header">
-  <div class="header-left">
-    <img
-      src="assets/images/mcme-logo.svg"
-      alt="MCME"
-      class="app-logo"
-    />
-  </div>
+    <div class="header-left">
+      <img
+        src="assets/images/mcme-logo.svg"
+        alt="MCME"
+        class="app-logo"
+      />
+    </div>
 
-  <div class="header-right">
-    <!-- Este contenido normalmente lo inyecta JS -->
-  </div>
-</header>
+    <div class="header-right"></div>
+  </header>
 
-
+  <!-- APP -->
   <div class="app-container">
     <aside id="app-sidebar"></aside>
 
     <main class="app-main">
-  <section class="search-section">
-    <nav id="breadcrumbs" class="breadcrumbs"></nav>
+      <section class="search-section">
+        <nav id="breadcrumbs" class="breadcrumbs"></nav>
 
-    <input
-      type="search"
-      id="search-input"
-      placeholder="Buscar libro, tema o autor…"
-    />
-  </section>
+        <input
+          type="search"
+          id="search-input"
+          placeholder="Buscar libro, tema o autor…"
+        />
+      </section>
 
-  <section class="content-area">
-    <section id="booksGrid" class="books-grid"></section>
-
-    <!-- Visor PDF -->
-    <section id="pdfViewer" class="pdf-viewer hidden">
-  <header class="pdf-header">
-    <span id="pdfTitle"></span>
-
-    <div class="pdf-actions">
-      <button id="openNotesFromPdf">📝 Notas</button>
-      <button id="closePdfBtn">✕ Cerrar</button>
-    </div>
-  </header>
-
-  <iframe id="pdfFrame"></iframe>
-</section>
-
-</main>
-
+      <section class="content-area">
+        <section id="booksGrid" class="books-grid"></section>
+      </section>
+    </main>
   </div>
+
+  <!-- ========================= -->
+  <!-- MODAL PDF (FULL SCREEN) -->
+  <!-- ========================= -->
+  <section id="pdfViewer" class="pdf-modal hidden">
+    <header class="pdf-modal-header">
+      <span id="pdfTitle"></span>
+
+      <div class="pdf-actions">
+        <button id="openNotesFromPdf">📝 Notas</button>
+        <button id="closePdfBtn">✕ Cerrar</button>
+      </div>
+    </header>
+
+    <iframe id="pdfFrame"></iframe>
+  </section>
 
   <script type="module" src="assets/js/main.js"></script>
 </body>
