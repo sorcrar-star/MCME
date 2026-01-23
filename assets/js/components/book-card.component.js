@@ -24,9 +24,10 @@ export function renderBookCard(book) {
 
     <p>${book.collection} · ${book.year}</p>
 
-    <button class="pdf-link-btn">
+    <button class="pdf-open-btn">
   Abrir PDF
 </button>
+
 
   `;
 
@@ -49,7 +50,7 @@ export function renderBookCard(book) {
     e.stopPropagation();
     openNotesPanel(book);
   });
-  
+
 // 📄 Abrir PDF embebido
 const pdfBtn = article.querySelector(".pdf-link-btn");
 pdfBtn.addEventListener("click", (e) => {
