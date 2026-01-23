@@ -1,10 +1,6 @@
-// assets/js/components/book-card.component.js
-// Tarjeta visual de libro
-
 import { isFavorite, toggleFavorite } from "../services/favorites.service.js";
 import { openNotesPanel } from "./book-notes.component.js";
-import { openPdfViewer } from "./pdf-viewer.component.js";
-
+import { openPdfModal } from "./pdf-modal.component.js";
 
 export function renderBookCard(book) {
   const article = document.createElement("article");
@@ -26,45 +22,28 @@ export function renderBookCard(book) {
 
     <p>${book.collection} · ${book.year}</p>
 
-    <button class="pdf-open-btn">
-      Abrir PDF
-    </button>
+    <button class="pdf-open-btn">Abrir PDF</button>
   `;
 
-  /* ==========================
-     FAVORITOS
-  ========================== */
-  const favBtn = article.querySelector(".favorite-btn");
-  favBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
+  article.querySelector(".favorite-btn")
+    .addEventListener("click", (e) => {
+      e.stopPropagation();
+      const active = toggleFavorite(book.id);
+      e.target.textContent = active ? "★" : "☆";
+      document.dispatchEvent(new CustomEvent("favorites:updated"));
+    });
 
-    const active = toggleFavorite(book.id);
-    favBtn.textContent = active ? "★" : "☆";
+  article.querySelector(".notes-btn")
+    .addEventListener("click", (e) => {
+      e.stopPropagation();
+      openNotesPanel(book);
+    });
 
-    document.dispatchEvent(
-      new CustomEvent("favorites:updated")
-    );
-  });
-
-  /* ==========================
-     NOTAS (desde tarjeta)
-  ========================== */
-  const notesBtn = article.querySelector(".notes-btn");
-  notesBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    openNotesPanel(book);
-  });
-
-  /* ==========================
-     PDF (pantalla completa)
-  ========================== */
-  const pdfBtn = article.querySelector(".pdf-open-btn");
-  pdfBtn.addEventListener("click", (e) => {
-  e.stopPropagation();
-  console.log("CLICK PDF", book);
-  openPdfModal(book);
-  });
-
+  article.querySelector(".pdf-open-btn")
+    .addEventListener("click", (e) => {
+      e.stopPropagation();
+      openPdfModal(book);
+    });
 
   return article;
 }
