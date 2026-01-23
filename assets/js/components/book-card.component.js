@@ -25,25 +25,22 @@ export function renderBookCard(book) {
     <button class="pdf-open-btn">Abrir PDF</button>
   `;
 
-  article.querySelector(".favorite-btn")
-    .addEventListener("click", (e) => {
-      e.stopPropagation();
-      const active = toggleFavorite(book.id);
-      e.target.textContent = active ? "★" : "☆";
-      document.dispatchEvent(new CustomEvent("favorites:updated"));
-    });
+  article.querySelector(".favorite-btn").addEventListener("click", (e) => {
+    e.stopPropagation();
+    const active = toggleFavorite(book.id);
+    e.target.textContent = active ? "★" : "☆";
+    document.dispatchEvent(new CustomEvent("favorites:updated"));
+  });
 
-  article.querySelector(".notes-btn")
-    .addEventListener("click", (e) => {
-      e.stopPropagation();
-      openNotesPanel(book);
-    });
+  article.querySelector(".notes-btn").addEventListener("click", (e) => {
+    e.stopPropagation();
+    openNotesPanel(book);
+  });
 
-  article.querySelector(".pdf-open-btn")
-    .addEventListener("click", (e) => {
-      e.stopPropagation();
-      openPdfModal(book);
-    });
+  article.querySelector(".pdf-open-btn").addEventListener("click", (e) => {
+    e.stopPropagation();
+    openPdfModal(book);
+  });
 
   return article;
 }
