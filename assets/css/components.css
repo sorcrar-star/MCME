@@ -480,3 +480,24 @@
   color: var(--color-muted);
   font-size: 0.75rem;
 }
+/* ======================================================
+   BOOK CARD – ACTIONS
+====================================================== */
+
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.notes-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.notes-btn:hover {
+  transform: scale(1.15);
+}
