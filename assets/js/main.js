@@ -6,37 +6,35 @@ import { renderSidebar } from "./components/sidebar.component.js";
 import { getBooksByFolder, getFolderPath } from "./services/folder.service.js";
 import { renderHeader } from "./components/header.component.js";
 import { isAuthenticated } from "./services/auth.service.js";
+import { openNotesPanel } from "./components/book-notes.component.js";
 
-// 🔒 Protección de ruta
+/* ===============================
+   Protección de ruta
+=============================== */
 if (!isAuthenticated()) {
   window.location.href = "login.html";
 }
 
-// ===============================
-// Protección de ruta (frontend)
-// ===============================
-if (!isAuthenticated()) {
-  window.location.href = "login.html";
-}
-
-// ===============================
-// Constantes de storage
-// ===============================
+/* ===============================
+   Constantes storage
+=============================== */
 const STORAGE_ACTIVE_FOLDER = "activeFolderId";
 const STORAGE_SEARCH_QUERY = "searchQuery";
 
-// ===============================
-// Estado de la app
-// ===============================
+/* ===============================
+   Estado global
+=============================== */
 let activeFolderId =
   localStorage.getItem(STORAGE_ACTIVE_FOLDER) || "all-books";
 
 let currentSearch =
   localStorage.getItem(STORAGE_SEARCH_QUERY) || "";
 
-// ===============================
-// DOM
-// ===============================
+let currentPdfBook = null;
+
+/* ===============================
+   DOM base
+=============================== */
 const grid = document.getElementById("booksGrid");
 const searchInput = document.getElementById("search-input");
 
@@ -44,9 +42,46 @@ if (searchInput) {
   searchInput.value = currentSearch;
 }
 
-// ===============================
-// Render de libros
-// ===============================
+/* ===============================
+   PDF MODAL (pantalla completa)
+=============================== */
+export function openPdfModal(book) {
+  currentPdfBook = book;
+
+  const modal = document.getElementById("pdfModal");
+  const frame = document.getElementById("pdfModalFrame");
+  const title = document.getElementById("pdfModalTitle");
+
+  if (!modal || !frame || !title) return;
+
+  title.textContent = book.title;
+  frame.src = book.pdfUrl;
+
+  modal.classList.remove("hidden");
+}
+
+// cerrar PDF
+document.addEventListener("click", (e) => {
+  if (e.target.id === "closePdfModal") {
+    const modal = document.getElementById("pdfModal");
+    const frame = document.getElementById("pdfModalFrame");
+
+    frame.src = "";
+    modal.classList.add("hidden");
+    currentPdfBook = null;
+  }
+
+  // abrir notas desde PDF
+  if (e.target.id === "openNotesFromPdf") {
+    if (currentPdfBook) {
+      openNotesPanel(currentPdfBook);
+    }
+  }
+});
+
+/* ===============================
+   Render de libros
+=============================== */
 function renderBooks() {
   const booksForFolder = getBooksByFolder(activeFolderId);
   const filtered = searchBooks(booksForFolder, currentSearch);
@@ -61,17 +96,13 @@ function renderBooks() {
   filtered.forEach(book => {
     grid.appendChild(renderBookCard(book));
   });
-  
-  document.addEventListener("favorites:updated", () => {
-   renderBooks();
-
-});
-
 }
 
-// ===============================
-// Buscador
-// ===============================
+document.addEventListener("favorites:updated", renderBooks);
+
+/* ===============================
+   Buscador
+=============================== */
 if (searchInput) {
   searchInput.addEventListener("input", (e) => {
     currentSearch = e.target.value;
@@ -80,10 +111,9 @@ if (searchInput) {
   });
 }
 
-// ===============================
-// Inicialización
-// ===============================
-// Estado global para la sidebar
+/* ===============================
+   Inicialización
+=============================== */
 window.__ACTIVE_FOLDER_ID__ = activeFolderId;
 window.__ACTIVE_FOLDER_PATH__ =
   getFolderPath(activeFolderId).map(f => f.id);
@@ -93,32 +123,27 @@ renderSidebar();
 renderBooks();
 renderBreadcrumbs(activeFolderId);
 
-
-// ===============================
-// Cambio de carpeta
-// ===============================
+/* ===============================
+   Cambio de carpeta
+=============================== */
 document.addEventListener("folder:selected", (e) => {
   const folderId = e.detail.folderId;
 
-  // 1️⃣ actualizar estado
   activeFolderId = folderId;
   localStorage.setItem(STORAGE_ACTIVE_FOLDER, folderId);
 
-  // 2️⃣ actualizar estado global de la sidebar
   window.__ACTIVE_FOLDER_ID__ = folderId;
   window.__ACTIVE_FOLDER_PATH__ =
     getFolderPath(folderId).map(f => f.id);
 
-  // 3️⃣ re-render UI
   renderSidebar();
   renderBooks();
   renderBreadcrumbs(folderId);
 });
 
-
-// ===============================
-// Breadcrumbs
-// ===============================
+/* ===============================
+   Breadcrumbs
+=============================== */
 function renderBreadcrumbs(folderId) {
   const container = document.getElementById("breadcrumbs");
   if (!container) return;
@@ -148,18 +173,4 @@ function renderBreadcrumbs(folderId) {
       container.appendChild(sep);
     }
   });
-  // ===============================
-// Cerrar visor PDF
-// ===============================
-document.addEventListener("click", (e) => {
-  if (e.target.id === "closePdfBtn") {
-    const viewer = document.getElementById("pdfViewer");
-    const frame = document.getElementById("pdfFrame");
-
-    frame.src = "";
-    viewer.classList.add("hidden");
-  }
-});
-
 }
-
