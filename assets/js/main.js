@@ -6,7 +6,6 @@ import { renderSidebar } from "./components/sidebar.component.js";
 import { getBooksByFolder, getFolderPath } from "./services/folder.service.js";
 import { renderHeader } from "./components/header.component.js";
 import { isAuthenticated } from "./services/auth.service.js";
-import { openNotesPanel } from "./components/book-notes.component.js";
 
 /* ===============================
    Protección de ruta
@@ -30,8 +29,6 @@ let activeFolderId =
 let currentSearch =
   localStorage.getItem(STORAGE_SEARCH_QUERY) || "";
 
-let currentPdfBook = null;
-
 /* ===============================
    DOM base
 =============================== */
@@ -41,46 +38,6 @@ const searchInput = document.getElementById("search-input");
 if (searchInput) {
   searchInput.value = currentSearch;
 }
-
-/* ===============================
-   VISOR PDF (pantalla completa)
-=============================== */
-export function openPdfModal(book) {
-  currentPdfBook = book;
-
-  const viewer = document.getElementById("pdfViewer");
-  const frame = document.getElementById("pdfFrame");
-  const title = document.getElementById("pdfTitle");
-
-  if (!viewer || !frame || !title) return;
-
-  title.textContent = book.title;
-  frame.src = book.pdfUrl;
-
-  viewer.classList.remove("hidden");
-}
-
-
-// cerrar PDF
-document.addEventListener("click", (e) => {
-  // cerrar visor PDF
-  if (e.target.id === "closePdfBtn") {
-    const viewer = document.getElementById("pdfViewer");
-    const frame = document.getElementById("pdfFrame");
-
-    frame.src = "";
-    viewer.classList.add("hidden");
-    currentPdfBook = null;
-  }
-
-  // abrir notas desde el PDF
-  if (e.target.id === "openNotesFromPdf") {
-    if (currentPdfBook) {
-      openNotesPanel(currentPdfBook);
-    }
-  }
-});
-
 
 /* ===============================
    Render de libros
