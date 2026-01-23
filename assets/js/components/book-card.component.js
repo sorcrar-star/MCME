@@ -2,6 +2,7 @@
 // Tarjeta visual de libro
 
 import { isFavorite, toggleFavorite } from "../services/favorites.service.js";
+import { openNotesPanel } from "./book-notes.component.js";
 
 export function renderBookCard(book) {
   const article = document.createElement("article");
@@ -12,9 +13,13 @@ export function renderBookCard(book) {
   article.innerHTML = `
     <div class="book-card-header">
       <h3>${book.title}</h3>
-      <button class="favorite-btn">
-        ${favorite ? "★" : "☆"}
-      </button>
+
+      <div class="card-actions">
+        <button class="notes-btn" title="Notas">📝</button>
+        <button class="favorite-btn">
+          ${favorite ? "★" : "☆"}
+        </button>
+      </div>
     </div>
 
     <p>${book.collection} · ${book.year}</p>
@@ -29,6 +34,7 @@ export function renderBookCard(book) {
     </a>
   `;
 
+  // ⭐ Favoritos
   const favBtn = article.querySelector(".favorite-btn");
   favBtn.addEventListener("click", (e) => {
     e.stopPropagation();
@@ -39,6 +45,13 @@ export function renderBookCard(book) {
     document.dispatchEvent(
       new CustomEvent("favorites:updated")
     );
+  });
+
+  // 📝 Notas
+  const notesBtn = article.querySelector(".notes-btn");
+  notesBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    openNotesPanel(book);
   });
 
   return article;
