@@ -501,3 +501,48 @@
 .notes-btn:hover {
   transform: scale(1.15);
 }
+/* ======================================================
+   PDF VIEWER
+====================================================== */
+
+.content-area {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.pdf-viewer {
+  flex: 1;
+  background: var(--color-white);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.pdf-viewer.hidden {
+  display: none;
+}
+
+.pdf-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: var(--color-primary-soft);
+  font-weight: 600;
+}
+
+.pdf-header button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+#pdfFrame {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
