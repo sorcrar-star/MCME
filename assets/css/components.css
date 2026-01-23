@@ -546,3 +546,24 @@
   height: 100%;
   border: none;
 }
+.pdf-open-btn {
+  margin-top: auto;
+  align-self: flex-start;
+
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+
+  transition: var(--transition-fast);
+}
+
+.pdf-open-btn:hover {
+  background: var(--color-primary);
+  color: white;
+}
