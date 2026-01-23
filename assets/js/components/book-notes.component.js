@@ -5,23 +5,14 @@ import { getCurrentUser } from "../services/auth.service.js";
 
 const STORAGE_KEY = "mcme_notes";
 
-/**
- * Obtiene todas las notas guardadas
- */
 function getAllNotes() {
   return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
 }
 
-/**
- * Guarda todas las notas
- */
 function saveAllNotes(notes) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
 }
 
-/**
- * Obtiene notas de un libro para el usuario actual
- */
 function getNotesByBook(bookId) {
   const user = getCurrentUser();
   if (!user) return [];
@@ -32,30 +23,40 @@ function getNotesByBook(bookId) {
 }
 
 /**
- * Guarda una nueva nota
+ * Obtiene la página actual del PDF
  */
+function getCurrentPdfPage() {
+  const iframe = document.getElementById("pdfFrame");
+  if (!iframe || !iframe.src) return null;
+
+  try {
+    const url = new URL(iframe.src);
+    return url.hash.replace("#page=", "") || null;
+  } catch {
+    return null;
+  }
+}
+
 function addNote(bookId, content) {
   const user = getCurrentUser();
   if (!user || !content.trim()) return;
 
   const notes = getAllNotes();
+  const page = getCurrentPdfPage();
 
   notes.push({
     id: crypto.randomUUID(),
     bookId,
     userEmail: user.email,
     content,
+    page,
     createdAt: new Date().toISOString()
   });
 
   saveAllNotes(notes);
 }
 
-/**
- * Renderiza el panel de notas
- */
 export function openNotesPanel(book) {
-  // Evitar duplicados
   if (document.getElementById("notes-panel")) return;
 
   const panel = document.createElement("div");
@@ -82,35 +83,25 @@ export function openNotesPanel(book) {
 
   document.body.appendChild(panel);
 
-  // Renderizar notas existentes
   renderNotes(book.id);
 
-  // Eventos
-  document
-    .getElementById("closeNotesBtn")
-    .addEventListener("click", () => {
-      panel.remove();
-    });
+  document.getElementById("closeNotesBtn").addEventListener("click", () => {
+    panel.remove();
+  });
 
-  document
-    .getElementById("saveNoteBtn")
-    .addEventListener("click", () => {
-      const textarea = document.getElementById("noteInput");
-      addNote(book.id, textarea.value);
-      textarea.value = "";
-      renderNotes(book.id);
-    });
+  document.getElementById("saveNoteBtn").addEventListener("click", () => {
+    const textarea = document.getElementById("noteInput");
+    addNote(book.id, textarea.value);
+    textarea.value = "";
+    renderNotes(book.id);
+  });
 }
 
-/**
- * Renderiza lista de notas
- */
 function renderNotes(bookId) {
   const list = document.querySelector(".notes-list");
   if (!list) return;
 
   const notes = getNotesByBook(bookId);
-
   list.innerHTML = "";
 
   if (notes.length === 0) {
@@ -122,7 +113,10 @@ function renderNotes(bookId) {
     const li = document.createElement("li");
     li.innerHTML = `
       <p>${note.content}</p>
-      <small>${new Date(note.createdAt).toLocaleString()}</small>
+      <small>
+        ${note.page ? `Página ${note.page} · ` : ""}
+        ${new Date(note.createdAt).toLocaleString()}
+      </small>
     `;
     list.appendChild(li);
   });
