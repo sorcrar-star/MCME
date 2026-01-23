@@ -24,14 +24,10 @@ export function renderBookCard(book) {
 
     <p>${book.collection} · ${book.year}</p>
 
-    <a 
-      href="${book.pdfUrl}"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="pdf-link"
-    >
-      Abrir PDF
-    </a>
+    <button class="pdf-link-btn">
+  Abrir PDF
+</button>
+
   `;
 
   // ⭐ Favoritos
