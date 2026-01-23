@@ -29,40 +29,54 @@ export function renderBookCard(book) {
     </button>
   `;
 
-  // ⭐ Favoritos
+  /* ==========================
+     FAVORITOS
+  ========================== */
   const favBtn = article.querySelector(".favorite-btn");
-  favBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
+  if (favBtn) {
+    favBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
 
-    const active = toggleFavorite(book.id);
-    favBtn.textContent = active ? "★" : "☆";
+      const active = toggleFavorite(book.id);
+      favBtn.textContent = active ? "★" : "☆";
 
-    document.dispatchEvent(
-      new CustomEvent("favorites:updated")
-    );
-  });
+      document.dispatchEvent(
+        new CustomEvent("favorites:updated")
+      );
+    });
+  }
 
-  // 📝 Notas
+  /* ==========================
+     NOTAS
+  ========================== */
   const notesBtn = article.querySelector(".notes-btn");
-  notesBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    openNotesPanel(book);
-  });
+  if (notesBtn) {
+    notesBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      openNotesPanel(book);
+    });
+  }
 
-  // 📄 Abrir PDF
+  /* ==========================
+     PDF
+  ========================== */
   const pdfBtn = article.querySelector(".pdf-open-btn");
-  pdfBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
+  if (pdfBtn) {
+    pdfBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
 
-    const viewer = document.getElementById("pdfViewer");
-    const frame = document.getElementById("pdfFrame");
-    const title = document.getElementById("pdfTitle");
+      const viewer = document.getElementById("pdfViewer");
+      const frame = document.getElementById("pdfFrame");
+      const title = document.getElementById("pdfTitle");
 
-    frame.src = book.pdfUrl;
-    title.textContent = book.title;
+      if (!viewer || !frame || !title) return;
 
-    viewer.classList.remove("hidden");
-  });
+      frame.src = book.pdfUrl;
+      title.textContent = book.title;
+
+      viewer.classList.remove("hidden");
+    });
+  }
 
   return article;
 }
