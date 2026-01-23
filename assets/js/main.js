@@ -43,41 +43,44 @@ if (searchInput) {
 }
 
 /* ===============================
-   PDF MODAL (pantalla completa)
+   VISOR PDF (pantalla completa)
 =============================== */
 export function openPdfModal(book) {
   currentPdfBook = book;
 
-  const modal = document.getElementById("pdfModal");
-  const frame = document.getElementById("pdfModalFrame");
-  const title = document.getElementById("pdfModalTitle");
+  const viewer = document.getElementById("pdfViewer");
+  const frame = document.getElementById("pdfFrame");
+  const title = document.getElementById("pdfTitle");
 
-  if (!modal || !frame || !title) return;
+  if (!viewer || !frame || !title) return;
 
   title.textContent = book.title;
   frame.src = book.pdfUrl;
 
-  modal.classList.remove("hidden");
+  viewer.classList.remove("hidden");
 }
+
 
 // cerrar PDF
 document.addEventListener("click", (e) => {
-  if (e.target.id === "closePdfModal") {
-    const modal = document.getElementById("pdfModal");
-    const frame = document.getElementById("pdfModalFrame");
+  // cerrar visor PDF
+  if (e.target.id === "closePdfBtn") {
+    const viewer = document.getElementById("pdfViewer");
+    const frame = document.getElementById("pdfFrame");
 
     frame.src = "";
-    modal.classList.add("hidden");
+    viewer.classList.add("hidden");
     currentPdfBook = null;
   }
 
-  // abrir notas desde PDF
+  // abrir notas desde el PDF
   if (e.target.id === "openNotesFromPdf") {
     if (currentPdfBook) {
       openNotesPanel(currentPdfBook);
     }
   }
 });
+
 
 /* ===============================
    Render de libros
