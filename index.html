@@ -34,17 +34,31 @@
     <aside id="app-sidebar"></aside>
 
     <main class="app-main">
-      <section class="search-section">
-        <nav id="breadcrumbs" class="breadcrumbs"></nav>
+  <section class="search-section">
+    <nav id="breadcrumbs" class="breadcrumbs"></nav>
 
-        <input type="search" id="search-input" placeholder="Buscar libro, tema o autor…" />
+    <input
+      type="search"
+      id="search-input"
+      placeholder="Buscar libro, tema o autor…"
+    />
+  </section>
 
-      </section>
+  <section class="content-area">
+    <section id="booksGrid" class="books-grid"></section>
 
-      <section id="booksGrid" class="books-grid">
-        <!-- Libros renderizados dinámicamente -->
-      </section>
-    </main>
+    <!-- Visor PDF -->
+    <section id="pdfViewer" class="pdf-viewer hidden">
+      <header class="pdf-header">
+        <span id="pdfTitle"></span>
+        <button id="closePdfBtn">Cerrar</button>
+      </header>
+
+      <iframe id="pdfFrame"></iframe>
+    </section>
+  </section>
+</main>
+
   </div>
 
   <script type="module" src="assets/js/main.js"></script>
