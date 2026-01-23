@@ -7,30 +7,30 @@ let currentPdfBook = null;
 export function openPdfModal(book) {
   currentPdfBook = book;
 
-  const viewer = document.getElementById("pdfViewer");
-  const frame = document.getElementById("pdfFrame");
-  const title = document.getElementById("pdfTitle");
+  const modal = document.getElementById("pdfModal");
+  const frame = document.getElementById("pdfModalFrame");
+  const title = document.getElementById("pdfModalTitle");
 
-  if (!viewer || !frame || !title) {
-    console.warn("PDF Viewer DOM no encontrado");
+  if (!modal || !frame || !title) {
+    console.error("PDF Modal: elementos no encontrados");
     return;
   }
 
   title.textContent = book.title;
   frame.src = book.pdfUrl;
 
-  viewer.classList.remove("hidden");
+  modal.classList.remove("hidden");
 }
 
-// Eventos del visor PDF
+// Eventos globales del modal
 document.addEventListener("click", (e) => {
   // cerrar PDF
-  if (e.target.id === "closePdfBtn") {
-    const viewer = document.getElementById("pdfViewer");
-    const frame = document.getElementById("pdfFrame");
+  if (e.target.id === "closePdfModal") {
+    const modal = document.getElementById("pdfModal");
+    const frame = document.getElementById("pdfModalFrame");
 
     if (frame) frame.src = "";
-    if (viewer) viewer.classList.add("hidden");
+    if (modal) modal.classList.add("hidden");
 
     currentPdfBook = null;
   }
