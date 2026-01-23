@@ -148,5 +148,18 @@ function renderBreadcrumbs(folderId) {
       container.appendChild(sep);
     }
   });
+  // ===============================
+// Cerrar visor PDF
+// ===============================
+document.addEventListener("click", (e) => {
+  if (e.target.id === "closePdfBtn") {
+    const viewer = document.getElementById("pdfViewer");
+    const frame = document.getElementById("pdfFrame");
+
+    frame.src = "";
+    viewer.classList.add("hidden");
+  }
+});
+
 }
 
