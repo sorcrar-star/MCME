@@ -49,6 +49,21 @@ export function renderBookCard(book) {
     e.stopPropagation();
     openNotesPanel(book);
   });
+  
+// 📄 Abrir PDF embebido
+const pdfBtn = article.querySelector(".pdf-link-btn");
+pdfBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+
+  const viewer = document.getElementById("pdfViewer");
+  const frame = document.getElementById("pdfFrame");
+  const title = document.getElementById("pdfTitle");
+
+  frame.src = book.pdfUrl;
+  title.textContent = book.title;
+
+  viewer.classList.remove("hidden");
+});
 
   return article;
 }
