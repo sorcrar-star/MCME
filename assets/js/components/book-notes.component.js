@@ -5,8 +5,16 @@ import { getCurrentUser } from "../services/auth.service.js";
 
 const STORAGE_KEY = "mcme_notes";
 
+/* ==========================
+   UTILIDADES STORAGE
+========================== */
+
 function getAllNotes() {
-  return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+  } catch {
+    return [];
+  }
 }
 
 function saveAllNotes(notes) {
@@ -22,19 +30,24 @@ function getNotesByBook(bookId) {
   );
 }
 
-/**
- * Obtiene la página actual del PDF
- */
+/* ==========================
+   PDF – PÁGINA ACTUAL
+========================== */
+
 function getCurrentPdfPage() {
   const iframe = document.getElementById("pdfFrame");
   if (!iframe || !iframe.src) return null;
 
-  try {
-    const url = new URL(iframe.src);
-    return url.hash.replace("#page=", "") || null;
-  } catch {
-    return null;
-  }
+  const hash = iframe.src.split("#page=")[1];
+  return hash ? hash.split("&")[0] : null;
+}
+
+/* ==========================
+   NOTAS
+========================== */
+
+function generateId() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2);
 }
 
 function addNote(bookId, content) {
@@ -42,19 +55,22 @@ function addNote(bookId, content) {
   if (!user || !content.trim()) return;
 
   const notes = getAllNotes();
-  const page = getCurrentPdfPage();
 
   notes.push({
-    id: crypto.randomUUID(),
+    id: generateId(),
     bookId,
     userEmail: user.email,
-    content,
-    page,
+    content: content.trim(),
+    page: getCurrentPdfPage(),
     createdAt: new Date().toISOString()
   });
 
   saveAllNotes(notes);
 }
+
+/* ==========================
+   PANEL DE NOTAS
+========================== */
 
 export function openNotesPanel(book) {
   if (document.getElementById("notes-panel")) return;
@@ -66,7 +82,7 @@ export function openNotesPanel(book) {
   panel.innerHTML = `
     <header class="notes-header">
       <h3>Notas – ${book.title}</h3>
-      <button id="closeNotesBtn">✕</button>
+      <button id="closeNotesBtn" title="Cerrar">✕</button>
     </header>
 
     <textarea
@@ -96,6 +112,10 @@ export function openNotesPanel(book) {
     renderNotes(book.id);
   });
 }
+
+/* ==========================
+   RENDER LISTA
+========================== */
 
 function renderNotes(bookId) {
   const list = document.querySelector(".notes-list");
