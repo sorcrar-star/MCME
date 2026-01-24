@@ -399,6 +399,17 @@
    NOTES PANEL
 ====================================================== */
 
+.book-notes-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 380px;
+  height: 100vh;
+  background: #fff;
+  z-index: 1100; /* MÁS que el PDF */
+  box-shadow: -4px 0 12px rgba(0,0,0,0.2);
+}
+
 .notes-panel {
   position: fixed;
   top: 0;
@@ -570,6 +581,12 @@
 /* ======================================================
    PDF MODAL (PANTALLA COMPLETA)
 ====================================================== */
+
+.pdf-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
 
 .pdf-modal {
   position: fixed;
