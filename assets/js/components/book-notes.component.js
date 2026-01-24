@@ -78,7 +78,8 @@ export function openNotesPanel(book) {
   const panel = document.createElement("div");
   panel.id = "notes-panel";
   panel.className = "notes-panel";
-
+  panel.style.zIndex = "1100";
+  
   panel.innerHTML = `
     <header class="notes-header">
       <h3>Notas – ${book.title}</h3>
