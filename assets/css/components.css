@@ -501,3 +501,147 @@
 .notes-btn:hover {
   transform: scale(1.15);
 }
+/* ======================================================
+   PDF VIEWER
+====================================================== */
+
+.content-area {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.pdf-viewer {
+  flex: 1;
+  background: var(--color-white);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.pdf-viewer.hidden {
+  display: none;
+}
+
+.pdf-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: var(--color-primary-soft);
+  font-weight: 600;
+}
+
+.pdf-header button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+#pdfFrame {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+.pdf-open-btn {
+  margin-top: auto;
+  align-self: flex-start;
+
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+
+  transition: var(--transition-fast);
+}
+
+.pdf-open-btn:hover {
+  background: var(--color-primary);
+  color: white;
+}
+/* ======================================================
+   PDF MODAL (PANTALLA COMPLETA)
+====================================================== */
+
+.pdf-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.85);
+  z-index: 2000;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pdf-modal.hidden {
+  display: none;
+}
+
+.pdf-modal-content {
+  background: var(--color-white);
+  width: 92%;
+  height: 92%;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* HEADER DEL PDF */
+.pdf-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: var(--color-primary-soft);
+  font-weight: 600;
+}
+
+.pdf-modal-header .actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* BOTONES DEL HEADER */
+.pdf-modal-header button {
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  transition: var(--transition-fast);
+}
+
+.pdf-modal-header button:hover {
+  background: var(--color-primary);
+  color: white;
+}
+
+/* CUERPO PDF */
+.pdf-modal-body {
+  flex: 1;
+  position: relative;
+}
+
+.pdf-modal-body iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
