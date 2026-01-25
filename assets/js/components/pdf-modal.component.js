@@ -17,14 +17,17 @@ export function openPdfModal(book) {
   }
 
   title.textContent = book.title;
-  frame.src = book.pdfUrl;
+  frame.src = book.pdfUrl; // ✅ ESTE ERA EL ERROR
 
   modal.classList.remove("hidden");
 }
 
-// Eventos globales del modal
+/* ==========================
+   EVENTOS DEL MODAL
+========================== */
+
 document.addEventListener("click", (e) => {
-  // cerrar PDF
+  // Cerrar PDF
   if (e.target.id === "closePdfModal") {
     const modal = document.getElementById("pdfModal");
     const frame = document.getElementById("pdfModalFrame");
@@ -35,10 +38,9 @@ document.addEventListener("click", (e) => {
     currentPdfBook = null;
   }
 
-  // abrir notas desde PDF
+  // Abrir notas desde PDF
   if (e.target.id === "openNotesFromPdf") {
-    if (currentPdfBook) {
-      openNotesPanel(currentPdfBook);
-    }
+    if (!currentPdfBook) return;
+    openNotesPanel(currentPdfBook);
   }
 });
