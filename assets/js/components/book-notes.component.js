@@ -75,20 +75,22 @@ function addNote(bookId, content) {
 export function openNotesPanel(book) {
   if (document.getElementById("notes-panel")) return;
 
+  const pdfModal = document.getElementById("pdfViewer");
+  if (!pdfModal) return;
+
   const panel = document.createElement("div");
   panel.id = "notes-panel";
   panel.className = "notes-panel";
-  panel.style.zIndex = "1100";
-  
+
   panel.innerHTML = `
     <header class="notes-header">
       <h3>Notas – ${book.title}</h3>
-      <button id="closeNotesBtn" title="Cerrar">✕</button>
+      <button id="closeNotesBtn">✕</button>
     </header>
 
     <textarea
       id="noteInput"
-      placeholder="Escribe aquí tu nota clínica o recordatorio…"
+      placeholder="Escribe aquí tu nota…"
     ></textarea>
 
     <button id="saveNoteBtn" class="save-note-btn">
@@ -98,21 +100,13 @@ export function openNotesPanel(book) {
     <ul class="notes-list"></ul>
   `;
 
-  document.body.appendChild(panel);
+  // 🔴 ESTE ES EL CAMBIO CLAVE
+  pdfModal.appendChild(panel);
 
-  renderNotes(book.id);
-
-  document.getElementById("closeNotesBtn").addEventListener("click", () => {
-    panel.remove();
-  });
-
-  document.getElementById("saveNoteBtn").addEventListener("click", () => {
-    const textarea = document.getElementById("noteInput");
-    addNote(book.id, textarea.value);
-    textarea.value = "";
-    renderNotes(book.id);
-  });
+  document.getElementById("closeNotesBtn")
+    .addEventListener("click", () => panel.remove());
 }
+
 
 /* ==========================
    RENDER LISTA
@@ -142,3 +136,4 @@ function renderNotes(bookId) {
     list.appendChild(li);
   });
 }
+
