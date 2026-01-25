@@ -35,7 +35,8 @@ function getNotesByBook(bookId) {
 ========================== */
 
 function getCurrentPdfPage() {
-  const iframe = document.getElementById("pdfFrame");
+  const iframe = document.getElementById("pdfModalFrame");
+
   if (!iframe || !iframe.src) return null;
 
   const hash = iframe.src.split("#page=")[1];
@@ -75,8 +76,12 @@ function addNote(bookId, content) {
 export function openNotesPanel(book) {
   if (document.getElementById("notes-panel")) return;
 
-  const pdfModal = document.getElementById("pdfViewer");
-  if (!pdfModal) return;
+  const pdfModal = document.getElementById("pdfModal");
+if (!pdfModal) {
+  console.error("No se encontró el contenedor del PDF");
+  return;
+}
+
 
   const panel = document.createElement("div");
   panel.id = "notes-panel";
