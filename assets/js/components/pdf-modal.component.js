@@ -1,45 +1,44 @@
 // assets/js/components/pdf-modal.component.js
-// Modal PDF en pantalla completa
 
 import { openNotesPanel } from "./book-notes.component.js";
 
-let currentBook = null;
+let currentPdfBook = null;
 
 export function openPdfModal(book) {
-  currentBook = book;
+  currentPdfBook = book;
 
   const modal = document.getElementById("pdfModal");
-  const iframe = document.getElementById("pdfModalFrame");
+  const frame = document.getElementById("pdfModalFrame");
   const title = document.getElementById("pdfModalTitle");
 
+  if (!modal || !frame || !title) {
+    console.error("PDF Modal: elementos no encontrados");
+    return;
+  }
+
   title.textContent = book.title;
-  iframe.src = book.pdf;
+  frame.src = book.pdfUrl;
 
   modal.classList.remove("hidden");
 }
 
-/* ==========================
-   EVENTOS DEL MODAL
-========================== */
+// Eventos globales del modal
+document.addEventListener("click", (e) => {
+  // cerrar PDF
+  if (e.target.id === "closePdfModal") {
+    const modal = document.getElementById("pdfModal");
+    const frame = document.getElementById("pdfModalFrame");
 
-document.addEventListener("DOMContentLoaded", () => {
-  const closeBtn = document.getElementById("closePdfModal");
-  const notesBtn = document.getElementById("openNotesFromPdf");
+    if (frame) frame.src = "";
+    if (modal) modal.classList.add("hidden");
 
-  if (closeBtn) {
-    closeBtn.addEventListener("click", () => {
-      const modal = document.getElementById("pdfModal");
-      const iframe = document.getElementById("pdfModalFrame");
-
-      iframe.src = "";
-      modal.classList.add("hidden");
-    });
+    currentPdfBook = null;
   }
 
-  if (notesBtn) {
-    notesBtn.addEventListener("click", () => {
-      if (!currentBook) return;
-      openNotesPanel(currentBook);
-    });
+  // abrir notas desde PDF
+  if (e.target.id === "openNotesFromPdf") {
+    if (currentPdfBook) {
+      openNotesPanel(currentPdfBook);
+    }
   }
 });
