@@ -33,9 +33,17 @@ export function renderBookCard(book) {
   });
 
   article.querySelector(".notes-btn").addEventListener("click", (e) => {
-    e.stopPropagation();
+  e.stopPropagation();
+
+  // 1️⃣ Abrir el PDF
+  openPdfModal(book);
+
+  // 2️⃣ Esperar a que el modal exista y abrir notas
+  setTimeout(() => {
     openNotesPanel(book);
-  });
+  }, 100);
+});
+
 
   article.querySelector(".pdf-open-btn").addEventListener("click", (e) => {
     e.stopPropagation();
@@ -44,3 +52,4 @@ export function renderBookCard(book) {
 
   return article;
 }
+
