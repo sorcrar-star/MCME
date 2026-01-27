@@ -1,9 +1,10 @@
-
-import * as pdfjsLib from "../vendor/pdfjs/pdf.mjs";
 import { openNotesPanel } from "./book-notes.component.js";
 
+import * as pdfjsLib from "../vendor/pdfjs/pdf.mjs";
+
 pdfjsLib.GlobalWorkerOptions.workerSrc =
-  "assets/js/vendor/pdfjs/pdf.worker.mjs";
+  new URL("../vendor/pdfjs/pdf.worker.mjs", import.meta.url);
+
 
 let pdfDoc = null;
 let currentPage = 1;
