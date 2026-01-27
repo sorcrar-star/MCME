@@ -40,9 +40,7 @@ export function renderBookCard(book) {
   openPdfModal(book);
 
   // 2️⃣ Esperar a que el modal exista y abrir notas
-  setTimeout(() => {
-    openNotesPanel(book);
-  }, 100);
+  
 });
 
 
