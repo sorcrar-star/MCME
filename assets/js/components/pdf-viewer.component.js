@@ -38,9 +38,11 @@ export async function openPdfModal(book) {
     }
 
     // ==========================
-    // RESET LIMPIO
+    // RESET ABSOLUTO
     // ==========================
     container.removeEventListener("scroll", detectCurrentPage);
+    container.style.overflow = "hidden"; // 🔒 BLOQUEO CRÍTICO
+    container.scrollTop = 0;
     container.innerHTML = "";
     currentPage = 1;
 
@@ -52,7 +54,6 @@ export async function openPdfModal(book) {
     // ==========================
     pdfDoc = await pdfjsLib.getDocument(book.pdfUrl).promise;
 
-    // Render de páginas
     for (let i = 1; i <= pdfDoc.numPages; i++) {
       const page = await pdfDoc.getPage(i);
       const viewport = page.getViewport({ scale: 1.5 });
@@ -74,20 +75,14 @@ export async function openPdfModal(book) {
     }
 
     // ==========================
-    // 🔒 FIX DEFINITIVO DEL SCROLL
+    // 🔓 LIBERAR SCROLL (FIX REAL)
     // ==========================
-    // Espera a que el navegador termine layout + paint
     requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        container.scrollTop = 0;
-        currentPage = 1;
-      });
+      container.scrollTop = 0;
+      container.style.overflow = "auto";
+      currentPage = 1;
+      container.addEventListener("scroll", detectCurrentPage);
     });
-
-    // ==========================
-    // SCROLL LISTENER (ÚNICO)
-    // ==========================
-    container.addEventListener("scroll", detectCurrentPage);
 
   } catch (err) {
     console.error("Error cargando PDF:", err);
@@ -121,7 +116,8 @@ export function getCurrentPdfPage() {
 // ==========================
 document.addEventListener("click", (e) => {
   if (e.target.id === "closePdfBtn") {
-    document.getElementById("pdfViewer")?.classList.add("hidden");
+    const viewer = document.getElementById("pdfViewer");
+    if (viewer) viewer.classList.add("hidden");
     currentBook = null;
   }
 
