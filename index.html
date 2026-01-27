@@ -53,25 +53,28 @@
   <!-- ========================= -->
   <!-- PDF MODAL (FULL SCREEN) -->
   <!-- ========================= -->
-  <div id="pdfModal" class="pdf-modal hidden">
-    <div class="pdf-modal-content">
+  <section id="pdfViewer" class="pdf-modal hidden">
+  <div class="pdf-modal-content">
 
-      <header class="pdf-modal-header">
-        <span id="pdfModalTitle"></span>
+    <header class="pdf-modal-header">
+      <span id="pdfTitle"></span>
 
-        <div class="actions">
-          <button id="openNotesFromPdf">📝 Notas</button>
-          <button id="closePdfModal">✕ Cerrar</button>
-        </div>
-      </header>
-
-      <div class="pdf-modal-body">
-        <iframe id="pdfModalFrame"></iframe>
+      <div class="actions">
+        <button id="openNotesFromPdf">📝 Notas</button>
+        <button id="closePdfBtn">✕ Cerrar</button>
       </div>
+    </header>
 
-    </div>
+    <div
+      id="pdfCanvasContainer"
+      class="pdf-canvas-container"
+    ></div>
+
   </div>
+</section>
+
 
   <script type="module" src="assets/js/main.js"></script>
 </body>
 </html>
+
