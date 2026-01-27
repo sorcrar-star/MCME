@@ -3,10 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <title>Biblioteca Médica Digital</title>
 
-  <!-- CSS global -->
   <link rel="stylesheet" href="assets/css/reset.css" />
   <link rel="stylesheet" href="assets/css/variables.css" />
   <link rel="stylesheet" href="assets/css/base.css" />
@@ -16,44 +14,35 @@
 
 <body>
 
-  <!-- HEADER -->
-  <header id="app-header">
-    <div class="header-left">
-      <img
-        src="assets/images/mcme-logo.svg"
-        alt="MCME"
-        class="app-logo"
-      />
-    </div>
-
-    <div class="header-right"></div>
-  </header>
-
-  <!-- APP -->
-  <div class="app-container">
-    <aside id="app-sidebar"></aside>
-
-    <main class="app-main">
-      <section class="search-section">
-        <nav id="breadcrumbs" class="breadcrumbs"></nav>
-
-        <input
-          type="search"
-          id="search-input"
-          placeholder="Buscar libro, tema o autor…"
-        />
-      </section>
-
-      <section class="content-area">
-        <section id="booksGrid" class="books-grid"></section>
-      </section>
-    </main>
+<header id="app-header">
+  <div class="header-left">
+    <img src="assets/images/mcme-logo.svg" alt="MCME" class="app-logo" />
   </div>
+  <div class="header-right"></div>
+</header>
 
-  <!-- ========================= -->
-  <!-- PDF MODAL (FULL SCREEN) -->
-  <!-- ========================= -->
-  <section id="pdfViewer" class="pdf-modal hidden">
+<div class="app-container">
+  <aside id="app-sidebar"></aside>
+
+  <main class="app-main">
+    <section class="search-section">
+      <nav id="breadcrumbs" class="breadcrumbs"></nav>
+
+      <input
+        type="search"
+        id="search-input"
+        placeholder="Buscar libro, tema o autor…"
+      />
+    </section>
+
+    <section class="content-area">
+      <section id="booksGrid" class="books-grid"></section>
+    </section>
+  </main>
+</div>
+
+<!-- PDF VIEWER -->
+<section id="pdfViewer" class="pdf-modal hidden">
   <div class="pdf-modal-content">
 
     <header class="pdf-modal-header">
@@ -65,16 +54,11 @@
       </div>
     </header>
 
-    <div
-      id="pdfCanvasContainer"
-      class="pdf-canvas-container"
-    ></div>
+    <div id="pdfCanvasContainer" class="pdf-canvas-container"></div>
 
   </div>
 </section>
 
-
-  <script type="module" src="assets/js/main.js"></script>
+<script type="module" src="assets/js/main.js"></script>
 </body>
 </html>
-
