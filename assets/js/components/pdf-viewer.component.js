@@ -18,11 +18,6 @@ export async function openPdfModal(book) {
   const container = document.getElementById("pdfCanvasContainer");
   const title = document.getElementById("pdfTitle");
 
-  if (!viewer || !container || !title) {
-    console.error("PDF Viewer: elementos no encontrados");
-    return;
-  }
-
   container.innerHTML = "";
   title.textContent = book.title;
   viewer.classList.remove("hidden");
@@ -66,7 +61,7 @@ export function getCurrentPdfPage() {
 
 document.addEventListener("click", (e) => {
   if (e.target.id === "closePdfBtn") {
-    document.getElementById("pdfViewer")?.classList.add("hidden");
+    document.getElementById("pdfViewer").classList.add("hidden");
   }
 
   if (e.target.id === "openNotesFromPdf") {
