@@ -153,6 +153,13 @@ function renderNotes(bookId) {
   </small>
 `;
 
+const pageLink = li.querySelector(".note-page");
+if (pageLink) {
+  pageLink.addEventListener("click", () => {
+    goToPdfPage(pageLink.dataset.page);
+  });
+}
+
     list.appendChild(li);
   });
 }
