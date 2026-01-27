@@ -1,11 +1,7 @@
 // assets/js/components/book-notes.component.js
-// Panel de notas por libro (frontend)
 
 import { getCurrentUser } from "../services/auth.service.js";
-import {
-  getCurrentPdfPage,
-  goToPdfPage
-} from "./pdf-viewer.component.js";
+import { getCurrentPdfPage } from "./pdf-viewer.component.js";
 
 const STORAGE_KEY = "mcme_notes";
 
@@ -53,7 +49,7 @@ function addNote(bookId, content) {
     bookId,
     userEmail: user.email,
     content: content.trim(),
-    page: getCurrentPdfPage(), // 🔥 PDF.js
+    page: getCurrentPdfPage(),
     createdAt: new Date().toISOString()
   });
 
@@ -80,10 +76,7 @@ export function openNotesPanel(book) {
       <button id="closeNotesBtn">✕</button>
     </header>
 
-    <textarea
-      id="noteInput"
-      placeholder="Escribe aquí tu nota…"
-    ></textarea>
+    <textarea id="noteInput" placeholder="Escribe aquí tu nota…"></textarea>
 
     <button id="saveNoteBtn" class="save-note-btn">
       Guardar nota
@@ -111,7 +104,7 @@ export function openNotesPanel(book) {
 }
 
 /* ==========================
-   RENDER LISTA
+   RENDER
 ========================== */
 
 function renderNotes(bookId) {
@@ -128,28 +121,17 @@ function renderNotes(bookId) {
 
   notes.forEach(note => {
     const li = document.createElement("li");
-
     li.innerHTML = `
       <p>${note.content}</p>
       <small>
         ${
           note.page
-            ? `<span class="note-page" data-page="${note.page}">
-                 Página ${note.page}
-               </span> · `
+            ? `<span class="note-page">Página ${note.page}</span> · `
             : ""
         }
         ${new Date(note.createdAt).toLocaleString()}
       </small>
     `;
-
-    const pageLink = li.querySelector(".note-page");
-    if (pageLink) {
-      pageLink.addEventListener("click", () => {
-        goToPdfPage(pageLink.dataset.page); // 🔥 PDF.js
-      });
-    }
-
     list.appendChild(li);
   });
 }
