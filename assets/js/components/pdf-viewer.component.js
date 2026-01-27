@@ -1,19 +1,14 @@
 // assets/js/components/pdf-viewer.component.js
 
-import * as pdfjsLib from "../pdf.mjs";
+import * as pdfjsLib from "/MCME/assets/js/vendor/pdfjs/pdf.mjs";
 import { openNotesPanel } from "./book-notes.component.js";
 
-// 🔹 Worker (ruta REAL en GitHub Pages)
 pdfjsLib.GlobalWorkerOptions.workerSrc =
-  "assets/js/pdf.worker.mjs";
+  "/MCME/assets/js/vendor/pdfjs/pdf.worker.mjs";
 
 let pdfDoc = null;
 let currentPage = 1;
 let currentBook = null;
-
-/* ==========================
-   ABRIR PDF
-========================== */
 
 export async function openPdfModal(book) {
   currentBook = book;
@@ -23,43 +18,30 @@ export async function openPdfModal(book) {
   const container = document.getElementById("pdfCanvasContainer");
   const title = document.getElementById("pdfTitle");
 
-  if (!viewer || !container || !title) {
-    console.error("PDF Viewer: elementos no encontrados");
-    return;
-  }
-
   container.innerHTML = "";
   title.textContent = book.title;
   viewer.classList.remove("hidden");
 
-  try {
-    pdfDoc = await pdfjsLib.getDocument(book.pdfUrl).promise;
+  pdfDoc = await pdfjsLib.getDocument(book.pdfUrl).promise;
 
-    for (let i = 1; i <= pdfDoc.numPages; i++) {
-      const page = await pdfDoc.getPage(i);
-      const viewport = page.getViewport({ scale: 1.5 });
+  for (let i = 1; i <= pdfDoc.numPages; i++) {
+    const page = await pdfDoc.getPage(i);
+    const viewport = page.getViewport({ scale: 1.5 });
 
-      const canvas = document.createElement("canvas");
-      canvas.className = "pdf-page";
-      canvas.dataset.page = i;
+    const canvas = document.createElement("canvas");
+    canvas.className = "pdf-page";
+    canvas.dataset.page = i;
 
-      const ctx = canvas.getContext("2d");
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
+    const ctx = canvas.getContext("2d");
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
 
-      await page.render({ canvasContext: ctx, viewport }).promise;
-      container.appendChild(canvas);
-    }
-
-    container.addEventListener("scroll", detectCurrentPage);
-  } catch (err) {
-    console.error("Error cargando PDF:", err);
+    await page.render({ canvasContext: ctx, viewport }).promise;
+    container.appendChild(canvas);
   }
-}
 
-/* ==========================
-   DETECTAR PÁGINA ACTUAL
-========================== */
+  container.addEventListener("scroll", detectCurrentPage);
+}
 
 function detectCurrentPage(e) {
   const pages = [...document.querySelectorAll(".pdf-page")];
@@ -77,13 +59,9 @@ export function getCurrentPdfPage() {
   return currentPage;
 }
 
-/* ==========================
-   EVENTOS GLOBALES
-========================== */
-
 document.addEventListener("click", (e) => {
   if (e.target.id === "closePdfBtn") {
-    document.getElementById("pdfViewer")?.classList.add("hidden");
+    document.getElementById("pdfViewer").classList.add("hidden");
   }
 
   if (e.target.id === "openNotesFromPdf") {
