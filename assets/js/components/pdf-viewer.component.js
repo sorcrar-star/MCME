@@ -21,8 +21,8 @@ export async function openPdfModal(book) {
     const oldContainer = document.getElementById("pdfCanvasContainer");
     const title = document.getElementById("pdfTitle");
 
+    // 🔥 reset REAL del contenedor
     oldContainer.removeEventListener("scroll", detectCurrentPage);
-
     const container = oldContainer.cloneNode(false);
     oldContainer.parentNode.replaceChild(container, oldContainer);
 
@@ -48,7 +48,7 @@ export async function openPdfModal(book) {
     }
 
     requestAnimationFrame(() => {
-      container.scrollTo({ top: 0 });
+      container.scrollTop = 0;
       container.addEventListener("scroll", detectCurrentPage);
     });
 
@@ -73,18 +73,19 @@ export function getCurrentPdfPage() {
   return currentPage;
 }
 
-/* 🔥 NUEVA FUNCIÓN PÚBLICA */
+// 🔥 USAR SOLO LA PÁGINA GUARDADA
 export function goToPdfPage(pageNumber) {
   const container = document.getElementById("pdfCanvasContainer");
-  const page = container?.querySelector(`[data-page="${pageNumber}"]`);
-  if (!container || !page) return;
+  const target = container?.querySelector(
+    `.pdf-page[data-page="${pageNumber}"]`
+  );
+
+  if (!container || !target) return;
 
   container.scrollTo({
-    top: page.offsetTop,
+    top: target.offsetTop,
     behavior: "smooth"
   });
-
-  currentPage = pageNumber;
 }
 
 document.addEventListener("click", (e) => {
