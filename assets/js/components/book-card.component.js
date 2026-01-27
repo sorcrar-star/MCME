@@ -1,7 +1,7 @@
-import { isFavorite, toggleFavorite } from "../services/favorites.service.js";
-import { openNotesPanel } from "./book-notes.component.js";
-import { openPdfModal } from "./pdf-viewer.component.js";
+// assets/js/components/book-card.component.js
 
+import { isFavorite, toggleFavorite } from "../services/favorites.service.js";
+import { openPdfModal } from "./pdf-viewer.component.js";
 
 export function renderBookCard(book) {
   const article = document.createElement("article");
@@ -22,7 +22,6 @@ export function renderBookCard(book) {
     </div>
 
     <p>${book.collection} · ${book.year}</p>
-
     <button class="pdf-open-btn">Abrir PDF</button>
   `;
 
@@ -34,15 +33,9 @@ export function renderBookCard(book) {
   });
 
   article.querySelector(".notes-btn").addEventListener("click", (e) => {
-  e.stopPropagation();
-
-  // 1️⃣ Abrir el PDF
-  openPdfModal(book);
-
-  // 2️⃣ Esperar a que el modal exista y abrir notas
-  
-});
-
+    e.stopPropagation();
+    openPdfModal(book);
+  });
 
   article.querySelector(".pdf-open-btn").addEventListener("click", (e) => {
     e.stopPropagation();
@@ -51,4 +44,3 @@ export function renderBookCard(book) {
 
   return article;
 }
-
