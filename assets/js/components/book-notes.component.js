@@ -6,7 +6,7 @@ import { getCurrentUser } from "../services/auth.service.js";
 const STORAGE_KEY = "mcme_notes";
 
 /* ==========================
-   UTILIDADES STORAGE
+   STORAGE
 ========================== */
 
 function getAllNotes() {
@@ -36,7 +36,6 @@ function getNotesByBook(bookId) {
 
 function getCurrentPdfPage() {
   const iframe = document.getElementById("pdfModalFrame");
-
   if (!iframe || !iframe.src) return null;
 
   const hash = iframe.src.split("#page=")[1];
@@ -77,11 +76,7 @@ export function openNotesPanel(book) {
   if (document.getElementById("notes-panel")) return;
 
   const pdfModal = document.getElementById("pdfModal");
-if (!pdfModal) {
-  console.error("No se encontró el contenedor del PDF");
-  return;
-}
-
+  if (!pdfModal) return;
 
   const panel = document.createElement("div");
   panel.id = "notes-panel";
@@ -105,13 +100,26 @@ if (!pdfModal) {
     <ul class="notes-list"></ul>
   `;
 
-  // 🔴 ESTE ES EL CAMBIO CLAVE
   pdfModal.appendChild(panel);
 
-  document.getElementById("closeNotesBtn")
+  // 🔹 Render inicial
+  renderNotes(book.id);
+
+  // 🔹 Guardar nota
+  document.getElementById("saveNoteBtn").addEventListener("click", () => {
+    const input = document.getElementById("noteInput");
+    if (!input) return;
+
+    addNote(book.id, input.value);
+    input.value = "";
+    renderNotes(book.id);
+  });
+
+  // 🔹 Cerrar panel
+  document
+    .getElementById("closeNotesBtn")
     .addEventListener("click", () => panel.remove());
 }
-
 
 /* ==========================
    RENDER LISTA
@@ -141,4 +149,3 @@ function renderNotes(bookId) {
     list.appendChild(li);
   });
 }
-
