@@ -2,6 +2,10 @@
 // Panel de notas por libro (frontend)
 
 import { getCurrentUser } from "../services/auth.service.js";
+import {
+  getCurrentPdfPage,
+  goToPdfPage
+} from "./pdf-viewer.component.js";
 
 const STORAGE_KEY = "mcme_notes";
 
@@ -31,18 +35,6 @@ function getNotesByBook(bookId) {
 }
 
 /* ==========================
-   PDF – PÁGINA ACTUAL
-========================== */
-
-function getCurrentPdfPage() {
-  const iframe = document.getElementById("pdfModalFrame");
-  if (!iframe || !iframe.src) return null;
-
-  const hash = iframe.src.split("#page=")[1];
-  return hash ? hash.split("&")[0] : null;
-}
-
-/* ==========================
    NOTAS
 ========================== */
 
@@ -61,7 +53,7 @@ function addNote(bookId, content) {
     bookId,
     userEmail: user.email,
     content: content.trim(),
-    page: getCurrentPdfPage(),
+    page: getCurrentPdfPage(), // 🔥 PDF.js
     createdAt: new Date().toISOString()
   });
 
@@ -102,10 +94,8 @@ export function openNotesPanel(book) {
 
   pdfModal.appendChild(panel);
 
-  // 🔹 Render inicial
   renderNotes(book.id);
 
-  // 🔹 Guardar nota
   document.getElementById("saveNoteBtn").addEventListener("click", () => {
     const input = document.getElementById("noteInput");
     if (!input) return;
@@ -115,7 +105,6 @@ export function openNotesPanel(book) {
     renderNotes(book.id);
   });
 
-  // 🔹 Cerrar panel
   document
     .getElementById("closeNotesBtn")
     .addEventListener("click", () => panel.remove());
@@ -139,36 +128,28 @@ function renderNotes(bookId) {
 
   notes.forEach(note => {
     const li = document.createElement("li");
-    li.innerHTML = `
-  <p>${note.content}</p>
-  <small>
-    ${
-      note.page
-        ? `<span class="note-page" data-page="${note.page}">
-             Página ${note.page}
-           </span> · `
-        : ""
-    }
-    ${new Date(note.createdAt).toLocaleString()}
-  </small>
-`;
 
-const pageLink = li.querySelector(".note-page");
-if (pageLink) {
-  pageLink.addEventListener("click", () => {
-    goToPdfPage(pageLink.dataset.page);
-  });
-}
+    li.innerHTML = `
+      <p>${note.content}</p>
+      <small>
+        ${
+          note.page
+            ? `<span class="note-page" data-page="${note.page}">
+                 Página ${note.page}
+               </span> · `
+            : ""
+        }
+        ${new Date(note.createdAt).toLocaleString()}
+      </small>
+    `;
+
+    const pageLink = li.querySelector(".note-page");
+    if (pageLink) {
+      pageLink.addEventListener("click", () => {
+        goToPdfPage(pageLink.dataset.page); // 🔥 PDF.js
+      });
+    }
 
     list.appendChild(li);
   });
-}
-function goToPdfPage(page) {
-  const iframe = document.getElementById("pdfModalFrame");
-  if (!iframe || !iframe.src || !page) return;
-
-  // Quitar página previa si existe
-  const baseSrc = iframe.src.split("#")[0];
-
-  iframe.src = `${baseSrc}#page=${page}`;
 }
