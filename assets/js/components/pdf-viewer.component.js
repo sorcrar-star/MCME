@@ -1,29 +1,17 @@
 // assets/js/components/pdf-viewer.component.js
 
-// ==========================
-// IMPORTS
-// ==========================
 import * as pdfjsLib from "../vendor/pdfjs/build/pdf.mjs";
 import { openNotesPanel } from "./book-notes.component.js";
 
-// ==========================
-// CONFIG PDF.JS
-// ==========================
 pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
   "../vendor/pdfjs/build/pdf.worker.mjs",
   import.meta.url
 ).href;
 
-// ==========================
-// ESTADO
-// ==========================
 let pdfDoc = null;
 let currentPage = 1;
 let currentBook = null;
 
-// ==========================
-// ABRIR VISOR PDF
-// ==========================
 export async function openPdfModal(book) {
   try {
     currentBook = book;
@@ -33,28 +21,14 @@ export async function openPdfModal(book) {
     const oldContainer = document.getElementById("pdfCanvasContainer");
     const title = document.getElementById("pdfTitle");
 
-    if (!viewer || !oldContainer || !title) {
-      console.error("PDF Viewer: elementos no encontrados");
-      return;
-    }
-
-    // ==========================
-    // 🔥 RESET REAL (CLAVE)
-    // ==========================
     oldContainer.removeEventListener("scroll", detectCurrentPage);
 
-    const newContainer = oldContainer.cloneNode(false);
-    oldContainer.parentNode.replaceChild(newContainer, oldContainer);
-
-    newContainer.scrollTop = 0;
-    newContainer.style.overflow = "auto";
+    const container = oldContainer.cloneNode(false);
+    oldContainer.parentNode.replaceChild(container, oldContainer);
 
     title.textContent = book.title;
     viewer.classList.remove("hidden");
 
-    // ==========================
-    // CARGA PDF
-    // ==========================
     pdfDoc = await pdfjsLib.getDocument(book.pdfUrl).promise;
 
     for (let i = 1; i <= pdfDoc.numPages; i++) {
@@ -69,31 +43,20 @@ export async function openPdfModal(book) {
       canvas.width = viewport.width;
       canvas.height = viewport.height;
 
-      await page.render({
-        canvasContext: ctx,
-        viewport
-      }).promise;
-
-      newContainer.appendChild(canvas);
+      await page.render({ canvasContext: ctx, viewport }).promise;
+      container.appendChild(canvas);
     }
 
-    // ==========================
-    // FORZAR INICIO REAL
-    // ==========================
     requestAnimationFrame(() => {
-      newContainer.scrollTo({ top: 0, left: 0, behavior: "auto" });
-      currentPage = 1;
-      newContainer.addEventListener("scroll", detectCurrentPage);
+      container.scrollTo({ top: 0 });
+      container.addEventListener("scroll", detectCurrentPage);
     });
 
   } catch (err) {
-    console.error("Error cargando PDF:", err);
+    console.error("Error PDF:", err);
   }
 }
 
-// ==========================
-// DETECTAR PÁGINA ACTUAL
-// ==========================
 function detectCurrentPage(e) {
   const pages = e.target.querySelectorAll(".pdf-page");
   const top = e.target.scrollTop;
@@ -106,20 +69,27 @@ function detectCurrentPage(e) {
   }
 }
 
-// ==========================
-// API
-// ==========================
 export function getCurrentPdfPage() {
   return currentPage;
 }
 
-// ==========================
-// EVENTOS MODAL
-// ==========================
+/* 🔥 NUEVA FUNCIÓN PÚBLICA */
+export function goToPdfPage(pageNumber) {
+  const container = document.getElementById("pdfCanvasContainer");
+  const page = container?.querySelector(`[data-page="${pageNumber}"]`);
+  if (!container || !page) return;
+
+  container.scrollTo({
+    top: page.offsetTop,
+    behavior: "smooth"
+  });
+
+  currentPage = pageNumber;
+}
+
 document.addEventListener("click", (e) => {
   if (e.target.id === "closePdfBtn") {
-    const viewer = document.getElementById("pdfViewer");
-    if (viewer) viewer.classList.add("hidden");
+    document.getElementById("pdfViewer")?.classList.add("hidden");
     currentBook = null;
   }
 
