@@ -140,12 +140,19 @@ function renderNotes(bookId) {
   notes.forEach(note => {
     const li = document.createElement("li");
     li.innerHTML = `
-      <p>${note.content}</p>
-      <small>
-        ${note.page ? `Página ${note.page} · ` : ""}
-        ${new Date(note.createdAt).toLocaleString()}
-      </small>
-    `;
+  <p>${note.content}</p>
+  <small>
+    ${
+      note.page
+        ? `<span class="note-page" data-page="${note.page}">
+             Página ${note.page}
+           </span> · `
+        : ""
+    }
+    ${new Date(note.createdAt).toLocaleString()}
+  </small>
+`;
+
     list.appendChild(li);
   });
 }
