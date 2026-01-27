@@ -149,3 +149,12 @@ function renderNotes(bookId) {
     list.appendChild(li);
   });
 }
+function goToPdfPage(page) {
+  const iframe = document.getElementById("pdfModalFrame");
+  if (!iframe || !iframe.src || !page) return;
+
+  // Quitar página previa si existe
+  const baseSrc = iframe.src.split("#")[0];
+
+  iframe.src = `${baseSrc}#page=${page}`;
+}
