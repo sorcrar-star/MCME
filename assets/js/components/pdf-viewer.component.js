@@ -1,15 +1,19 @@
 // assets/js/components/pdf-viewer.component.js
 
-import * as pdfjsLib from "../vendor/pdfjs/pdf.mjs";
+import * as pdfjsLib from "../pdf.mjs";
 import { openNotesPanel } from "./book-notes.component.js";
 
-// ✅ RUTA RELATIVA (OBLIGATORIA PARA GITHUB PAGES)
+// 🔹 Worker (ruta REAL en GitHub Pages)
 pdfjsLib.GlobalWorkerOptions.workerSrc =
-  "../vendor/pdfjs/pdf.worker.mjs";
+  "assets/js/pdf.worker.mjs";
 
 let pdfDoc = null;
 let currentPage = 1;
 let currentBook = null;
+
+/* ==========================
+   ABRIR PDF
+========================== */
 
 export async function openPdfModal(book) {
   currentBook = book;
@@ -30,29 +34,32 @@ export async function openPdfModal(book) {
 
   try {
     pdfDoc = await pdfjsLib.getDocument(book.pdfUrl).promise;
+
+    for (let i = 1; i <= pdfDoc.numPages; i++) {
+      const page = await pdfDoc.getPage(i);
+      const viewport = page.getViewport({ scale: 1.5 });
+
+      const canvas = document.createElement("canvas");
+      canvas.className = "pdf-page";
+      canvas.dataset.page = i;
+
+      const ctx = canvas.getContext("2d");
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+
+      await page.render({ canvasContext: ctx, viewport }).promise;
+      container.appendChild(canvas);
+    }
+
+    container.addEventListener("scroll", detectCurrentPage);
   } catch (err) {
     console.error("Error cargando PDF:", err);
-    return;
   }
-
-  for (let i = 1; i <= pdfDoc.numPages; i++) {
-    const page = await pdfDoc.getPage(i);
-    const viewport = page.getViewport({ scale: 1.5 });
-
-    const canvas = document.createElement("canvas");
-    canvas.className = "pdf-page";
-    canvas.dataset.page = i;
-
-    const ctx = canvas.getContext("2d");
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
-
-    await page.render({ canvasContext: ctx, viewport }).promise;
-    container.appendChild(canvas);
-  }
-
-  container.addEventListener("scroll", detectCurrentPage);
 }
+
+/* ==========================
+   DETECTAR PÁGINA ACTUAL
+========================== */
 
 function detectCurrentPage(e) {
   const pages = [...document.querySelectorAll(".pdf-page")];
@@ -70,9 +77,10 @@ export function getCurrentPdfPage() {
   return currentPage;
 }
 
-// ==========================
-// BOTONES DEL MODAL
-// ==========================
+/* ==========================
+   EVENTOS GLOBALES
+========================== */
+
 document.addEventListener("click", (e) => {
   if (e.target.id === "closePdfBtn") {
     document.getElementById("pdfViewer")?.classList.add("hidden");
