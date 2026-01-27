@@ -721,3 +721,74 @@
 .note-actions button:hover {
   opacity: 0.7;
 }
+/* ===============================
+   FIX REAL – NOTAS (VISIBLE)
+=============================== */
+
+.note-item {
+  display: flex;
+  flex-direction: column;   /* 🔥 CLAVE */
+  gap: 6px;
+  padding: 0.6rem;
+}
+
+/* textarea editable */
+.note-edit {
+  width: 100%;
+  min-height: 70px;
+  resize: vertical;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  padding: 0.4rem;
+  font-size: 0.85rem;
+}
+
+/* info página */
+.note-meta {
+  font-size: 0.75rem;
+  color: var(--color-muted);
+}
+
+/* acciones visibles */
+.note-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.note-actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 4px;
+}
+
+.note-actions button:hover {
+  transform: scale(1.15);
+}
+
+/* ===============================
+   CREAR NOTA – SELECTOR PÁGINA
+=============================== */
+
+.note-create {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.note-create-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.note-create-actions input[type="number"] {
+  width: 80px;
+  padding: 0.3rem;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 0.85rem;
+}
