@@ -9,7 +9,6 @@ import { openNotesPanel } from "./book-notes.component.js";
 // ==========================
 // CONFIGURACIÓN PDF.JS (OBLIGATORIA)
 // ==========================
-// Esto evita errores de worker en GitHub Pages
 pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
   "../vendor/pdfjs/build/pdf.worker.mjs",
   import.meta.url
@@ -28,7 +27,6 @@ let currentBook = null;
 export async function openPdfModal(book) {
   try {
     currentBook = book;
-    currentPage = 1;
 
     const viewer = document.getElementById("pdfViewer");
     const container = document.getElementById("pdfCanvasContainer");
@@ -39,8 +37,15 @@ export async function openPdfModal(book) {
       return;
     }
 
-    // Reset visual
+    // ==========================
+    // RESET TOTAL DEL VISOR
+    // ==========================
+    container.removeEventListener("scroll", detectCurrentPage);
     container.innerHTML = "";
+    container.scrollTop = 0;
+
+    currentPage = 1;
+
     title.textContent = book.title;
     viewer.classList.remove("hidden");
 
@@ -70,7 +75,9 @@ export async function openPdfModal(book) {
       container.appendChild(canvas);
     }
 
-    // Detectar página visible al hacer scroll
+    // ==========================
+    // SCROLL LISTENER (ÚNICO)
+    // ==========================
     container.addEventListener("scroll", detectCurrentPage);
 
   } catch (err) {
