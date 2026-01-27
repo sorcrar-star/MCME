@@ -5,10 +5,6 @@ import { getCurrentPdfPage } from "./pdf-viewer.component.js";
 
 const STORAGE_KEY = "mcme_notes";
 
-/* ==========================
-   STORAGE
-========================== */
-
 function getAllNotes() {
   try {
     return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
@@ -29,10 +25,6 @@ function getNotesByBook(bookId) {
     n => n.bookId === bookId && n.userEmail === user.email
   );
 }
-
-/* ==========================
-   NOTAS
-========================== */
 
 function generateId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2);
@@ -56,15 +48,11 @@ function addNote(bookId, content) {
   saveAllNotes(notes);
 }
 
-/* ==========================
-   PANEL DE NOTAS
-========================== */
-
 export function openNotesPanel(book) {
   if (document.getElementById("notes-panel")) return;
 
-  const pdfModal = document.getElementById("pdfModal");
-  if (!pdfModal) return;
+  const pdfViewer = document.getElementById("pdfViewer");
+  if (!pdfViewer) return;
 
   const panel = document.createElement("div");
   panel.id = "notes-panel";
@@ -85,8 +73,7 @@ export function openNotesPanel(book) {
     <ul class="notes-list"></ul>
   `;
 
-  pdfModal.appendChild(panel);
-
+  pdfViewer.appendChild(panel);
   renderNotes(book.id);
 
   document.getElementById("saveNoteBtn").addEventListener("click", () => {
@@ -103,10 +90,6 @@ export function openNotesPanel(book) {
     .addEventListener("click", () => panel.remove());
 }
 
-/* ==========================
-   RENDER
-========================== */
-
 function renderNotes(bookId) {
   const list = document.querySelector(".notes-list");
   if (!list) return;
@@ -114,7 +97,7 @@ function renderNotes(bookId) {
   const notes = getNotesByBook(bookId);
   list.innerHTML = "";
 
-  if (notes.length === 0) {
+  if (!notes.length) {
     list.innerHTML = "<li><em>No hay notas aún.</em></li>";
     return;
   }
@@ -124,11 +107,7 @@ function renderNotes(bookId) {
     li.innerHTML = `
       <p>${note.content}</p>
       <small>
-        ${
-          note.page
-            ? `<span class="note-page">Página ${note.page}</span> · `
-            : ""
-        }
+        ${note.page ? `Página ${note.page} · ` : ""}
         ${new Date(note.createdAt).toLocaleString()}
       </small>
     `;
