@@ -3,6 +3,7 @@
 import * as pdfjsLib from "../vendor/pdfjs/pdf.mjs";
 import { openNotesPanel } from "./book-notes.component.js";
 
+// ✅ RUTA RELATIVA (OBLIGATORIA PARA GITHUB PAGES)
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   "../vendor/pdfjs/pdf.worker.mjs";
 
@@ -18,15 +19,25 @@ export async function openPdfModal(book) {
   const container = document.getElementById("pdfCanvasContainer");
   const title = document.getElementById("pdfTitle");
 
+  if (!viewer || !container || !title) {
+    console.error("PDF Viewer: elementos no encontrados");
+    return;
+  }
+
   container.innerHTML = "";
   title.textContent = book.title;
   viewer.classList.remove("hidden");
 
-  pdfDoc = await pdfjsLib.getDocument(book.pdfUrl).promise;
+  try {
+    pdfDoc = await pdfjsLib.getDocument(book.pdfUrl).promise;
+  } catch (err) {
+    console.error("Error cargando PDF:", err);
+    return;
+  }
 
   for (let i = 1; i <= pdfDoc.numPages; i++) {
     const page = await pdfDoc.getPage(i);
-    const viewport = page.getViewport({ scale: 1.4 });
+    const viewport = page.getViewport({ scale: 1.5 });
 
     const canvas = document.createElement("canvas");
     canvas.className = "pdf-page";
@@ -48,7 +59,7 @@ function detectCurrentPage(e) {
   const top = e.target.scrollTop;
 
   for (const page of pages) {
-    if (page.offsetTop + page.offsetHeight > top + 120) {
+    if (page.offsetTop + page.offsetHeight > top + 100) {
       currentPage = Number(page.dataset.page);
       break;
     }
@@ -59,9 +70,12 @@ export function getCurrentPdfPage() {
   return currentPage;
 }
 
+// ==========================
+// BOTONES DEL MODAL
+// ==========================
 document.addEventListener("click", (e) => {
   if (e.target.id === "closePdfBtn") {
-    document.getElementById("pdfViewer").classList.add("hidden");
+    document.getElementById("pdfViewer")?.classList.add("hidden");
   }
 
   if (e.target.id === "openNotesFromPdf") {
