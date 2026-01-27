@@ -1,8 +1,16 @@
+// assets/js/components/book-notes.component.js
+
 import { getCurrentUser } from "../services/auth.service.js";
-import { getCurrentPdfPage, goToPdfPage } from "./pdf-viewer.component.js";
+import {
+  getCurrentPdfPage,
+  goToPdfPage
+} from "./pdf-viewer.component.js";
 
 const STORAGE_KEY = "mcme_notes";
 
+// ==========================
+// STORAGE
+// ==========================
 function getAllNotes() {
   try {
     return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
@@ -28,7 +36,10 @@ function generateId() {
   return crypto.randomUUID();
 }
 
-function addNote(bookId, content) {
+// ==========================
+// CRUD
+// ==========================
+function addNote(bookId, content, page) {
   const user = getCurrentUser();
   if (!user || !content.trim()) return;
 
@@ -39,7 +50,7 @@ function addNote(bookId, content) {
     bookId,
     userEmail: user.email,
     content: content.trim(),
-    page: getCurrentPdfPage(), // 🔥 se guarda UNA VEZ
+    page: Number(page),
     createdAt: new Date().toISOString()
   });
 
@@ -60,10 +71,16 @@ function deleteNote(id) {
   saveAllNotes(notes);
 }
 
+// ==========================
+// PANEL
+// ==========================
 export function openNotesPanel(book) {
   if (document.getElementById("notes-panel")) return;
 
   const pdfViewer = document.getElementById("pdfViewer");
+  if (!pdfViewer) return;
+
+  const currentPage = getCurrentPdfPage();
 
   const panel = document.createElement("div");
   panel.id = "notes-panel";
@@ -75,8 +92,28 @@ export function openNotesPanel(book) {
       <button id="closeNotesBtn">✕</button>
     </header>
 
-    <textarea id="noteInput" placeholder="Escribe aquí tu nota…"></textarea>
-    <button id="saveNoteBtn" class="save-note-btn">Guardar nota</button>
+    <div class="note-create">
+      <textarea
+        id="noteInput"
+        placeholder="Escribe aquí tu nota…"
+      ></textarea>
+
+      <div class="note-create-actions">
+        <label>
+          Página:
+          <input
+            type="number"
+            id="notePageInput"
+            min="1"
+            value="${currentPage}"
+          />
+        </label>
+
+        <button id="saveNoteBtn" class="save-note-btn">
+          Guardar nota
+        </button>
+      </div>
+    </div>
 
     <ul class="notes-list"></ul>
   `;
@@ -85,17 +122,27 @@ export function openNotesPanel(book) {
   renderNotes(book.id);
 
   document.getElementById("saveNoteBtn").onclick = () => {
-    const input = document.getElementById("noteInput");
-    addNote(book.id, input.value);
-    input.value = "";
+    const text = document.getElementById("noteInput");
+    const pageInput = document.getElementById("notePageInput");
+
+    addNote(book.id, text.value, pageInput.value);
+
+    text.value = "";
+    pageInput.value = getCurrentPdfPage();
+
     renderNotes(book.id);
   };
 
   document.getElementById("closeNotesBtn").onclick = () => panel.remove();
 }
 
+// ==========================
+// RENDER
+// ==========================
 function renderNotes(bookId) {
   const list = document.querySelector(".notes-list");
+  if (!list) return;
+
   const notes = getNotesByBook(bookId);
   list.innerHTML = "";
 
@@ -111,19 +158,34 @@ function renderNotes(bookId) {
     li.innerHTML = `
       <textarea class="note-edit">${note.content}</textarea>
 
-      <div class="note-actions">
+      <div class="note-meta">
         <small>Página ${note.page}</small>
+      </div>
 
-        <button title="Ir a página ${note.page}" class="go-btn">↩</button>
-        <button title="Guardar cambios" class="save-btn">💾</button>
-        <button title="Eliminar nota" class="delete-btn">🗑</button>
+      <div class="note-actions">
+        <button class="go-btn" title="Ir a la página ${note.page}">
+          ↩
+        </button>
+
+        <button class="save-btn" title="Guardar cambios">
+          💾
+        </button>
+
+        <button class="delete-btn" title="Eliminar nota">
+          🗑
+        </button>
       </div>
     `;
 
-    li.querySelector(".go-btn").onclick = () => goToPdfPage(note.page);
-    li.querySelector(".save-btn").onclick = () => {
-      updateNote(note.id, li.querySelector(".note-edit").value);
+    li.querySelector(".go-btn").onclick = () => {
+      goToPdfPage(note.page);
     };
+
+    li.querySelector(".save-btn").onclick = () => {
+      const newText = li.querySelector(".note-edit").value;
+      updateNote(note.id, newText);
+    };
+
     li.querySelector(".delete-btn").onclick = () => {
       deleteNote(note.id);
       renderNotes(bookId);
