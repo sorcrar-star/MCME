@@ -7,7 +7,7 @@ import * as pdfjsLib from "../vendor/pdfjs/build/pdf.mjs";
 import { openNotesPanel } from "./book-notes.component.js";
 
 // ==========================
-// CONFIGURACIÓN PDF.JS (OBLIGATORIA)
+// CONFIGURACIÓN PDF.JS
 // ==========================
 pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
   "../vendor/pdfjs/build/pdf.worker.mjs",
@@ -38,23 +38,21 @@ export async function openPdfModal(book) {
     }
 
     // ==========================
-    // RESET TOTAL DEL VISOR
+    // RESET LIMPIO
     // ==========================
     container.removeEventListener("scroll", detectCurrentPage);
     container.innerHTML = "";
-    container.scrollTop = 0;
-
     currentPage = 1;
 
     title.textContent = book.title;
     viewer.classList.remove("hidden");
 
     // ==========================
-    // CARGA DEL PDF
+    // CARGA PDF
     // ==========================
     pdfDoc = await pdfjsLib.getDocument(book.pdfUrl).promise;
 
-    // Renderiza TODAS las páginas
+    // Render de páginas
     for (let i = 1; i <= pdfDoc.numPages; i++) {
       const page = await pdfDoc.getPage(i);
       const viewport = page.getViewport({ scale: 1.5 });
@@ -74,6 +72,17 @@ export async function openPdfModal(book) {
 
       container.appendChild(canvas);
     }
+
+    // ==========================
+    // 🔒 FIX DEFINITIVO DEL SCROLL
+    // ==========================
+    // Espera a que el navegador termine layout + paint
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        container.scrollTop = 0;
+        currentPage = 1;
+      });
+    });
 
     // ==========================
     // SCROLL LISTENER (ÚNICO)
