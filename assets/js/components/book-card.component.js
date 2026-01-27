@@ -1,6 +1,7 @@
 import { isFavorite, toggleFavorite } from "../services/favorites.service.js";
 import { openNotesPanel } from "./book-notes.component.js";
-import { openPdfModal } from "./pdf-modal.component.js";
+import { openPdfModal } from "./pdf-viewer.component.js";
+
 
 export function renderBookCard(book) {
   const article = document.createElement("article");
