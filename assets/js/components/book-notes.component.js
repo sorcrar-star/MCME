@@ -1,15 +1,10 @@
 // assets/js/components/book-notes.component.js
 
 import { getCurrentUser } from "../services/auth.service.js";
-import { getCurrentPdfPage } from "./pdf-viewer.component.js";
+import { getCurrentPdfPage, goToPdfPage } from "./pdf-viewer.component.js";
 
 const STORAGE_KEY = "mcme_notes";
 
-let editingNoteId = null;
-
-// ==========================
-// STORAGE
-// ==========================
 function getAllNotes() {
   try {
     return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
@@ -31,9 +26,6 @@ function getNotesByBook(bookId) {
   );
 }
 
-// ==========================
-// CRUD
-// ==========================
 function generateId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2);
 }
@@ -56,26 +48,6 @@ function addNote(bookId, content) {
   saveAllNotes(notes);
 }
 
-function updateNote(noteId, newContent) {
-  const notes = getAllNotes();
-
-  const note = notes.find(n => n.id === noteId);
-  if (!note) return;
-
-  note.content = newContent.trim();
-  note.updatedAt = new Date().toISOString();
-
-  saveAllNotes(notes);
-}
-
-function deleteNote(noteId) {
-  const notes = getAllNotes().filter(n => n.id !== noteId);
-  saveAllNotes(notes);
-}
-
-// ==========================
-// UI
-// ==========================
 export function openNotesPanel(book) {
   if (document.getElementById("notes-panel")) return;
 
@@ -108,13 +80,7 @@ export function openNotesPanel(book) {
     const input = document.getElementById("noteInput");
     if (!input) return;
 
-    if (editingNoteId) {
-      updateNote(editingNoteId, input.value);
-      editingNoteId = null;
-    } else {
-      addNote(book.id, input.value);
-    }
-
+    addNote(book.id, input.value);
     input.value = "";
     renderNotes(book.id);
   });
@@ -126,7 +92,6 @@ export function openNotesPanel(book) {
 
 function renderNotes(bookId) {
   const list = document.querySelector(".notes-list");
-  const input = document.getElementById("noteInput");
   if (!list) return;
 
   const notes = getNotesByBook(bookId);
@@ -142,30 +107,28 @@ function renderNotes(bookId) {
     li.className = "note-item";
 
     li.innerHTML = `
-      <div class="note-content">
-        <p>${note.content}</p>
+      <p>${note.content}</p>
+
+      <div class="note-footer">
         <small>
-          ${note.page ? `Página ${note.page} · ` : ""}
+          Página ${note.page ?? "—"} ·
           ${new Date(note.createdAt).toLocaleString()}
         </small>
-      </div>
 
-      <div class="note-actions">
-        <button class="edit-note-btn">✏️</button>
-        <button class="delete-note-btn">🗑</button>
+        ${note.page ? `
+          <button
+            class="go-to-page-btn"
+            title="Redireccionar a la página ${note.page}"
+            data-page="${note.page}"
+          >
+            ↩
+          </button>
+        ` : ""}
       </div>
     `;
 
-    li.querySelector(".edit-note-btn").addEventListener("click", () => {
-      input.value = note.content;
-      editingNoteId = note.id;
-      input.focus();
-    });
-
-    li.querySelector(".delete-note-btn").addEventListener("click", () => {
-      if (!confirm("¿Eliminar esta nota?")) return;
-      deleteNote(note.id);
-      renderNotes(bookId);
+    li.querySelector(".go-to-page-btn")?.addEventListener("click", () => {
+      goToPdfPage(note.page);
     });
 
     list.appendChild(li);
