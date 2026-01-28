@@ -87,36 +87,45 @@ export function openNotesPanel(book) {
   panel.className = "notes-panel";
 
   panel.innerHTML = `
-    <header class="notes-header">
-      <h3>Notas – ${book.title}</h3>
-      <button id="closeNotesBtn">✕</button>
-    </header>
-
-    <div class="note-create">
-      <textarea
-        id="noteInput"
-        placeholder="Escribe aquí tu nota…"
-      ></textarea>
-
-      <div class="note-create-actions">
-        <label>
-          Página:
-          <input
-            type="number"
-            id="notePageInput"
-            min="1"
-            value="${currentPage}"
-          />
-        </label>
-
-        <button id="saveNoteBtn" class="save-note-btn">
-          Guardar nota
-        </button>
-      </div>
+  <header class="notes-header">
+    <div class="notes-title">
+      <h3>Notas</h3>
+      <span class="notes-subtitle">${book.title}</span>
     </div>
+    <button id="closeNotesBtn">✕</button>
+  </header>
 
+  <section class="notes-editor">
+    <label class="editor-label">Nueva nota</label>
+
+    <textarea
+      id="noteInput"
+      placeholder="Escribe aquí tu nota…"
+    ></textarea>
+
+    <div class="editor-footer">
+      <div class="page-indicator">
+        Página
+        <input
+          type="number"
+          id="notePageInput"
+          min="1"
+          value="${currentPage}"
+        />
+      </div>
+
+      <button id="saveNoteBtn" class="save-note-btn">
+        Guardar nota
+      </button>
+    </div>
+  </section>
+
+  <section class="notes-history">
+    <h4>Notas guardadas</h4>
     <ul class="notes-list"></ul>
-  `;
+  </section>
+`;
+
 
   pdfViewer.appendChild(panel);
   renderNotes(book.id);
