@@ -28,6 +28,8 @@ export async function openPdfModal(book) {
 
     title.textContent = book.title;
     viewer.classList.remove("hidden");
+    document.body.classList.add("notes-open");
+
 
     pdfDoc = await pdfjsLib.getDocument(book.pdfUrl).promise;
 
@@ -91,6 +93,8 @@ export function goToPdfPage(pageNumber) {
 document.addEventListener("click", (e) => {
   if (e.target.id === "closePdfBtn") {
     document.getElementById("pdfViewer")?.classList.add("hidden");
+    document.body.classList.remove("notes-open");
+
     currentBook = null;
   }
 
