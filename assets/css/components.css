@@ -864,3 +864,179 @@
   border: 1px solid #ddd;
   font-size: 0.85rem;
 }
+/* ======================================================
+   NOTES PANEL – AISLAMIENTO PREMIUM
+====================================================== */
+
+/* Evita scroll roto del modal */
+#pdfViewer {
+  overflow: hidden;
+}
+
+/* Panel como herramienta independiente */
+#notes-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  width: 420px;
+  height: 100%;
+
+  background: #f9fafb;
+  border-left: 1px solid #e5e7eb;
+
+  display: flex;
+  flex-direction: column;
+
+  box-shadow: -12px 0 40px rgba(0, 0, 0, 0.12);
+  z-index: 20;
+}
+
+/* ===== SIMETRÍA INTERNA ===== */
+
+#notes-panel > * {
+  max-width: 360px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ===== HEADER ===== */
+
+#notes-panel .notes-header {
+  padding: 1.25rem 0 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#notes-panel .notes-header h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+#notes-panel .notes-header button {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+#notes-panel .notes-header button:hover {
+  opacity: 1;
+}
+
+/* ===== ÁREA DE ESCRITURA (FOCO PRINCIPAL) ===== */
+
+#notes-panel .note-create {
+  background: white;
+  border-radius: 16px;
+  padding: 1rem;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  box-shadow: var(--shadow-soft);
+}
+
+#notes-panel #noteInput {
+  width: 100%;
+  min-height: 120px;
+  padding: 0.75rem;
+
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+
+  font-size: 0.9rem;
+  line-height: 1.45;
+
+  resize: vertical;
+}
+
+/* ===== ACCIONES ===== */
+
+#notes-panel .note-create-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#notes-panel .note-create-actions input {
+  width: 72px;
+  padding: 0.4rem;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+}
+
+#notes-panel .save-note-btn {
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 0.45rem 1.2rem;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+/* ===== LISTA (CONTENIDA, SIN SCROLL ROTO) ===== */
+
+#notes-panel .notes-list {
+  flex: 1;
+  margin-top: 1rem;
+  padding-bottom: 1rem;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* ===== NOTA ===== */
+
+#notes-panel .note-item {
+  background: white;
+  border-radius: 14px;
+  padding: 0.75rem;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  box-shadow: var(--shadow-soft);
+}
+
+#notes-panel .note-edit {
+  width: 100%;
+  min-height: 60px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  padding: 0.5rem;
+
+  font-size: 0.85rem;
+}
+
+/* ===== META ===== */
+
+#notes-panel .note-meta {
+  font-size: 0.7rem;
+  color: var(--color-muted);
+}
+
+/* ===== BOTONES ===== */
+
+#notes-panel .note-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.4rem;
+}
+
+#notes-panel .note-actions button {
+  background: var(--color-primary-soft);
+  border: none;
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+}
