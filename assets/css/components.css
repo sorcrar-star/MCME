@@ -1089,3 +1089,103 @@ button span {
 button:focus {
   outline: none;
 }
+/* =========================
+   NOTES PANEL – PREMIUM UI
+========================= */
+
+.notes-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 420px;
+  height: 100%;
+  background: #fff;
+  border-left: 1px solid #e6e6e6;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -10px 0 30px rgba(0,0,0,.06);
+  z-index: 20;
+}
+
+.notes-header {
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+}
+
+.notes-title h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.notes-subtitle {
+  font-size: .8rem;
+  color: #777;
+}
+
+.notes-editor {
+  padding: 1.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.editor-label {
+  font-size: .75rem;
+  color: #555;
+  text-transform: uppercase;
+}
+
+.notes-editor textarea {
+  width: 100%;
+  min-height: 120px;
+  margin-top: .5rem;
+  padding: .75rem;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  resize: vertical;
+}
+
+.editor-footer {
+  margin-top: .8rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.page-indicator {
+  font-size: .8rem;
+  color: #555;
+}
+
+.notes-history {
+  padding: 1.5rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.notes-history h4 {
+  margin-bottom: .8rem;
+  font-size: .9rem;
+  color: #333;
+}
+
+.note-item {
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: .75rem;
+  margin-bottom: .75rem;
+}
+
+.note-item textarea {
+  width: 100%;
+  border: none;
+  background: transparent;
+  resize: none;
+}
+
+.note-actions {
+  margin-top: .4rem;
+  display: flex;
+  gap: .4rem;
+}
