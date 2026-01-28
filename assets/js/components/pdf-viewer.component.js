@@ -18,7 +18,8 @@ export async function openPdfModal(book) {
     currentPage = 1;
 
     const viewer = document.getElementById("pdfViewer");
-    const oldContainer = document.getElementById("pdfCanvasContainer");
+    const oldContainer = document.querySelector(".pdf-canvas-container");
+
     const title = document.getElementById("pdfTitle");
 
     // 🔥 reset REAL del contenedor
@@ -77,7 +78,8 @@ export function getCurrentPdfPage() {
 
 // 🔥 USAR SOLO LA PÁGINA GUARDADA
 export function goToPdfPage(pageNumber) {
-  const container = document.getElementById("pdfCanvasContainer");
+  const container = document.querySelector(".pdf-canvas-container");
+
   const target = container?.querySelector(
     `.pdf-page[data-page="${pageNumber}"]`
   );
