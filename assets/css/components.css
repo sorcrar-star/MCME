@@ -1189,3 +1189,72 @@ button:focus {
   display: flex;
   gap: .4rem;
 }
+/* =========================
+   NOTES PANEL – ANIMATIONS
+========================= */
+
+.notes-panel {
+  transform: translateX(100%);
+  opacity: 0;
+  animation: notesSlideIn .45s cubic-bezier(.4,0,.2,1) forwards;
+}
+
+@keyframes notesSlideIn {
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+.notes-panel {
+  background: linear-gradient(
+    to bottom,
+    #ffffff,
+    #f8fafc
+  );
+  box-shadow:
+    -20px 0 40px rgba(0,0,0,.08),
+    -2px 0 6px rgba(0,0,0,.04);
+}
+.notes-editor textarea {
+  font-size: .95rem;
+  line-height: 1.6;
+  background: #fff;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.05);
+  transition: box-shadow .2s ease, border .2s ease;
+}
+
+.notes-editor textarea:focus {
+  outline: none;
+  border-color: #0f4c81;
+  box-shadow:
+    0 0 0 3px rgba(15,76,129,.12),
+    inset 0 1px 2px rgba(0,0,0,.05);
+}
+.note-item {
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.note-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,.08);
+}
+
+.note-actions button {
+  opacity: .6;
+  transition: opacity .15s ease, transform .15s ease;
+}
+
+.note-item:hover .note-actions button {
+  opacity: 1;
+}
+
+.note-actions button:hover {
+  transform: scale(1.1);
+}
+.notes-history {
+  background:
+    linear-gradient(to bottom,
+      rgba(255,255,255,0),
+      rgba(0,0,0,.03)
+    );
+}
