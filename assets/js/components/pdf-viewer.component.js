@@ -102,6 +102,6 @@ document.addEventListener("click", (e) => {
 
   if (e.target.id === "openNotesFromPdf") {
     if (!currentBook) return;
-    openNotesPanel(currentBook);
+    openNotesPanel(currentBook, currentPage);
   }
 });
