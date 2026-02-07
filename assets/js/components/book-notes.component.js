@@ -75,18 +75,15 @@
   // PANEL
   // ==========================
   export function openNotesPanel(book) {
-    if (document.getElementById("notes-panel")) return;
+  if (document.getElementById("notes-panel")) return;
 
-    const pdfViewer = document.getElementById("pdfViewer");
-    if (!pdfViewer) return;
+  const currentPage = getCurrentPdfPage?.() || 1;
 
-    const currentPage = getCurrentPdfPage();
+  const panel = document.createElement("div");
+  panel.id = "notes-panel";
+  panel.className = "notes-panel";
 
-    const panel = document.createElement("div");
-    panel.id = "notes-panel";
-    panel.className = "notes-panel";
-
-    panel.innerHTML = `
+  panel.innerHTML = `
     <header class="notes-header">
       <div class="notes-title">
         <h3>Notas</h3>
@@ -95,16 +92,14 @@
       <button id="closeNotesBtn">✕</button>
     </header>
 
-    <section class="notes-editor">
-      <label class="editor-label">Nueva nota</label>
-
+    <section class="note-create">
       <textarea
         id="noteInput"
         placeholder="Escribe aquí tu nota…"
       ></textarea>
 
-      <div class="editor-footer">
-        <div class="page-indicator">
+      <div class="note-create-actions">
+        <div>
           Página
           <input
             type="number"
@@ -115,19 +110,37 @@
         </div>
 
         <button id="saveNoteBtn" class="save-note-btn">
-          Guardar nota
+          Guardar
         </button>
       </div>
     </section>
 
     <section class="notes-history">
-      <h4>Notas guardadas</h4>
       <ul class="notes-list"></ul>
     </section>
   `;
 
+  // 🔥 CLAVE: ahora siempre se agrega al body
+  document.body.appendChild(panel);
 
-    pdfViewer.appendChild(panel);
+  renderNotes(book.id);
+
+  document.getElementById("saveNoteBtn").onclick = () => {
+    const text = document.getElementById("noteInput");
+    const pageInput = document.getElementById("notePageInput");
+
+    addNote(book.id, text.value, pageInput.value);
+
+    text.value = "";
+    pageInput.value = getCurrentPdfPage?.() || 1;
+
+    renderNotes(book.id);
+  };
+
+  document.getElementById("closeNotesBtn").onclick = () => {
+    panel.remove();
+  };
+}
 
 // 🔥 Forzar render antes de animar
 panel.classList.add("is-mounted");
@@ -158,8 +171,6 @@ renderNotes(book.id);
     panel.remove();
   }, 300);
 };
-
-  }
 
   // ==========================
   // RENDER
