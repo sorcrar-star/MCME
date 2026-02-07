@@ -35,9 +35,10 @@ export function renderBookCard(book) {
   });
 
   article.querySelector(".notes-btn").addEventListener("click", (e) => {
-    e.stopPropagation();
-    openNotesPanel(book);
-  });
+  e.stopPropagation();
+  openNotesPanel(book);
+});
+
 
 
   article.querySelector(".pdf-open-btn").addEventListener("click", (e) => {
