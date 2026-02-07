@@ -18,18 +18,12 @@ export async function openPdfModal(book) {
     currentPage = 1;
 
     const viewer = document.getElementById("pdfViewer");
-    const oldContainer = document.getElementById("pdfViewer");
-
+    const container = document.querySelector(".pdf-canvas-container");
     const title = document.getElementById("pdfTitle");
 
-    // 🔥 reset REAL del contenedorf
-    const container = oldContainer;
-
+    container.innerHTML = "";
     title.textContent = book.title;
     viewer.classList.remove("hidden");
-    viewer.addEventListener("scroll", detectCurrentPage);
-    document.body.classList.add("notes-open");
-
 
     pdfDoc = await pdfjsLib.getDocument(book.pdfUrl).promise;
 
@@ -49,30 +43,26 @@ export async function openPdfModal(book) {
       container.appendChild(canvas);
     }
 
-    requestAnimationFrame(() => {
-      container.scrollTop = 0;
-      container.addEventListener("scroll", detectCurrentPage);
-    });
+    container.addEventListener("scroll", detectCurrentPage);
 
   } catch (err) {
     console.error("Error PDF:", err);
   }
 }
 
-function detectCurrentPage(e) {
-  console.log("SCROLL DETECTADO");
+function detectCurrentPage() {
+  const container = document.querySelector(".pdf-canvas-container");
+  if (!container) return;
 
-  const container = e.target;
   const pages = container.querySelectorAll(".pdf-page");
+  const containerTop = container.getBoundingClientRect().top;
 
   let closestPage = 1;
   let minDistance = Infinity;
 
-  const containerRect = container.getBoundingClientRect();
-
   pages.forEach(page => {
     const rect = page.getBoundingClientRect();
-    const distance = Math.abs(rect.top - containerRect.top);
+    const distance = Math.abs(rect.top - containerTop);
 
     if (distance < minDistance) {
       minDistance = distance;
@@ -83,33 +73,19 @@ function detectCurrentPage(e) {
   currentPage = closestPage;
 }
 
-
 export function getCurrentPdfPage() {
-  const container = document.querySelector(".pdf-canvas-container");
-  if (!container) return 1;
-
-  const pages = container.querySelectorAll(".pdf-page");
-  const top = container.scrollTop;
-
-  for (const page of pages) {
-    if (page.offsetTop + page.offsetHeight > top + 100) {
-      return Number(page.dataset.page);
-    }
-  }
-
-  return 1;
+  return currentPage;
 }
 
-
-// 🔥 USAR SOLO LA PÁGINA GUARDADA
 export function goToPdfPage(pageNumber) {
   const container = document.querySelector(".pdf-canvas-container");
+  if (!container) return;
 
-  const target = container?.querySelector(
+  const target = container.querySelector(
     `.pdf-page[data-page="${pageNumber}"]`
   );
 
-  if (!container || !target) return;
+  if (!target) return;
 
   container.scrollTo({
     top: target.offsetTop,
@@ -120,8 +96,6 @@ export function goToPdfPage(pageNumber) {
 document.addEventListener("click", (e) => {
   if (e.target.id === "closePdfBtn") {
     document.getElementById("pdfViewer")?.classList.add("hidden");
-    document.body.classList.remove("notes-open");
-
     currentBook = null;
   }
 
