@@ -2,6 +2,8 @@
 
 import { isFavorite, toggleFavorite } from "../services/favorites.service.js";
 import { openPdfModal } from "./pdf-viewer.component.js";
+import { openNotesPanel } from "./book-notes.component.js";
+
 
 export function renderBookCard(book) {
   const article = document.createElement("article");
@@ -34,8 +36,9 @@ export function renderBookCard(book) {
 
   article.querySelector(".notes-btn").addEventListener("click", (e) => {
     e.stopPropagation();
-    openPdfModal(book);
+    openNotesPanel(book);
   });
+
 
   article.querySelector(".pdf-open-btn").addEventListener("click", (e) => {
     e.stopPropagation();
