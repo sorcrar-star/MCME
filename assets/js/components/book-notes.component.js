@@ -1,80 +1,75 @@
-  // assets/js/components/book-notes.component.js
+import { getCurrentUser } from "../services/auth.service.js";
+import {
+  getCurrentPdfPage,
+  goToPdfPage
+} from "./pdf-viewer.component.js";
 
-  import { getCurrentUser } from "../services/auth.service.js";
-  import {
-    getCurrentPdfPage,
-    goToPdfPage
-  } from "./pdf-viewer.component.js";
+const STORAGE_KEY = "mcme_notes";
 
-  const STORAGE_KEY = "mcme_notes";
+/* ================= STORAGE ================= */
 
-  // ==========================
-  // STORAGE
-  // ==========================
-  function getAllNotes() {
-    try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-    } catch {
-      return [];
-    }
+function getAllNotes() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+  } catch {
+    return [];
   }
+}
 
-  function saveAllNotes(notes) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
-  }
+function saveAllNotes(notes) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+}
 
-  function getNotesByBook(bookId) {
-    const user = getCurrentUser();
-    if (!user) return [];
+function getNotesByBook(bookId) {
+  const user = getCurrentUser();
+  if (!user) return [];
 
-    return getAllNotes().filter(
-      n => n.bookId === bookId && n.userEmail === user.email
-    );
-  }
+  return getAllNotes().filter(
+    n => n.bookId === bookId && n.userEmail === user.email
+  );
+}
 
-  function generateId() {
-    return crypto.randomUUID();
-  }
+function generateId() {
+  return crypto.randomUUID();
+}
 
-  // ==========================
-  // CRUD
-  // ==========================
-  function addNote(bookId, content, page) {
-    const user = getCurrentUser();
-    if (!user || !content.trim()) return;
+/* ================= CRUD ================= */
 
-    const notes = getAllNotes();
+function addNote(bookId, content, page) {
+  const user = getCurrentUser();
+  if (!user || !content.trim()) return;
 
-    notes.push({
-      id: generateId(),
-      bookId,
-      userEmail: user.email,
-      content: content.trim(),
-      page: Number(page),
-      createdAt: new Date().toISOString()
-    });
+  const notes = getAllNotes();
 
-    saveAllNotes(notes);
-  }
+  notes.push({
+    id: generateId(),
+    bookId,
+    userEmail: user.email,
+    content: content.trim(),
+    page: Number(page),
+    createdAt: new Date().toISOString()
+  });
 
-  function updateNote(id, newContent) {
-    const notes = getAllNotes();
-    const note = notes.find(n => n.id === id);
-    if (!note) return;
+  saveAllNotes(notes);
+}
 
-    note.content = newContent.trim();
-    saveAllNotes(notes);
-  }
+function updateNote(id, newContent) {
+  const notes = getAllNotes();
+  const note = notes.find(n => n.id === id);
+  if (!note) return;
 
-  function deleteNote(id) {
-    const notes = getAllNotes().filter(n => n.id !== id);
-    saveAllNotes(notes);
-  }
+  note.content = newContent.trim();
+  saveAllNotes(notes);
+}
 
-  // ==========================
-  // PANEL
-  // ==========================
-  export function openNotesPanel(book) {
+function deleteNote(id) {
+  const notes = getAllNotes().filter(n => n.id !== id);
+  saveAllNotes(notes);
+}
+
+/* ================= PANEL ================= */
+
+export function openNotesPanel(book) {
   if (document.getElementById("notes-panel")) return;
 
   const currentPage = getCurrentPdfPage?.() || 1;
@@ -85,9 +80,9 @@
 
   panel.innerHTML = `
     <header class="notes-header">
-      <div class="notes-title">
+      <div>
         <h3>Notas</h3>
-        <span class="notes-subtitle">${book.title}</span>
+        <small>${book.title}</small>
       </div>
       <button id="closeNotesBtn">✕</button>
     </header>
@@ -120,7 +115,6 @@
     </section>
   `;
 
-  // 🔥 CLAVE: ahora siempre se agrega al body
   document.body.appendChild(panel);
 
   renderNotes(book.id);
@@ -142,91 +136,52 @@
   };
 }
 
-// 🔥 Forzar render antes de animar
-panel.classList.add("is-mounted");
+/* ================= RENDER ================= */
 
-requestAnimationFrame(() => {
-  panel.classList.add("is-open");
-});
+function renderNotes(bookId) {
+  const list = document.querySelector(".notes-list");
+  if (!list) return;
 
-renderNotes(book.id);
+  const notes = getNotesByBook(bookId);
+  list.innerHTML = "";
 
+  if (!notes.length) {
+    list.innerHTML = "<li><em>No hay notas aún.</em></li>";
+    return;
+  }
 
-    document.getElementById("saveNoteBtn").onclick = () => {
-      const text = document.getElementById("noteInput");
-      const pageInput = document.getElementById("notePageInput");
+  notes.forEach(note => {
+    const li = document.createElement("li");
+    li.className = "note-item";
 
-      addNote(book.id, text.value, pageInput.value);
+    li.innerHTML = `
+      <textarea class="note-edit">${note.content}</textarea>
 
-      text.value = "";
-      pageInput.value = getCurrentPdfPage();
+      <div class="note-meta">
+        <small>Página ${note.page}</small>
+      </div>
 
-      renderNotes(book.id);
+      <div class="note-actions">
+        <button class="go-btn">↩</button>
+        <button class="save-btn">💾</button>
+        <button class="delete-btn">🗑</button>
+      </div>
+    `;
+
+    li.querySelector(".go-btn").onclick = () => {
+      goToPdfPage(note.page);
     };
 
-    document.getElementById("closeNotesBtn").onclick = () => {
-  panel.classList.remove("is-open");
+    li.querySelector(".save-btn").onclick = () => {
+      const newText = li.querySelector(".note-edit").value;
+      updateNote(note.id, newText);
+    };
 
-  setTimeout(() => {
-    panel.remove();
-  }, 300);
-};
+    li.querySelector(".delete-btn").onclick = () => {
+      deleteNote(note.id);
+      renderNotes(bookId);
+    };
 
-  // ==========================
-  // RENDER
-  // ==========================
-  function renderNotes(bookId) {
-    const list = document.querySelector(".notes-list");
-    if (!list) return;
-
-    const notes = getNotesByBook(bookId);
-    list.innerHTML = "";
-
-    if (!notes.length) {
-      list.innerHTML = "<li><em>No hay notas aún.</em></li>";
-      return;
-    }
-
-    notes.forEach(note => {
-      const li = document.createElement("li");
-      li.className = "note-item";
-
-      li.innerHTML = `
-        <textarea class="note-edit">${note.content}</textarea>
-
-        <div class="note-meta">
-          <small>Página ${note.page}</small>
-        </div>
-
-        <div class="note-actions">
-          <button class="go-btn" title="Ir a la página ${note.page}">
-            ↩
-          </button>
-
-          <button class="save-btn" title="Guardar cambios">
-            💾
-          </button>
-
-          <button class="delete-btn" title="Eliminar nota">
-            🗑
-          </button>
-        </div>
-      `;
-
-      li.querySelector(".go-btn").onclick = () => {
-        goToPdfPage(note.page);
-      };
-
-      li.querySelector(".save-btn").onclick = () => {
-        const newText = li.querySelector(".note-edit").value;
-        updateNote(note.id, newText);
-      };
-
-      li.querySelector(".delete-btn").onclick = () => {
-        deleteNote(note.id);
-        renderNotes(bookId);
-      };
-
-      list.appendChild(li);
-    });
-  }
+    list.appendChild(li);
+  });
+}
