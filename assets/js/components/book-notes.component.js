@@ -69,10 +69,13 @@ function deleteNote(id) {
 
 /* ================= PANEL ================= */
 
-export function openNotesPanel(book) {
+export function openNotesPanel(book, forcedPage = null) {
   if (document.getElementById("notes-panel")) return;
 
-  const currentPage = getCurrentPdfPage?.() || 1;
+  const currentPage =
+  forcedPage ??
+  (typeof getCurrentPdfPage === "function" ? getCurrentPdfPage() : 1);
+
 
   const panel = document.createElement("div");
   panel.id = "notes-panel";
@@ -185,3 +188,4 @@ function renderNotes(bookId) {
     list.appendChild(li);
   });
 }
+
