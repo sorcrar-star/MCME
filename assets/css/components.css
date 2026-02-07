@@ -1,633 +1,275 @@
-  /* ======================================================
-    HEADER
-  ====================================================== */
+/* ======================================================
+   HEADER
+====================================================== */
 
 #app-header {
-  /* Layout */
   display: flex;
   justify-content: space-between;
   align-items: center;
 
-  /* Visual */
   background: var(--color-white);
-  padding: 1rem 2rem;
-  border-bottom: 1px solid var(--color-gray-light);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+  border-bottom: 1px solid rgba(15, 76, 129, 0.08);
 }
 
-
-  #app-header h1 {
-    color: var(--color-primary);
-    font-weight: 700;
-  }
-
-  .header-right {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  #logoutBtn {
-    background: var(--color-primary);
-    color: white;
-    border: none;
-    padding: 0.5rem 1.1rem;
-    border-radius: 999px;
-    transition: var(--transition-normal);
-  }
-
-  #logoutBtn:hover {
-    background: var(--color-accent);
-    transform: translateY(-1px);
-  }
-
-  /* ======================================================
-    SIDEBAR – BASE
-  ====================================================== */
-
-  #app-sidebar {
-    background: var(--color-white);
-    padding: 2rem 1.5rem;
-    box-shadow: var(--shadow-soft);
-  }
-
-  #app-sidebar ul {
-    list-style: none;
-    padding-left: 0;
-    margin: 0;
-  }
-
-  /* ======================================================
-    SIDEBAR – NODO CARPETA
-  ====================================================== */
-
-  .sidebar-folder {
-    position: relative;
-    cursor: pointer;
-    user-select: none;
-
-    margin: 2px 0;
-    padding: 0.55rem 0.9rem;
-    border-radius: 10px;
-
-    color: #2c3e50;
-    font-size: 0.95rem;
-    font-weight: 400;
-
-    transition:
-      background-color 0.25s ease,
-      color 0.25s ease,
-      transform 0.15s ease;
-  }
-
-  /* Hover suave */
-  .sidebar-folder:hover {
-    background-color: rgba(15, 76, 129, 0.08);
-  }
-
-  /* Click físico */
-  .sidebar-folder:active {
-    transform: scale(0.97);
-  }
-
-  /* Activo (solo el nodo) */
-  .sidebar-folder.active {
-    background-color: rgba(15, 76, 129, 0.14);
-    color: #0f4c81;
-    font-weight: 600;
-    overflow: visible;
-  }
-
-  /* Indicador lateral médico */
-  .sidebar-folder.active::before {
-    content: "";
-    position: absolute;
-    left: -8px;
-    top: 6px;
-    bottom: 6px;
-    width: 4px;
-    background-color: #0f4c81;
-    border-radius: 4px;
-  }
-
-  /* ======================================================
-    SIDEBAR – FILA INTERNA
-  ====================================================== */
-
-  .sidebar-row {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .sidebar-label {
-    flex: 1;
-    color: inherit;
-    line-height: 1.2;
-    white-space: nowrap;
-  }
-
-  /* ======================================================
-    SIDEBAR – FLECHAS
-  ====================================================== */
-
-  .sidebar-arrow {
-    font-size: 0.75rem;
-    width: 14px;
-    text-align: center;
-    color: #6b7280;
-    cursor: pointer;
-  }
-
-  .sidebar-folder:not(.has-children) .sidebar-arrow {
-    visibility: hidden;
-  }
-
-  /* ======================================================
-    SIDEBAR – SUBCARPETAS
-  ====================================================== */
-
-  .sidebar-subfolders {
-    margin-left: 1rem;
-    margin-top: 0.25rem;
-
-    overflow: hidden;
-    max-height: 1000px;
-    opacity: 1;
-    transform: translateY(0);
-
-    transition:
-      max-height 0.35s ease,
-      opacity 0.25s ease,
-      transform 0.25s ease;
-  }
-
-  /* Estado colapsado */
-  .sidebar-subfolders.collapsed {
-    max-height: 0;
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-
-  /* Hijos siempre con color base */
-  .sidebar-subfolders .sidebar-folder {
-    color: #2c3e50;
-    font-size: 0.9rem;
-    opacity: 0.85;
-  }
-
-  /* ======================================================
-    BOOK GRID
-  ====================================================== */
-
-  .books-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 1.5rem;
-  }
-
-  /* ======================================================
-    BOOK CARD
-  ====================================================== */
-
-  .book-card {
-    background: var(--color-white);
-    padding: 1.5rem;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-soft);
-
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-    min-height: 180px;
-
-    transition: var(--transition-slow);
-    animation: fadeIn 0.4s ease;
-  }
-
-  .book-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-hover);
-  }
-
-  .book-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: start;
-  }
-
-  .book-card h3 {
-    font-size: 1rem;
-    font-weight: 600;
-  }
-
-  .book-card p {
-    font-size: 0.85rem;
-    color: var(--color-muted);
-    margin: 0;
-  }
-
-  .book-card a {
-    margin-top: auto;
-    align-self: flex-start;
-
-    padding: 0.45rem 0.9rem;
-    border-radius: 999px;
-
-    background: var(--color-primary-soft);
-    color: var(--color-primary);
-    font-size: 0.85rem;
-    font-weight: 600;
-
-    transition: var(--transition-fast);
-  }
-
-  .book-card a:hover {
-    background: var(--color-primary);
-    color: white;
-  }
-
-  /* ======================================================
-    FAVORITOS
-  ====================================================== */
-
-  .favorite-btn {
-    background: none;
-    border: none;
-    font-size: 1.3rem;
-    color: var(--color-accent);
-    transition: transform var(--transition-fast);
-  }
-
-  .favorite-btn:hover {
-    transform: scale(1.2);
-  }
-
-  /* ======================================================
-    SEARCH
-  ====================================================== */
-
-  #search-input {
-    padding: 0.75rem 1rem;
-    border-radius: 999px;
-    border: 1px solid #ddd;
-    transition: var(--transition-fast);
-  }
-
-  #search-input:focus {
-    outline: none;
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px var(--color-primary-soft);
-  }
-
-  /* ======================================================
-    BREADCRUMBS
-  ====================================================== */
-
-  .breadcrumbs {
-    font-size: 0.85rem;
-    color: var(--color-muted);
-  }
-
-  .breadcrumb-item {
-    cursor: pointer;
-    color: var(--color-primary);
-    font-weight: 500;
-  }
-
-  .breadcrumb-item:hover {
-    color: var(--color-accent);
-    text-decoration: underline;
-  }
-
-  .separator {
-    margin: 0 0.25rem;
-    color: var(--color-muted);
-  }
-
-  /* ======================================================
-    LOGIN
-  ====================================================== */
-
-  .login-page {
-    background: linear-gradient(
-      135deg,
-      var(--color-primary-soft),
-      var(--color-bg)
-    );
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .login-container {
-    background: var(--color-white);
-    padding: 2.5rem 3rem;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-soft);
-    max-width: 420px;
-    width: 100%;
-    animation: fadeIn 0.6s ease;
-  }
-
-  .login-container h1 {
-    text-align: center;
-    color: var(--color-primary);
-    font-weight: 700;
-  }
-
-  .login-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-top: 1.5rem;
-  }
-
-  .login-form input {
-    padding: 0.8rem 1rem;
-    border-radius: 999px;
-    border: 1px solid #ddd;
-  }
-
-  .login-form input:focus {
-    outline: none;
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px var(--color-primary-soft);
-  }
-
-  .login-form button {
-    background: var(--color-primary);
-    color: white;
-    border: none;
-    padding: 0.8rem;
-    border-radius: 999px;
-    font-weight: 600;
-  }
-
-  .login-form button:hover {
-    background: var(--color-accent);
-  }
-
-  /* ======================================================
-    ANIMATIONS
-  ====================================================== */
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(8px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  /* ===== HEADER LOGO (INDEX) ===== */
-  .header-left {
-    display: flex;
-    align-items: center;
-  }
-
-  #app-header .app-logo {
-    height: 50px;   /* pequeño, clínico */
-    width: auto;
-  }
-  /* ======================================================
-    BOOK CARD – ACTIONS
-  ====================================================== */
-
-  .card-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-  }
-
-  .notes-btn {
-    background: none;
-    border: none;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: transform 0.15s ease;
-  }
-
-  .notes-btn:hover {
-    transform: scale(1.15);
-  }
-  /* ======================================================
-    PDF VIEWER
-  ====================================================== */
-
-  .content-area {
-    display: flex;
-    gap: 1.5rem;
-  }
-
-  .pdf-viewer {
-    flex: 1;
-    background: var(--color-white);
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-soft);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-
-  .pdf-viewer.hidden {
-    display: none;
-  }
-
-  .pdf-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.75rem 1rem;
-    background: var(--color-primary-soft);
-    font-weight: 600;
-  }
-
-  .pdf-header button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    color: var(--color-primary);
-  }
-
-  #pdfFrame {
-    width: 100%;
-    height: 100%;
-    border: none;
-  }
-  .pdf-open-btn {
-    margin-top: auto;
-    align-self: flex-start;
-
-    padding: 0.45rem 0.9rem;
-    border-radius: 999px;
-
-    background: var(--color-primary-soft);
-    color: var(--color-primary);
-    font-size: 0.85rem;
-    font-weight: 600;
-    border: none;
-    cursor: pointer;
-
-    transition: var(--transition-fast);
-  }
-
-  .pdf-open-btn:hover {
-    background: var(--color-primary);
-    color: white;
-  }
-  /* ======================================================
-    PDF MODAL (PANTALLA COMPLETA)
-  ====================================================== */
-
-  .pdf-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(15, 23, 42, 0.85);
-    z-index: 2000;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .pdf-modal.hidden {
-    display: none;
-  }
-
-  .pdf-modal-content {
-  width: 90%;
-  height: 90%;
-  background: white;
-  border-radius: 12px;
-
+#app-header h1 {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.header-left {
   display: flex;
-  flex-direction: column;  /* MUY IMPORTANTE */
+  align-items: center;
 }
 
-/* CONTENEDOR REAL DEL PDF (aquí vive el scroll) */
-.pdf-canvas-container {
-  flex: 1;                 /* ocupa el espacio restante */
-  overflow-y: auto;        /* habilita scroll vertical */
-  overflow-x: hidden;
+#app-header .app-logo {
+  height: 48px;
+  width: auto;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+#logoutBtn {
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 0.55rem 1.2rem;
+  border-radius: 999px;
+  font-weight: 600;
+  box-shadow: 0 4px 14px rgba(15, 76, 129, 0.25);
+  transition: var(--transition-normal);
+}
+
+#logoutBtn:hover {
+  background: var(--color-accent);
+  box-shadow: 0 6px 18px rgba(47, 164, 169, 0.35);
+}
+
+/* ======================================================
+   SIDEBAR
+====================================================== */
+
+.sidebar-folder {
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+
+  margin: 4px 0;
+  padding: 0.65rem 1rem;
+  border-radius: 16px;
+
+  font-size: 0.95rem;
+  font-weight: 500;
+
+  color: var(--color-text);
+  transition: var(--transition-normal);
+}
+
+.sidebar-folder:hover {
+  background: rgba(15, 76, 129, 0.08);
+}
+
+.sidebar-folder.active {
+  background: linear-gradient(
+    90deg,
+    rgba(15, 76, 129, 0.12),
+    rgba(47, 164, 169, 0.08)
+  );
+  color: var(--color-primary);
+  font-weight: 600;
+  box-shadow: 0 4px 14px rgba(15, 76, 129, 0.12);
+}
+
+.sidebar-folder.active::before {
+  content: "";
+  position: absolute;
+  left: -10px;
+  top: 8px;
+  bottom: 8px;
+  width: 4px;
+  background: linear-gradient(
+    180deg,
+    var(--color-primary),
+    var(--color-accent)
+  );
+  border-radius: 4px;
+}
+
+.sidebar-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sidebar-label {
+  flex: 1;
+  white-space: nowrap;
+}
+
+.sidebar-arrow {
+  font-size: 0.75rem;
+  color: var(--color-muted);
+}
+
+/* ======================================================
+   BOOK GRID
+====================================================== */
+
+.books-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
+/* ======================================================
+   BOOK CARD
+====================================================== */
+
+.book-card {
+  background: var(--color-white);
+  padding: 1.8rem;
+  border-radius: 20px;
+  box-shadow: var(--shadow-soft);
 
   display: flex;
   flex-direction: column;
-  align-items: center;
+  gap: 0.75rem;
 
-  padding: 20px;
-  gap: 20px;
-
-  background: #e5e7eb;
+  transition: var(--transition-slow);
 }
 
-/* Cada página */
-.pdf-page {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+.book-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-hover);
 }
 
+.book-card h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+}
 
-  /* HEADER DEL PDF */
-  .pdf-modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.75rem 1rem;
-    background: var(--color-primary-soft);
-    font-weight: 600;
-  }
+.book-card p {
+  font-size: 0.9rem;
+  color: var(--color-muted);
+  margin: 0;
+}
 
-  .pdf-modal-header .actions {
-    display: flex;
-    gap: 0.5rem;
-  }
+.book-card a,
+.pdf-open-btn {
+  margin-top: auto;
+  align-self: flex-start;
 
-  /* BOTONES DEL HEADER */
-  .pdf-modal-header button {
-    padding: 0.4rem 0.9rem;
-    border-radius: 999px;
-    border: none;
-    font-weight: 600;
-    cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
 
-    background: var(--color-primary-soft);
-    color: var(--color-primary);
-    transition: var(--transition-fast);
-  }
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-weight: 600;
+  border: none;
 
-  .pdf-modal-header button:hover {
-    background: var(--color-primary);
-    color: white;
-  }
+  transition: var(--transition-fast);
+}
+
+.book-card a:hover,
+.pdf-open-btn:hover {
+  background: var(--color-primary);
+  color: white;
+}
+
 /* ======================================================
-GLOBAL BUTTON FEEDBACK – PREMIUM CLICK FEEL
+   FAVORITE BUTTON
 ====================================================== */
 
-/* Todo lo clickeable */
-button,
-a,
-input[type="button"],
-input[type="submit"] {
-  cursor: pointer;
-  transition:
-    transform 0.12s ease,
-    box-shadow 0.12s ease,
-    background-color 0.2s ease,
-    color 0.2s ease;
+.favorite-btn {
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  color: var(--color-accent);
+  transition: var(--transition-fast);
 }
 
-/* Hover = elevación */
-button:hover,
-a:hover,
-input[type="button"]:hover,
-input[type="submit"]:hover {
-  transform: translateY(-1px);
+.favorite-btn:hover {
+  transform: scale(1.2);
 }
 
-/* Active = presión física */
-button:active,
-a:active,
-input[type="button"]:active,
-input[type="submit"]:active {
-  transform: translateY(1px) scale(0.97);
-  box-shadow: inset 0 2px 6px rgba(0,0,0,0.15);
+/* ======================================================
+   SEARCH
+====================================================== */
+
+#search-input {
+  padding: 0.85rem 1.2rem;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 76, 129, 0.15);
+  background: var(--color-white);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.04);
+  transition: var(--transition-fast);
 }
 
-/* Quita sensación "plana" en botones con fondo */
-button {
-  box-shadow: 0 1px 0 rgba(0,0,0,0.08);
-}
-
-/* Micro-feedback en icon buttons */
-button svg,
-button span {
-  pointer-events: none;
-}
-
-/* Evita animación fea al arrastrar */
-button:focus {
+#search-input:focus {
   outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 4px rgba(47, 164, 169, 0.15);
 }
 
 /* ======================================================
-Boton de crear cuenta
+   PDF MODAL
 ====================================================== */
 
-.crear-cuenta{
-  color:#0f4c81
+.pdf-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(6px);
+  z-index: 2000;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pdf-modal.hidden {
+  display: none;
+}
+
+.pdf-modal-content {
+  width: 92%;
+  height: 92%;
+  background: var(--color-white);
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.25);
+}
+
+.pdf-modal-header {
+  padding: 1rem 1.5rem;
+  background: var(--color-primary-soft);
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pdf-modal-header button {
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  border: none;
+  font-weight: 600;
+  background: white;
+  color: var(--color-primary);
+  transition: var(--transition-fast);
+}
+
+.pdf-modal-header button:hover {
+  background: var(--color-primary);
+  color: white;
 }
 
 /* ======================================================
-NOTES PANEL – CLEAN ARCHITECTURE
+   NOTES PANEL
 ====================================================== */
 
 .notes-panel {
@@ -636,157 +278,93 @@ NOTES PANEL – CLEAN ARCHITECTURE
   right: 0;
   width: 420px;
   height: 100vh;
-  background: #f9fafb;
+  background: var(--color-white);
   z-index: 3000;
 
   display: flex;
   flex-direction: column;
 
-  box-shadow: -12px 0 40px rgba(0, 0, 0, 0.12);
-  padding: 1rem;
+  box-shadow: -20px 0 60px rgba(0,0,0,0.18);
+  padding: 1.5rem;
 }
 
-/* HEADER */
-
 .notes-header {
-  flex-shrink: 0;
-  margin-bottom: 1rem;
-
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .notes-header h3 {
-  font-size: 1.1rem;
   font-weight: 700;
   color: var(--color-primary);
 }
 
-.notes-header button {
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  opacity: 0.6;
-}
-
-.notes-header button:hover {
-  opacity: 1;
-}
-
-/* CREATE SECTION */
-
-.note-create {
-  flex-shrink: 0;
-
-  background: white;
-  border-radius: 16px;
+.note-create,
+.note-item {
+  background: var(--color-white);
+  border-radius: 18px;
   padding: 1rem;
   box-shadow: var(--shadow-soft);
-
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
 }
 
-#noteInput {
+#noteInput,
+.note-edit {
   width: 100%;
-  min-height: 100px;
-  resize: vertical;
-  border-radius: 10px;
-  border: 1px solid #e5e7eb;
-  padding: 0.6rem;
-  font-size: 0.9rem;
+  border-radius: 14px;
+  border: 1px solid rgba(15, 76, 129, 0.15);
+  padding: 0.7rem;
+  transition: var(--transition-fast);
 }
 
-.note-create-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.note-create-actions input[type="number"] {
-  width: 70px;
-  padding: 0.4rem;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
+#noteInput:focus,
+.note-edit:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 4px rgba(47, 164, 169, 0.15);
 }
 
 .save-note-btn {
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 0.4rem 1rem;
+  padding: 0.5rem 1.2rem;
   border-radius: 999px;
   font-weight: 600;
 }
 
-/* HISTORY SECTION */
-
-.notes-history {
-  flex: 1;
-  overflow: hidden;
-
-  display: flex;
-  flex-direction: column;
+.save-note-btn:hover {
+  background: var(--color-accent);
 }
 
-/* SCROLL REAL AQUÍ */
+/* ======================================================
+   GLOBAL BUTTON FEEDBACK
+====================================================== */
 
-.notes-list {
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-
-  padding-right: 4px;
+button,
+a {
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
-/* NOTE ITEM */
-
-.note-item {
-  background: white;
-  border-radius: 14px;
-  padding: 0.75rem;
-
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-
-  box-shadow: var(--shadow-soft);
+button:hover,
+a:hover {
+  transform: translateY(-2px);
 }
 
-.note-edit {
-  width: 100%;
-  min-height: 60px;
-  resize: vertical;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  padding: 0.5rem;
-  font-size: 0.85rem;
+button:active,
+a:active {
+  transform: translateY(1px) scale(0.97);
 }
 
-.note-meta {
-  font-size: 0.75rem;
-  color: var(--color-muted);
-}
+/* ======================================================
+   CREAR CUENTA
+====================================================== */
 
-.note-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.4rem;
-}
-
-.note-actions button {
-  background: none;
-  border: none;
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-.note-actions button:hover {
-  transform: scale(1.1);
+.crear-cuenta {
+  color: var(--color-primary);
+  margin-top: 1rem;
+  font-weight: 500;
 }
