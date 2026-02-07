@@ -61,16 +61,27 @@ export async function openPdfModal(book) {
 }
 
 function detectCurrentPage(e) {
-  const pages = e.target.querySelectorAll(".pdf-page");
-  const top = e.target.scrollTop;
+  const container = e.target;
+  const pages = container.querySelectorAll(".pdf-page");
 
-  for (const page of pages) {
-    if (page.offsetTop + page.offsetHeight > top + 100) {
-      currentPage = Number(page.dataset.page);
-      break;
+  let closestPage = 1;
+  let minDistance = Infinity;
+
+  const containerRect = container.getBoundingClientRect();
+
+  pages.forEach(page => {
+    const rect = page.getBoundingClientRect();
+    const distance = Math.abs(rect.top - containerRect.top);
+
+    if (distance < minDistance) {
+      minDistance = distance;
+      closestPage = Number(page.dataset.page);
     }
-  }
+  });
+
+  currentPage = closestPage;
 }
+
 
 export function getCurrentPdfPage() {
   const container = document.querySelector(".pdf-canvas-container");
