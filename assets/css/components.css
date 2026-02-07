@@ -2,14 +2,19 @@
     HEADER
   ====================================================== */
 
-  #app-header {
-    background: var(--color-white);
-    padding: 1.25rem 2.5rem;
-    box-shadow: var(--shadow-soft);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+#app-header {
+  /* Layout */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  /* Visual */
+  background: var(--color-white);
+  padding: 1rem 2rem;
+  border-bottom: 1px solid var(--color-gray-light);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+}
+
 
   #app-header h1 {
     color: var(--color-primary);
@@ -379,13 +384,6 @@
     }
   }
   /* ===== HEADER LOGO (INDEX) ===== */
-
-  #app-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
   .header-left {
     display: flex;
     align-items: center;
@@ -395,177 +393,6 @@
     height: 50px;   /* pequeño, clínico */
     width: auto;
   }
-  /* ======================================================
-    NOTES PANEL – PREMIUM TOOL UI
-  ====================================================== */
-
-  .notes-panel {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 420px;
-    height: 100vh;
-    background: #f9fafb;
-    z-index: 3000;
-
-    display: flex;
-    flex-direction: column;
-
-    box-shadow: -12px 0 40px rgba(0, 0, 0, 0.12);
-  }
-
-  /* ===== CONTENEDOR INTERNO (SIMETRÍA) ===== */
-
-  .notes-panel > * {
-    max-width: 360px;
-    margin-left: auto;
-    margin-right: auto;
-    width: 100%;
-  }
-
-  /* ===== HEADER ===== */
-
-  .notes-header {
-    padding: 1.25rem 0 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .notes-header h3 {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--color-primary);
-  }
-
-  .notes-header button {
-    background: none;
-    border: none;
-    font-size: 1.2rem;
-    opacity: 0.5;
-    cursor: pointer;
-  }
-
-  .notes-header button:hover {
-    opacity: 1;
-  }
-
-  /* ===== ÁREA DE TRABAJO ===== */
-
-  .note-create {
-    background: white;
-    border-radius: 16px;
-    padding: 1rem;
-
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-
-    box-shadow: var(--shadow-soft);
-  }
-
-  /* INPUT */
-
-  #noteInput {
-    width: 100%;
-    min-height: 110px;
-    padding: 0.75rem;
-    border-radius: 12px;
-    border: 1px solid #e5e7eb;
-
-    font-size: 0.9rem;
-    line-height: 1.4;
-
-    resize: vertical;
-  }
-
-  /* ACCIONES */
-
-  .note-create-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .note-create-actions input {
-    width: 72px;
-    padding: 0.4rem;
-    border-radius: 8px;
-    border: 1px solid #d1d5db;
-  }
-
-  .save-note-btn {
-    background: var(--color-primary);
-    color: white;
-    border: none;
-    padding: 0.45rem 1.2rem;
-    border-radius: 999px;
-    font-weight: 600;
-  }
-
-  /* ===== LISTA DE NOTAS ===== */
-
-  .notes-list {
-    flex: 1;
-    margin-top: 1rem;
-    padding-bottom: 1rem;
-
-    overflow-y: auto;
-    overflow-x: hidden;
-
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  /* ===== NOTA ===== */
-
-  .note-item {
-    background: white;
-    border-radius: 14px;
-    padding: 0.75rem;
-
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-
-    box-shadow: var(--shadow-soft);
-  }
-
-  .note-edit {
-    width: 100%;
-    min-height: 60px;
-    border-radius: 10px;
-    border: 1px solid #e5e7eb;
-    padding: 0.5rem;
-
-    font-size: 0.85rem;
-  }
-
-  /* META */
-
-  .note-meta {
-    font-size: 0.7rem;
-    color: var(--color-muted);
-  }
-
-  /* ===== BOTONES ===== */
-
-  .note-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.4rem;
-  }
-
-  .note-actions button {
-    background: var(--color-primary-soft);
-    border: none;
-    padding: 0.3rem 0.6rem;
-    border-radius: 999px;
-  }
-
-
-
   /* ======================================================
     BOOK CARD – ACTIONS
   ====================================================== */
@@ -737,182 +564,11 @@
     height: 100%;
     border: none;
   }
-
-  /* ==============================
-    FIX: Notas sobre PDF (CORRECTO)
-  ============================== */
-
-  .notes-panel {
-    position: fixed;       /* CLAVE */
-    top: 0;
-    right: 0;
-    width: 380px;
-    height: 100vh;
-    background: var(--color-white);
-    z-index: 3000;         /* MÁS QUE EL PDF */
-    box-shadow: -6px 0 20px rgba(0,0,0,0.25);
-
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  .note-page {
-    color: var(--color-primary);
-    cursor: pointer;
-    font-weight: 600;
-  }
-
-  .note-page:hover {
-    text-decoration: underline;
-  }
-  .pdf-canvas-container {
-    flex: 1;
-    overflow-y: auto;
-    background: #2b2b2b;
-    padding: 24px;
-  }
-
-  .pdf-page {
-    margin: 0 auto 24px;
-    box-shadow: 0 4px 20px rgba(0,0,0,.4);
-  }
-  .note-item {
-    display: flex;
-    justify-content: space-between;
-    gap: 8px;
-    margin-bottom: 10px;
-  }
-
-  .note-actions button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-  }
-
-  .note-actions button:hover {
-    opacity: 0.7;
-  }
-  /* ===============================
-    FIX REAL – NOTAS (VISIBLE)
-  =============================== */
-
-  .note-item {
-    display: flex;
-    flex-direction: column;   /* 🔥 CLAVE */
-    gap: 6px;
-    padding: 0.6rem;
-  }
-
-  /* textarea editable */
-  .note-edit {
-    width: 100%;
-    min-height: 70px;
-    resize: vertical;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    padding: 0.4rem;
-    font-size: 0.85rem;
-  }
-
-  /* info página */
-  .note-meta {
-    font-size: 0.75rem;
-    color: var(--color-muted);
-  }
-
-  /* acciones visibles */
-  .note-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-  }
-
-  .note-actions button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1rem;
-    padding: 4px;
-  }
-
-  .note-actions button:hover {
-    transform: scale(1.15);
-  }
-
   /* ===============================
     CREAR NOTA – SELECTOR PÁGINA
   =============================== */
-
-  .note-create {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .note-create-actions {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-  }
-
-  .note-create-actions input[type="number"] {
-    width: 80px;
-    padding: 0.3rem;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    font-size: 0.85rem;
-  }
-  /* ======================================================
-   NOTES PANEL – TOOL UI (ESTABLE)
-====================================================== */
-
-.notes-panel {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 420px;
-  height: 100vh;
-  background: #f9fafb;
-  z-index: 3000;
-
-  display: flex;
-  flex-direction: column;
-  box-shadow: -12px 0 40px rgba(0, 0, 0, 0.12);
-}
-
-.notes-panel > * {
-  max-width: 360px;
-  width: 100%;
-  margin: 0 auto;
-}
-
-.notes-header {
-  padding: 1.25rem 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.note-create,
-.note-item {
-  background: white;
-  border-radius: 16px;
-  padding: 1rem;
-  box-shadow: var(--shadow-soft);
-}
-
-.notes-list {
-  flex: 1;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
 /* ======================================================
-   GLOBAL BUTTON FEEDBACK – PREMIUM CLICK FEEL
+GLOBAL BUTTON FEEDBACK – PREMIUM CLICK FEEL
 ====================================================== */
 
 /* Todo lo clickeable */
@@ -959,4 +615,177 @@ button span {
 /* Evita animación fea al arrastrar */
 button:focus {
   outline: none;
+}
+
+/* ======================================================
+Boton de crear cuenta
+====================================================== */
+
+.crear-cuenta{
+  color:#0f4c81
+}
+
+/* ======================================================
+NOTES PANEL – CLEAN ARCHITECTURE
+====================================================== */
+
+.notes-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 420px;
+  height: 100vh;
+  background: #f9fafb;
+  z-index: 3000;
+
+  display: flex;
+  flex-direction: column;
+
+  box-shadow: -12px 0 40px rgba(0, 0, 0, 0.12);
+  padding: 1rem;
+}
+
+/* HEADER */
+
+.notes-header {
+  flex-shrink: 0;
+  margin-bottom: 1rem;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.notes-header h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.notes-header button {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  opacity: 0.6;
+}
+
+.notes-header button:hover {
+  opacity: 1;
+}
+
+/* CREATE SECTION */
+
+.note-create {
+  flex-shrink: 0;
+
+  background: white;
+  border-radius: 16px;
+  padding: 1rem;
+  box-shadow: var(--shadow-soft);
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+#noteInput {
+  width: 100%;
+  min-height: 100px;
+  resize: vertical;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  padding: 0.6rem;
+  font-size: 0.9rem;
+}
+
+.note-create-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.note-create-actions input[type="number"] {
+  width: 70px;
+  padding: 0.4rem;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+}
+
+.save-note-btn {
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+/* HISTORY SECTION */
+
+.notes-history {
+  flex: 1;
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* SCROLL REAL AQUÍ */
+
+.notes-list {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  padding-right: 4px;
+}
+
+/* NOTE ITEM */
+
+.note-item {
+  background: white;
+  border-radius: 14px;
+  padding: 0.75rem;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  box-shadow: var(--shadow-soft);
+}
+
+.note-edit {
+  width: 100%;
+  min-height: 60px;
+  resize: vertical;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  padding: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.note-meta {
+  font-size: 0.75rem;
+  color: var(--color-muted);
+}
+
+.note-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.4rem;
+}
+
+.note-actions button {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.note-actions button:hover {
+  transform: scale(1.1);
 }
