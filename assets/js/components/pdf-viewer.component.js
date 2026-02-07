@@ -48,7 +48,7 @@ export async function openPdfModal(book) {
   }
 }
 
-function detectCurrentPage() {
+export function detectCurrentPage() {
   const container = document.querySelector(".pdf-canvas-container");
   if (!container) return;
 
