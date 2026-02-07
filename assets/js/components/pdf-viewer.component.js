@@ -18,17 +18,16 @@ export async function openPdfModal(book) {
     currentPage = 1;
 
     const viewer = document.getElementById("pdfViewer");
-    const oldContainer = document.querySelector(".pdf-canvas-container");
+    const oldContainer = document.getElementById("pdfViewer");
 
     const title = document.getElementById("pdfTitle");
 
-    // 🔥 reset REAL del contenedor
-    oldContainer.removeEventListener("scroll", detectCurrentPage);
-    const container = oldContainer.cloneNode(false);
-    oldContainer.parentNode.replaceChild(container, oldContainer);
+    // 🔥 reset REAL del contenedorf
+    const container = oldContainer;
 
     title.textContent = book.title;
     viewer.classList.remove("hidden");
+    viewer.addEventListener("scroll", detectCurrentPage);
     document.body.classList.add("notes-open");
 
 
@@ -62,7 +61,7 @@ export async function openPdfModal(book) {
 
 function detectCurrentPage(e) {
   console.log("SCROLL DETECTADO");
-  
+
   const container = e.target;
   const pages = container.querySelectorAll(".pdf-page");
 
