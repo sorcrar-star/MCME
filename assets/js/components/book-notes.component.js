@@ -74,11 +74,11 @@ export function openNotesPanel(book, forcedPage = null) {
 
   let currentPage = 1;
 
-if (forcedPage !== null) {
-  currentPage = forcedPage;
-} else if (typeof getCurrentPdfPage === "function") {
-  currentPage = getCurrentPdfPage();
-}
+  if (forcedPage !== null) {
+    currentPage = forcedPage;
+  } else if (typeof getCurrentPdfPage === "function") {
+    currentPage = getCurrentPdfPage();
+  }
 
   const panel = document.createElement("div");
   panel.id = "notes-panel";
@@ -125,6 +125,15 @@ if (forcedPage !== null) {
 
   renderNotes(book.id);
 
+  // 🔥 ESCUCHAR CAMBIO DE PAGINA DEL PDF
+  const pageChangeHandler = (e) => {
+    const pageInput = document.getElementById("notePageInput");
+    if (!pageInput) return;
+    pageInput.value = e.detail.page;
+  };
+
+  document.addEventListener("pdf:pageChanged", pageChangeHandler);
+
   document.getElementById("saveNoteBtn").onclick = () => {
     const text = document.getElementById("noteInput");
     const pageInput = document.getElementById("notePageInput");
@@ -132,12 +141,11 @@ if (forcedPage !== null) {
     addNote(book.id, text.value, pageInput.value);
 
     text.value = "";
-    pageInput.value = getCurrentPdfPage?.() || 1;
-
     renderNotes(book.id);
   };
 
   document.getElementById("closeNotesBtn").onclick = () => {
+    document.removeEventListener("pdf:pageChanged", pageChangeHandler);
     panel.remove();
   };
 }
