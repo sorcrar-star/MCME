@@ -70,7 +70,16 @@ function detectCurrentPage() {
     }
   });
 
-  currentPage = closestPage;
+  if (currentPage !== closestPage) {
+    currentPage = closestPage;
+
+    // 🔥 NOTIFICAR CAMBIO DE PAGINA
+    document.dispatchEvent(
+      new CustomEvent("pdf:pageChanged", {
+        detail: { page: currentPage }
+      })
+    );
+  }
 }
 
 export function getCurrentPdfPage() {
