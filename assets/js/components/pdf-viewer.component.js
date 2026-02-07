@@ -42,6 +42,9 @@ export async function openPdfModal(book) {
     }
 
     container.addEventListener("scroll", detectCurrentPage);
+    // Forzar cálculo inicial
+    detectCurrentPage();
+
 
   } catch (err) {
     console.error("Error PDF:", err);
