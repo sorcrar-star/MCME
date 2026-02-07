@@ -1,78 +1,107 @@
 /* ======================================================
-HEADER
+   HEADER
 ====================================================== */
 
 #app-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   background: var(--color-white);
   padding: 1rem 2rem;
-  border-bottom: 1px solid rgba(15, 76, 129, 0.08);
-  box-shadow: 0 6px 18px rgba(15, 76, 129, 0.08);
+  border-bottom: 1px solid var(--color-gray-light);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.03);
 }
 
-.header-left {
+#app-header h1 {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.header-right {
   display: flex;
   align-items: center;
+  gap: 1rem;
 }
 
-#app-header .app-logo {
-  height: 50px;
+#logoutBtn {
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 0.5rem 1.1rem;
+  border-radius: 999px;
+  transition: var(--transition-normal);
+}
+
+#logoutBtn:hover {
+  background: var(--color-accent);
+  transform: translateY(-1px);
 }
 
 /* ======================================================
-SIDEBAR
+   SIDEBAR – BASE
 ====================================================== */
 
 #app-sidebar {
-  background: linear-gradient(180deg, #ffffff, #f6f9fc);
+  background: var(--color-white);
   padding: 2rem 1.5rem;
-  box-shadow: 12px 0 32px rgba(15, 76, 129, 0.08);
+  box-shadow: var(--shadow-soft);
 }
 
-#app-sidebar h2 {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--color-primary);
-  margin-bottom: 1rem;
+#app-sidebar ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
 }
+
+/* ======================================================
+   SIDEBAR – NODO CARPETA
+====================================================== */
 
 .sidebar-folder {
   position: relative;
-  margin: 4px 0;
-  padding: 0.6rem 0.9rem;
-  border-radius: 12px;
+  cursor: pointer;
+  user-select: none;
+  margin: 2px 0;
+  padding: 0.55rem 0.9rem;
+  border-radius: 10px;
+  color: #2c3e50;
   font-size: 0.95rem;
-  color: #334155;
-  transition: background 0.25s ease, transform 0.15s ease;
+  font-weight: 400;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    transform 0.15s ease;
 }
 
 .sidebar-folder:hover {
-  background: rgba(15, 76, 129, 0.06);
+  background-color: rgba(15, 76, 129, 0.08);
+}
+
+.sidebar-folder:active {
+  transform: scale(0.97);
 }
 
 .sidebar-folder.active {
-  background: rgba(15, 76, 129, 0.12);
-  color: var(--color-primary);
+  background-color: rgba(15, 76, 129, 0.14);
+  color: #0f4c81;
   font-weight: 600;
+  overflow: visible;
 }
 
 .sidebar-folder.active::before {
   content: "";
   position: absolute;
-  left: -10px;
-  top: 8px;
-  bottom: 8px;
+  left: -8px;
+  top: 6px;
+  bottom: 6px;
   width: 4px;
-  background: linear-gradient(
-    180deg,
-    var(--color-primary),
-    var(--color-accent)
-  );
+  background-color: #0f4c81;
   border-radius: 4px;
 }
+
+/* ======================================================
+   SIDEBAR – FILA INTERNA
+====================================================== */
 
 .sidebar-row {
   display: flex;
@@ -80,144 +109,276 @@ SIDEBAR
   gap: 6px;
 }
 
-.sidebar-arrow {
-  width: 14px;
-  font-size: 0.75rem;
-  color: #64748b;
+.sidebar-label {
+  flex: 1;
+  color: inherit;
+  line-height: 1.2;
+  white-space: nowrap;
 }
+
+/* ======================================================
+   SIDEBAR – FLECHAS
+====================================================== */
+
+.sidebar-arrow {
+  font-size: 0.75rem;
+  width: 14px;
+  text-align: center;
+  color: #6b7280;
+  cursor: pointer;
+}
+
+.sidebar-folder:not(.has-children) .sidebar-arrow {
+  visibility: hidden;
+}
+
+/* ======================================================
+   SIDEBAR – SUBCARPETAS
+====================================================== */
 
 .sidebar-subfolders {
   margin-left: 1rem;
-  margin-top: 0.3rem;
+  margin-top: 0.25rem;
   overflow: hidden;
   max-height: 1000px;
-  transition: max-height 0.35s ease, opacity 0.25s ease;
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    max-height 0.35s ease,
+    opacity 0.25s ease,
+    transform 0.25s ease;
 }
 
 .sidebar-subfolders.collapsed {
   max-height: 0;
   opacity: 0;
+  transform: translateY(-4px);
+}
+
+.sidebar-subfolders .sidebar-folder {
+  color: #2c3e50;
+  font-size: 0.9rem;
+  opacity: 0.85;
 }
 
 /* ======================================================
-BOOK GRID
+   BOOK GRID
 ====================================================== */
 
 .books-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 1.8rem;
+  gap: 1.5rem;
 }
 
 /* ======================================================
-BOOK CARD
+   BOOK CARD
 ====================================================== */
 
 .book-card {
-  background: linear-gradient(180deg, #ffffff, #fbfdff);
-  padding: 1.6rem;
-  border-radius: 18px;
-  box-shadow: 0 10px 30px rgba(15, 76, 129, 0.12);
+  background: var(--color-white);
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-soft);
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
+  min-height: 180px;
   transition: var(--transition-slow);
+  animation: fadeIn 0.4s ease;
 }
 
 .book-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 18px 42px rgba(15, 76, 129, 0.18);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+
+.book-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
 }
 
 .book-card h3 {
   font-size: 1rem;
-  font-weight: 700;
-  color: var(--color-primary);
+  font-weight: 600;
 }
 
 .book-card p {
   font-size: 0.85rem;
   color: var(--color-muted);
+  margin: 0;
+}
+
+.book-card a {
+  margin-top: auto;
+  align-self: flex-start;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: var(--transition-fast);
+}
+
+.book-card a:hover {
+  background: var(--color-primary);
+  color: white;
 }
 
 /* ======================================================
-BOOK ACTIONS
+   FAVORITOS
 ====================================================== */
 
-.card-actions {
-  display: flex;
-  gap: 0.4rem;
+.favorite-btn {
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  color: var(--color-accent);
+  transition: transform var(--transition-fast);
 }
 
-.pdf-open-btn {
-  margin-top: auto;
-  padding: 0.5rem 1.1rem;
+.favorite-btn:hover {
+  transform: scale(1.2);
+}
+
+/* ======================================================
+   SEARCH
+====================================================== */
+
+#search-input {
+  padding: 0.75rem 1rem;
   border-radius: 999px;
+  border: 1px solid #ddd;
+  transition: var(--transition-fast);
+}
+
+#search-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
+}
+
+/* ======================================================
+   BREADCRUMBS
+====================================================== */
+
+.breadcrumbs {
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+
+.breadcrumb-item {
+  cursor: pointer;
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+.breadcrumb-item:hover {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
+.separator {
+  margin: 0 0.25rem;
+  color: var(--color-muted);
+}
+
+/* ======================================================
+   LOGIN
+====================================================== */
+
+.login-page {
   background: linear-gradient(
     135deg,
-    var(--color-primary),
-    var(--color-accent)
+    var(--color-primary-soft),
+    var(--color-bg)
   );
-  color: white;
-  font-weight: 600;
-  border: none;
-}
-
-.notes-btn {
-  background: var(--color-primary-soft);
-  border-radius: 999px;
-  padding: 0.45rem 0.6rem;
-}
-
-/* ======================================================
-PDF MODAL (FIX CRÍTICO)
-====================================================== */
-
-.pdf-modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.55);
-  backdrop-filter: blur(10px);
-  z-index: 2000;
-
+  min-height: 100vh;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
 }
 
-/* 🔥 ESTO ARREGLA TODO */
-.pdf-modal.hidden {
-  display: none;
+.login-container {
+  background: var(--color-white);
+  padding: 2.5rem 3rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-soft);
+  max-width: 420px;
+  width: 100%;
+  animation: fadeIn 0.6s ease;
 }
 
-.pdf-modal-content {
-  width: 92%;
-  height: 92%;
-  background: linear-gradient(180deg, #ffffff, #f8fafc);
-  border-radius: 20px;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 40px 80px rgba(0,0,0,0.35);
-}
-
-.pdf-modal-header {
-  padding: 0.9rem 1.2rem;
-  background: var(--color-primary-soft);
+.login-container h1 {
+  text-align: center;
+  color: var(--color-primary);
   font-weight: 700;
 }
 
-.pdf-canvas-container {
-  flex: 1;
-  overflow-y: auto;
-  background: #e5e7eb;
-  padding: 30px;
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
+/* ======================================================
+   ANIMATIONS
+====================================================== */
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.pdf-page {
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+/* ======================================================
+   VISUAL ENHANCEMENTS – SOLO ESTÉTICA (OVERRIDES)
+====================================================== */
+
+/* Profundidad general */
+#app-header,
+#app-sidebar,
+.book-card,
+.pdf-viewer,
+.login-container,
+.notes-panel {
+  backdrop-filter: saturate(1.1);
+}
+
+/* Cards más premium */
+.book-card {
+  border: 1px solid rgba(15,76,129,0.06);
+}
+
+.book-card:hover {
+  box-shadow:
+    0 12px 30px rgba(15,76,129,0.15),
+    0 2px 6px rgba(0,0,0,0.05);
+}
+
+/* Sidebar más clínica */
+#app-sidebar {
+  border-right: 1px solid rgba(15,76,129,0.06);
+}
+
+/* PDF modal más elegante */
+.pdf-modal-content {
+  box-shadow: 0 40px 120px rgba(0,0,0,0.45);
+}
+
+/* Notes panel más limpio */
+.notes-panel {
+  background: linear-gradient(
+    180deg,
+    #ffffff,
+    #f4f7fb
+  );
+}
+
+/* Botones primarios más firmes */
+button,
+.pdf-open-btn,
+.save-note-btn {
+  letter-spacing: 0.02em;
+}
+
+/* Inputs más suaves */
+input,
+textarea {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
