@@ -72,13 +72,8 @@ function deleteNote(id) {
 export function openNotesPanel(book, forcedPage = null) {
   if (document.getElementById("notes-panel")) return;
 
-  let currentPage = 1;
-
-  if (forcedPage !== null) {
-    currentPage = forcedPage;
-  } else if (typeof getCurrentPdfPage === "function") {
-    currentPage = getCurrentPdfPage();
-  }
+  let initialPage =
+    forcedPage !== null ? forcedPage : getCurrentPdfPage();
 
   const panel = document.createElement("div");
   panel.id = "notes-panel";
@@ -106,7 +101,7 @@ export function openNotesPanel(book, forcedPage = null) {
             type="number"
             id="notePageInput"
             min="1"
-            value="${currentPage}"
+            value="${initialPage}"
           />
         </div>
 
@@ -122,17 +117,11 @@ export function openNotesPanel(book, forcedPage = null) {
   `;
 
   document.body.appendChild(panel);
-  // 🔥 Escuchar cambios de página del PDF
-document.addEventListener("pdfPageChanged", (e) => {
-  const pageInput = document.getElementById("notePageInput");
-  if (pageInput) {
-    pageInput.value = e.detail.page;
-  }
-});
 
   renderNotes(book.id);
 
-  // 🔥 ESCUCHAR CAMBIO DE PAGINA DEL PDF
+  /* ===== SINCRONIZACIÓN CON PDF ===== */
+
   const pageChangeHandler = (e) => {
     const pageInput = document.getElementById("notePageInput");
     if (!pageInput) return;
@@ -140,6 +129,8 @@ document.addEventListener("pdfPageChanged", (e) => {
   };
 
   document.addEventListener("pdf:pageChanged", pageChangeHandler);
+
+  /* ===== GUARDAR ===== */
 
   document.getElementById("saveNoteBtn").onclick = () => {
     const text = document.getElementById("noteInput");
@@ -150,6 +141,8 @@ document.addEventListener("pdfPageChanged", (e) => {
     text.value = "";
     renderNotes(book.id);
   };
+
+  /* ===== CERRAR ===== */
 
   document.getElementById("closeNotesBtn").onclick = () => {
     document.removeEventListener("pdf:pageChanged", pageChangeHandler);
@@ -206,4 +199,3 @@ function renderNotes(bookId) {
     list.appendChild(li);
   });
 }
-
