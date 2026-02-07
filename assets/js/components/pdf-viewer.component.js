@@ -55,31 +55,25 @@ function detectCurrentPage() {
   if (!container) return;
 
   const pages = container.querySelectorAll(".pdf-page");
-  const containerTop = container.getBoundingClientRect().top;
 
-  let closestPage = 1;
-  let minDistance = Infinity;
+  const containerScrollTop = container.scrollTop;
+  const containerHeight = container.clientHeight;
+
+  let current = 1;
 
   pages.forEach(page => {
-    const rect = page.getBoundingClientRect();
-    const distance = Math.abs(rect.top - containerTop);
+    const pageTop = page.offsetTop;
+    const pageHeight = page.clientHeight;
 
-    if (distance < minDistance) {
-      minDistance = distance;
-      closestPage = Number(page.dataset.page);
+    if (
+      pageTop <= containerScrollTop + containerHeight / 2 &&
+      pageTop + pageHeight > containerScrollTop + containerHeight / 2
+    ) {
+      current = Number(page.dataset.page);
     }
   });
 
-  if (currentPage !== closestPage) {
-    currentPage = closestPage;
-
-    // 🔥 Notificar cambio de página al resto del sistema
-    document.dispatchEvent(
-      new CustomEvent("pdfPageChanged", {
-        detail: { page: currentPage }
-      })
-    );
-  }
+  currentPage = current;
 }
 
 export function getCurrentPdfPage() {
