@@ -72,10 +72,13 @@ function deleteNote(id) {
 export function openNotesPanel(book, forcedPage = null) {
   if (document.getElementById("notes-panel")) return;
 
-  const currentPage =
-  forcedPage ??
-  (typeof getCurrentPdfPage === "function" ? getCurrentPdfPage() : 1);
+  let currentPage = 1;
 
+if (forcedPage !== null) {
+  currentPage = forcedPage;
+} else if (typeof getCurrentPdfPage === "function") {
+  currentPage = getCurrentPdfPage();
+}
 
   const panel = document.createElement("div");
   panel.id = "notes-panel";
