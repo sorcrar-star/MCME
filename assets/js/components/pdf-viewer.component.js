@@ -73,9 +73,9 @@ function detectCurrentPage() {
   if (currentPage !== closestPage) {
     currentPage = closestPage;
 
-    // 🔥 NOTIFICAR CAMBIO DE PAGINA
+    // 🔥 Notificar cambio de página al resto del sistema
     document.dispatchEvent(
-      new CustomEvent("pdf:pageChanged", {
+      new CustomEvent("pdfPageChanged", {
         detail: { page: currentPage }
       })
     );
