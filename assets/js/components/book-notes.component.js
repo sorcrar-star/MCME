@@ -1,8 +1,5 @@
 import { getCurrentUser } from "../services/auth.service.js";
-import {
-  getCurrentPdfPage,
-  goToPdfPage
-} from "./pdf-viewer.component.js";
+import { getCurrentPdfPage,goToPdfPage,detectCurrentPage} from "./pdf-viewer.component.js";
 
 const STORAGE_KEY = "mcme_notes";
 
