@@ -69,8 +69,14 @@ function deleteNote(id) {
 export function openNotesPanel(book, forcedPage = null) {
   if (document.getElementById("notes-panel")) return;
 
-  let initialPage =
-    forcedPage !== null ? forcedPage : getCurrentPdfPage();
+// 🔥 Forzar detección real antes de leer estado
+if (forcedPage === null) {
+  detectCurrentPage();
+}
+
+let initialPage =
+  forcedPage !== null ? forcedPage : getCurrentPdfPage();
+
 
   const panel = document.createElement("div");
   panel.id = "notes-panel";
