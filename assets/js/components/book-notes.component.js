@@ -122,6 +122,13 @@ export function openNotesPanel(book, forcedPage = null) {
   `;
 
   document.body.appendChild(panel);
+  // 🔥 Escuchar cambios de página del PDF
+document.addEventListener("pdfPageChanged", (e) => {
+  const pageInput = document.getElementById("notePageInput");
+  if (pageInput) {
+    pageInput.value = e.detail.page;
+  }
+});
 
   renderNotes(book.id);
 
