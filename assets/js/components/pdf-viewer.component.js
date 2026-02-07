@@ -61,6 +61,8 @@ export async function openPdfModal(book) {
 }
 
 function detectCurrentPage(e) {
+  console.log("SCROLL DETECTADO");
+  
   const container = e.target;
   const pages = container.querySelectorAll(".pdf-page");
 
