@@ -1,5 +1,3 @@
-// assets/js/components/pdf-viewer.component.js
-
 import * as pdfjsLib from "../vendor/pdfjs/build/pdf.mjs";
 import { openNotesPanel } from "./book-notes.component.js";
 
@@ -56,24 +54,29 @@ function detectCurrentPage() {
 
   const pages = container.querySelectorAll(".pdf-page");
 
-  const containerScrollTop = container.scrollTop;
-  const containerHeight = container.clientHeight;
+  const middle = container.scrollTop + container.clientHeight / 2;
 
-  let current = 1;
+  let detected = 1;
 
   pages.forEach(page => {
-    const pageTop = page.offsetTop;
-    const pageHeight = page.clientHeight;
+    const top = page.offsetTop;
+    const bottom = top + page.clientHeight;
 
-    if (
-      pageTop <= containerScrollTop + containerHeight / 2 &&
-      pageTop + pageHeight > containerScrollTop + containerHeight / 2
-    ) {
-      current = Number(page.dataset.page);
+    if (middle >= top && middle < bottom) {
+      detected = Number(page.dataset.page);
     }
   });
 
-  currentPage = current;
+  if (detected !== currentPage) {
+    currentPage = detected;
+
+    // 🔥 Disparar evento para el panel
+    document.dispatchEvent(
+      new CustomEvent("pdf:pageChanged", {
+        detail: { page: currentPage }
+      })
+    );
+  }
 }
 
 export function getCurrentPdfPage() {
