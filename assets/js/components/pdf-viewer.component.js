@@ -73,8 +73,21 @@ function detectCurrentPage(e) {
 }
 
 export function getCurrentPdfPage() {
-  return currentPage;
+  const container = document.querySelector(".pdf-canvas-container");
+  if (!container) return 1;
+
+  const pages = container.querySelectorAll(".pdf-page");
+  const top = container.scrollTop;
+
+  for (const page of pages) {
+    if (page.offsetTop + page.offsetHeight > top + 100) {
+      return Number(page.dataset.page);
+    }
+  }
+
+  return 1;
 }
+
 
 // 🔥 USAR SOLO LA PÁGINA GUARDADA
 export function goToPdfPage(pageNumber) {
