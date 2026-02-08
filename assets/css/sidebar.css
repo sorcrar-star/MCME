@@ -1,1 +1,161 @@
 
+/* ================= SIDEBAR ================= */
+
+#app-sidebar {
+  position: sticky;
+  top: 72px; /* altura del header */
+  height: calc(100vh - 72px);
+
+  background: linear-gradient(
+    to bottom,
+    #f9fbfd 0%,
+    #ffffff 100%
+  );
+
+  padding: 1.5rem 1rem;
+  overflow-y: auto;
+
+  border-right: 1px solid rgba(15, 76, 129, 0.08);
+  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.6);
+}
+
+/* Scroll elegante */
+#app-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+#app-sidebar::-webkit-scrollbar-thumb {
+  background-color: rgba(15, 76, 129, 0.15);
+  border-radius: 999px;
+}
+
+/* ================= SECCIONES ================= */
+
+.sidebar-section {
+  margin-bottom: 1.75rem;
+}
+
+.sidebar-section-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+
+  color: var(--color-muted);
+  padding: 0 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+/* ================= ITEMS ================= */
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 10px 12px;
+  margin: 4px 0;
+
+  border-radius: 10px;
+  cursor: pointer;
+
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text);
+
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+/* Hover satisfactorio */
+.sidebar-item:hover {
+  background-color: var(--color-primary-soft);
+  transform: translateX(2px);
+}
+
+/* Activo */
+.sidebar-item.active {
+  background: linear-gradient(
+    to right,
+    rgba(15, 76, 129, 0.12),
+    rgba(47, 164, 169, 0.08)
+  );
+
+  color: var(--color-primary);
+  box-shadow: inset 3px 0 0 var(--color-primary);
+}
+
+/* ================= ICONOS ================= */
+
+.sidebar-item .icon {
+  width: 18px;
+  height: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 16px;
+  opacity: 0.85;
+}
+
+/* ================= SUBCARPETAS ================= */
+
+.sidebar-sublist {
+  margin-left: 18px;
+  margin-top: 4px;
+
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--transition-normal);
+}
+
+.sidebar-sublist.open {
+  grid-template-rows: 1fr;
+}
+
+.sidebar-sublist > div {
+  overflow: hidden;
+}
+
+/* Animación de entrada */
+.sidebar-sublist .sidebar-item {
+  animation: slideFadeIn 0.25s ease forwards;
+}
+
+@keyframes slideFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ================= CONTADOR / BADGE ================= */
+
+.sidebar-badge {
+  margin-left: auto;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  padding: 2px 8px;
+  border-radius: 999px;
+
+  background-color: rgba(15, 76, 129, 0.1);
+  color: var(--color-primary);
+}
+
+/* ================= ESTADOS VACÍOS ================= */
+
+.sidebar-empty {
+  font-size: 13px;
+  color: var(--color-muted);
+  padding: 0.75rem;
+}
