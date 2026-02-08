@@ -78,7 +78,17 @@ window.__ACTIVE_FOLDER_ID__ = activeFolderId;
 window.__ACTIVE_FOLDER_PATH__ =
   getFolderPath(activeFolderId).map(f => f.id);
 
-renderHeader();
+/*
+  IMPORTANTE:
+  Si el header ya existe en HTML (header estático),
+  NO lo volvemos a renderizar desde JS para no destruir
+  la navegación temporal.
+*/
+const headerNav = document.querySelector(".header-nav");
+if (!headerNav) {
+  renderHeader();
+}
+
 renderSidebar();
 renderBooks();
 renderBreadcrumbs(activeFolderId);
