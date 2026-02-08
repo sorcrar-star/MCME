@@ -1,1 +1,19 @@
+/* ================= FAVORITES ================= */
+
+.favorite-btn {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.favorite-btn:hover {
+  transform: scale(1.15);
+}
+
+.favorite-btn:active {
+  transform: scale(0.95);
+}
 
