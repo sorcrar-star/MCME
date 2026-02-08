@@ -1,97 +1,108 @@
 /* ============================
-HEADER – Biblioteca Médica
-Estilo Apple + UNAM moderno
-============================ */
+   HEADER – Biblioteca Médica
+   Contraste real para logo
+   ============================ */
 
 #app-header {
-    height: 64px;
-    padding: 0 24px;
+  height: 64px;
+  padding: 0 24px;
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
-/* Degradado institucional elegante */
-    background: linear-gradient(
-    135deg,
-    #0f2a44 0%,
-    #123a5f 45%,
-    #0b2238 100%
-);
+  /* Fondo claro tipo Apple / académico */
+  background: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #f2f6fb 100%
+  );
 
-/* Separación visual tipo Apple */
-    box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.08),
-    0 8px 24px rgba(0, 0, 0, 0.25);
+  box-shadow:
+    0 1px 0 rgba(15, 76, 129, 0.08),
+    0 8px 24px rgba(15, 76, 129, 0.12);
 
-position: relative;
-z-index: 200;
+  position: relative;
+  z-index: 200;
 }
 
-/* Línea inferior sutil (detalle premium) */
+/* Línea inferior institucional */
 #app-header::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
 
-    background: linear-gradient(
+  background: linear-gradient(
     to right,
     transparent,
-    rgba(255, 255, 255, 0.25),
+    rgba(15, 76, 129, 0.25),
     transparent
-);
+  );
 }
 
 /* ---------- IZQUIERDA ---------- */
 
 .header-left {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
+}
+
+/* CONTENEDOR DEL LOGO (clave del contraste) */
+.header-left::before {
+  content: "";
+  position: absolute;
 }
 
 /* LOGO */
 .app-logo {
-    height: 36px;
-    width: auto;
+  height: 38px;
+  width: auto;
 
-/* Que se vea nítido y protagonista */
-    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
+  /* Plano de contraste elegante */
+  background: #ffffff;
+  padding: 6px 10px;
+  border-radius: 10px;
 
-    transition: transform 0.25s ease, filter 0.25s ease;
+  box-shadow:
+    0 4px 14px rgba(15, 76, 129, 0.18);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
-/* Micro interacción Apple-style */
+/* Micro interacción */
 .app-logo:hover {
-    transform: translateY(-1px);
-    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.45));
+  transform: translateY(-1px);
+  box-shadow:
+    0 6px 20px rgba(15, 76, 129, 0.25);
 }
 
 /* ---------- DERECHA ---------- */
 
 .header-right {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-/* (Preparado para botones futuros, sin afectar nada ahora) */
+/* Botones futuros */
 .header-right button {
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #ffffff;
+  background: rgba(15, 76, 129, 0.08);
+  border: 1px solid rgba(15, 76, 129, 0.2);
+  color: var(--color-primary);
 
-    padding: 6px 12px;
-    font-size: 13px;
-    border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 13px;
+  border-radius: 8px;
 
-    cursor: pointer;
-    transition: all 0.2s ease;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .header-right button:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(15, 76, 129, 0.15);
 }
