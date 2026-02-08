@@ -22,7 +22,7 @@
 <!-- ================= HEADER ================= -->
 <header id="app-header">
 
-  <!-- LOGO -->
+  <!-- IZQUIERDA: LOGO -->
   <div class="header-left">
     <img
       src="assets/images/mcme-logo.svg"
@@ -31,25 +31,30 @@
     />
   </div>
 
-  <!-- NAV FUTURA -->
+  <!-- CENTRO: NAV DEMO (temporal) -->
   <nav class="header-nav">
     <a href="#" class="active">Inicio</a>
     <a href="#">Biblioteca</a>
     <a href="#">Favoritos</a>
   </nav>
 
-  <!-- ACCIONES -->
+  <!-- DERECHA: USUARIO -->
   <div class="header-right">
-    <button type="button">Usuario</button>
+    <span>usuario@mcme.mx</span>
+    <button type="button" id="logoutBtn">
+      Cerrar sesión
+    </button>
   </div>
 
 </header>
 <!-- ========================================= -->
 
 <div class="app-container">
+
   <aside id="app-sidebar"></aside>
 
   <main class="app-main">
+
     <section class="search-section">
       <nav id="breadcrumbs" class="breadcrumbs"></nav>
 
@@ -63,11 +68,14 @@
     <section class="content-area">
       <section id="booksGrid" class="books-grid"></section>
     </section>
+
   </main>
+
 </div>
 
 <!-- ================= PDF VIEWER ================= -->
 <section id="pdfViewer" class="pdf-modal hidden">
+
   <div class="pdf-modal-content">
 
     <header class="pdf-modal-header">
@@ -85,6 +93,7 @@
     ></div>
 
   </div>
+
 </section>
 <!-- ============================================= -->
 
