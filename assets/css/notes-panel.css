@@ -1,1 +1,297 @@
 
+/* =====================================================
+   NOTES PANEL CONTAINER
+===================================================== */
+
+.notes-panel {
+  position: fixed;
+  top: 90px;
+  right: 30px;
+
+  width: 380px;
+  height: calc(100vh - 120px);
+
+  background: linear-gradient(
+    to bottom,
+    #f9fbfd 0%,
+    #ffffff 100%
+  );
+
+  border-radius: 18px;
+
+  display: flex;
+  flex-direction: column;
+
+  z-index: 1200;
+
+  box-shadow:
+    0 20px 60px rgba(15, 76, 129, 0.25),
+    0 8px 25px rgba(0, 0, 0, 0.12);
+
+  overflow: hidden;
+
+  animation: slideInPanel 0.25s ease forwards;
+}
+
+@keyframes slideInPanel {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.notes-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 1rem 1.2rem;
+
+  background: #ffffff;
+  border-bottom: 1px solid rgba(15, 76, 129, 0.08);
+}
+
+.notes-header h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.notes-header small {
+  display: block;
+  font-size: 12px;
+  color: var(--color-muted);
+  margin-top: 2px;
+}
+
+#closeNotesBtn {
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: var(--color-muted);
+
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+#closeNotesBtn:hover {
+  transform: scale(1.1);
+  color: #dc2626;
+}
+
+/* =====================================================
+   CREATE NOTE SECTION
+===================================================== */
+
+.note-create {
+  padding: 1rem 1.2rem;
+  border-bottom: 1px solid rgba(15, 76, 129, 0.08);
+}
+
+#noteInput {
+  width: 100%;
+  min-height: 80px;
+  resize: vertical;
+
+  padding: 10px 12px;
+  border-radius: 10px;
+
+  border: 1px solid rgba(15, 76, 129, 0.15);
+
+  font-size: 14px;
+  font-family: inherit;
+
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#noteInput:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(15, 76, 129, 0.15);
+}
+
+/* Acciones creación */
+
+.note-create-actions {
+  margin-top: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.note-create-actions input[type="number"] {
+  width: 70px;
+  margin-left: 6px;
+
+  padding: 6px 8px;
+
+  border-radius: 8px;
+  border: 1px solid rgba(15, 76, 129, 0.15);
+
+  font-size: 13px;
+}
+
+.note-create-actions input[type="number"]:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.save-note-btn {
+  padding: 8px 14px;
+
+  border-radius: 8px;
+  border: none;
+
+  background: var(--color-primary);
+  color: #ffffff;
+
+  font-size: 13px;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.save-note-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(15, 76, 129, 0.3);
+}
+
+/* =====================================================
+   NOTES HISTORY
+===================================================== */
+
+.notes-history {
+  flex: 1;
+  overflow-y: auto;
+
+  padding: 1rem 1.2rem;
+}
+
+.notes-history::-webkit-scrollbar {
+  width: 6px;
+}
+
+.notes-history::-webkit-scrollbar-thumb {
+  background: rgba(15, 76, 129, 0.2);
+  border-radius: 999px;
+}
+
+.notes-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* =====================================================
+   NOTE ITEM
+===================================================== */
+
+.note-item {
+  background: #ffffff;
+  border-radius: 12px;
+
+  padding: 10px;
+  margin-bottom: 12px;
+
+  border: 1px solid rgba(15, 76, 129, 0.08);
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.note-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+}
+
+.note-edit {
+  width: 100%;
+  min-height: 60px;
+  resize: vertical;
+
+  border: none;
+  outline: none;
+
+  font-size: 13px;
+  font-family: inherit;
+
+  background: transparent;
+}
+
+/* Meta */
+
+.note-meta {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--color-muted);
+}
+
+/* Acciones */
+
+.note-actions {
+  margin-top: 8px;
+
+  display: flex;
+  gap: 8px;
+}
+
+.note-actions button {
+  flex: 1;
+
+  padding: 6px 8px;
+
+  border-radius: 8px;
+  border: 1px solid rgba(15, 76, 129, 0.15);
+
+  background: #ffffff;
+
+  font-size: 12px;
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.note-actions button:hover {
+  background: var(--color-primary-soft);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(15, 76, 129, 0.15);
+}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 1024px) {
+  .notes-panel {
+    right: 15px;
+    width: 340px;
+  }
+}
+
+@media (max-width: 768px) {
+  .notes-panel {
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100vh;
+    border-radius: 0;
+  }
+}
