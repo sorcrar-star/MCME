@@ -1,87 +1,93 @@
 /* ============================
-   HEADER – Biblioteca Médica
-   Contraste real para logo
+   HEADER – Escalable y legible
    ============================ */
 
 #app-header {
-  height: 64px;
-  padding: 0 24px;
+  height: 68px;
+  padding: 0 32px;
 
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  justify-content: space-between;
+  gap: 32px;
 
-  /* Fondo claro tipo Apple / académico */
-  background: linear-gradient(
-    180deg,
-    #ffffff 0%,
-    #f2f6fb 100%
-  );
+  /* FONDO NEUTRO (clave para el logo) */
+  background: #ffffff;
 
-  box-shadow:
-    0 1px 0 rgba(15, 76, 129, 0.08),
-    0 8px 24px rgba(15, 76, 129, 0.12);
+  border-bottom: 1px solid #e3e8ef;
 
-  position: relative;
-  z-index: 200;
+  position: sticky;
+  top: 0;
+  z-index: 300;
 }
 
-/* Línea inferior institucional */
-#app-header::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-
-  background: linear-gradient(
-    to right,
-    transparent,
-    rgba(15, 76, 129, 0.25),
-    transparent
-  );
-}
-
-/* ---------- IZQUIERDA ---------- */
+/* ================= LOGO ================= */
 
 .header-left {
   display: flex;
   align-items: center;
 }
 
-/* CONTENEDOR DEL LOGO (clave del contraste) */
-.header-left::before {
-  content: "";
-  position: absolute;
-}
-
-/* LOGO */
 .app-logo {
-  height: 38px;
+  height: 40px;
   width: auto;
 
-  /* Plano de contraste elegante */
+  /* Fondo 100% neutro */
   background: #ffffff;
-  padding: 6px 10px;
-  border-radius: 10px;
+  padding: 4px 6px;
+  border-radius: 6px;
 
-  box-shadow:
-    0 4px 14px rgba(15, 76, 129, 0.18);
-
-  transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease;
+  /* Separación visual sin color */
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
-/* Micro interacción */
-.app-logo:hover {
-  transform: translateY(-1px);
-  box-shadow:
-    0 6px 20px rgba(15, 76, 129, 0.25);
+/* ================= NAV ================= */
+
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
 }
 
-/* ---------- DERECHA ---------- */
+.header-nav a {
+  position: relative;
+
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+
+  color: #2c3e50;
+
+  padding: 6px 2px;
+
+  transition: color 0.2s ease;
+}
+
+.header-nav a:hover {
+  color: var(--color-primary);
+}
+
+/* Indicador activo / hover institucional */
+.header-nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -10px;
+
+  height: 2px;
+  background: var(--color-primary);
+
+  transform: scaleX(0);
+  transition: transform 0.25s ease;
+}
+
+.header-nav a:hover::after,
+.header-nav a.active::after {
+  transform: scaleX(1);
+}
+
+/* ================= DERECHA ================= */
 
 .header-right {
   display: flex;
@@ -89,20 +95,20 @@
   gap: 12px;
 }
 
-/* Botones futuros */
 .header-right button {
-  background: rgba(15, 76, 129, 0.08);
-  border: 1px solid rgba(15, 76, 129, 0.2);
-  color: var(--color-primary);
+  background: #f4f6f9;
+  border: 1px solid #d9e0ea;
+
+  color: #2c3e50;
+  font-size: 13px;
 
   padding: 6px 12px;
-  font-size: 13px;
-  border-radius: 8px;
+  border-radius: 6px;
 
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .header-right button:hover {
-  background: rgba(15, 76, 129, 0.15);
+  background: #e9eef5;
 }
