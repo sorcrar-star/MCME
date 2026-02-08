@@ -1,72 +1,4 @@
 /* ======================================================
-   SIDEBAR
-====================================================== */
-
-#app-sidebar {
-  background: #ffffff;
-  padding: 1.75rem 1.25rem;
-  border-right: 1px solid rgba(15,76,129,0.08);
-}
-
-#app-sidebar ul {
-  list-style: none;
-  padding-left: 0;
-  margin: 0;
-}
-
-/* ======================================================
-   SIDEBAR – NODOS
-====================================================== */
-
-.sidebar-folder {
-  position: relative;
-  cursor: pointer;
-  margin: 2px 0;
-  padding: 0.55rem 0.75rem;
-  border-radius: 8px;
-  color: #2c3e50;
-  font-size: 0.95rem;
-  transition: background-color 0.2s ease;
-}
-
-.sidebar-folder:hover {
-  background-color: rgba(15,76,129,0.06);
-}
-
-.sidebar-folder.active {
-  background-color: rgba(15,76,129,0.1);
-  color: var(--color-primary);
-  font-weight: 600;
-}
-
-.sidebar-folder.active::before {
-  content: "";
-  position: absolute;
-  left: -10px;
-  top: 6px;
-  bottom: 6px;
-  width: 3px;
-  background-color: var(--color-primary);
-  border-radius: 3px;
-}
-
-/* ======================================================
-   SIDEBAR – SUBCARPETAS
-====================================================== */
-
-.sidebar-subfolders {
-  margin-left: 1rem;
-  margin-top: 0.25rem;
-  overflow: hidden;
-  max-height: 1000px;
-  transition: max-height 0.3s ease;
-}
-
-.sidebar-subfolders.collapsed {
-  max-height: 0;
-}
-
-/* ======================================================
    BOOK GRID
 ====================================================== */
 
@@ -249,4 +181,5 @@
 .breadcrumb-item:hover {
   text-decoration: underline;
 }
+
 
