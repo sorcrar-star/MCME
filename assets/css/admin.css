@@ -251,3 +251,18 @@ body.dark-mode .admin-badge {
   font-size: 13px;
   color: var(--admin-text-muted);
 }
+.admin-theme-toggle {
+  margin-left: 1rem;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: none;
+  background: var(--admin-surface-soft);
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.admin-theme-toggle:hover {
+  transform: translateY(-1px);
+}
+
