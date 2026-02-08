@@ -2,254 +2,131 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Panel Admin | MCME</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registro | Biblioteca Médica</title>
 
   <link rel="stylesheet" href="assets/css/reset.css" />
   <link rel="stylesheet" href="assets/css/variables.css" />
   <link rel="stylesheet" href="assets/css/base.css" />
   <link rel="stylesheet" href="assets/css/layout.css" />
   <link rel="stylesheet" href="assets/css/components.css" />
-  <link rel="stylesheet" href="assets/css/admin.css" />
+  <link rel="stylesheet" href="assets/css/registro.css" />
 </head>
 
-<body class="admin-page">
+<body class="login-page">
 
-<header id="app-header">
-  <div class="header-left">
-    <img
-      src="assets/images/mcme-logo.svg"
-      alt="MCME"
-      class="app-logo"
-    />
-  </div>
+<main class="login-container">
 
-  <div class="header-right">
-    <strong class="admin-badge">Administrador</strong>
-    <button id="logoutBtn" class="admin-logout">Cerrar sesión</button>
-  </div>
-</header>
+  <!-- Toggle Dark Mode -->
+  <button id="themeToggle" class="theme-toggle">
+    🌙 Modo oscuro
+  </button>
 
-<main class="admin-container">
+  <img 
+    src="assets/images/mcme-logo.svg" 
+    alt="MCME"
+    style="width:220px;margin-bottom:1.5rem" 
+  />
 
-  <h1 class="admin-title">Panel de Control de Usuarios</h1>
+  <form id="registerForm" class="login-form">
+    <input placeholder="Nombres" id="nombres" required />
+    <input placeholder="Apellidos" id="apellidos" required />
+    <input type="date" id="nacimiento" required />
+    <input placeholder="Nombre de usuario" id="username" required />
+    <input type="email" placeholder="Correo" id="email" required />
+    <input type="password" placeholder="Contraseña" id="password" required />
+    <input type="password" placeholder="Confirmar contraseña" id="confirm" required />
 
-  <div class="admin-grid">
+    <button type="submit">Registrar cuenta</button>
+  </form>
 
-    <!-- ===================== -->
-    <!-- PENDIENTES -->
-    <!-- ===================== -->
-    <section class="admin-section pending-section">
-      <h2>Usuarios pendientes</h2>
-      <ul id="users" class="admin-list"></ul>
-    </section>
-
-    <!-- ===================== -->
-    <!-- APROBADOS -->
-    <!-- ===================== -->
-    <section class="admin-section approved-section">
-      <h2>Usuarios aprobados</h2>
-      <ul id="approvedUsers" class="admin-list"></ul>
-    </section>
-
-    <!-- ===================== -->
-    <!-- SUSPENDIDOS -->
-    <!-- ===================== -->
-    <section class="admin-section suspended-section">
-      <h2>Usuarios suspendidos</h2>
-      <ul id="suspendedUsers" class="admin-list"></ul>
-    </section>
-
-  </div>
+  <button 
+    class="crear-cuenta" 
+    type="button"
+    onclick="window.location.href='login.html'">
+    Volver al login
+  </button>
 
 </main>
 
 <script>
-const ADMIN_EMAIL = "sorcrar@gmail.com";
-const API = "https://mcme-backend.onrender.com/api/admin";
+/* ===============================
+   DARK MODE (MISMO SISTEMA LOGIN)
+================================ */
 
-// ==========================
-// SEGURIDAD
-// ==========================
-const session = JSON.parse(localStorage.getItem("user"));
-if (!session || session.email !== ADMIN_EMAIL) {
-  window.location.href = "login.html";
+const toggleBtn = document.getElementById("themeToggle");
+
+if (localStorage.getItem("theme") === "dark") {
+  document.body.classList.add("dark-mode");
 }
 
-document.getElementById("logoutBtn").onclick = () => {
-  localStorage.removeItem("user");
-  window.location.href = "login.html";
-};
+toggleBtn.addEventListener("click", () => {
+  document.body.classList.toggle("dark-mode");
 
-// ==========================
-// RENDER CARD
-// ==========================
-function createUserCard(user, actionsHtml) {
-  return `
-    <li>
-      <div class="admin-user-card">
-        <div class="admin-user-info">
-          <strong>${user.name}</strong>
-          <span>${user.email}</span>
-        </div>
-        <div class="admin-actions">
-          ${actionsHtml}
-        </div>
-      </div>
-    </li>
-  `;
-}
-
-// ==========================
-// PENDIENTES
-// ==========================
-async function loadUsers() {
-  const res = await fetch(`${API}/pending`, {
-    headers: { "x-admin-email": ADMIN_EMAIL }
-  });
-
-  const users = await res.json();
-  const ul = document.getElementById("users");
-  ul.innerHTML = "";
-
-  if (users.length === 0) {
-    ul.innerHTML = `<p class="empty-state">No hay usuarios pendientes.</p>`;
-    return;
+  if (document.body.classList.contains("dark-mode")) {
+    localStorage.setItem("theme", "dark");
+    toggleBtn.textContent = "☀️ Modo claro";
+  } else {
+    localStorage.setItem("theme", "light");
+    toggleBtn.textContent = "🌙 Modo oscuro";
   }
+});
 
-  users.forEach(u => {
-    ul.innerHTML += createUserCard(
-      u,
-      `
-        <button class="admin-btn btn-approve" onclick="approve('${u.email}')">
-          Aprobar
-        </button>
-        <button class="admin-btn btn-reject" onclick="reject('${u.email}')">
-          Rechazar
-        </button>
-      `
-    );
-  });
+if (document.body.classList.contains("dark-mode")) {
+  toggleBtn.textContent = "☀️ Modo claro";
 }
 
-async function approve(email) {
-  await fetch(`${API}/approve`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-admin-email": ADMIN_EMAIL
-    },
-    body: JSON.stringify({ email })
-  });
 
-  loadUsers();
-  loadApprovedUsers();
-}
+/* ===============================
+   REGISTRO
+================================ */
 
-async function reject(email) {
-  await fetch(`${API}/reject`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-admin-email": ADMIN_EMAIL
-    },
-    body: JSON.stringify({ email })
-  });
+document.getElementById("registerForm")
+  .addEventListener("submit", async e => {
+    e.preventDefault();
 
-  loadUsers();
-}
+    const nombres = document.getElementById("nombres").value;
+    const apellidos = document.getElementById("apellidos").value;
+    const nacimiento = document.getElementById("nacimiento").value;
+    const username = document.getElementById("username").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const confirm = document.getElementById("confirm").value;
 
-// ==========================
-// APROBADOS
-// ==========================
-async function loadApprovedUsers() {
-  const res = await fetch(`${API}/approved`, {
-    headers: { "x-admin-email": ADMIN_EMAIL }
-  });
+    if (password !== confirm) {
+      alert("Las contraseñas no coinciden");
+      return;
+    }
 
-  const users = await res.json();
-  const ul = document.getElementById("approvedUsers");
-  ul.innerHTML = "";
+    const body = {
+      name: `${nombres} ${apellidos}`,
+      username,
+      nacimiento,
+      email,
+      password
+    };
 
-  if (users.length === 0) {
-    ul.innerHTML = `<p class="empty-state">No hay usuarios aprobados.</p>`;
-    return;
-  }
+    try {
+      const res = await fetch(
+        "https://mcme-backend.onrender.com/api/auth/register",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        }
+      );
 
-  users.forEach(u => {
-    ul.innerHTML += createUserCard(
-      u,
-      `
-        <button class="admin-btn btn-revoke" onclick="revoke('${u.email}')">
-          Quitar acceso
-        </button>
-      `
-    );
-  });
-}
+      const data = await res.json();
+      alert(data.message);
 
-async function revoke(email) {
-  await fetch(`${API}/revoke`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-admin-email": ADMIN_EMAIL
-    },
-    body: JSON.stringify({ email })
-  });
+      if (res.ok) {
+        window.location.href = "login.html";
+      }
 
-  loadApprovedUsers();
-  loadSuspendedUsers();
-}
-
-// ==========================
-// SUSPENDIDOS
-// ==========================
-async function loadSuspendedUsers() {
-  const res = await fetch(`${API}/suspended`, {
-    headers: { "x-admin-email": ADMIN_EMAIL }
-  });
-
-  const users = await res.json();
-  const ul = document.getElementById("suspendedUsers");
-  ul.innerHTML = "";
-
-  if (users.length === 0) {
-    ul.innerHTML = `<p class="empty-state">No hay usuarios suspendidos.</p>`;
-    return;
-  }
-
-  users.forEach(u => {
-    ul.innerHTML += createUserCard(
-      u,
-      `
-        <button class="admin-btn btn-reactivate" onclick="reactivate('${u.email}')">
-          Reactivar acceso
-        </button>
-      `
-    );
-  });
-}
-
-async function reactivate(email) {
-  await fetch(`${API}/reactivate`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-admin-email": ADMIN_EMAIL
-    },
-    body: JSON.stringify({ email })
-  });
-
-  loadSuspendedUsers();
-  loadApprovedUsers();
-}
-
-// ==========================
-// INICIO
-// ==========================
-loadUsers();
-loadApprovedUsers();
-loadSuspendedUsers();
+    } catch (err) {
+      alert("Error de conexión con el servidor");
+    }
+});
 </script>
 
 </body>
