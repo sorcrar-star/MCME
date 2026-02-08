@@ -1,4 +1,6 @@
-/* ================= HEADER ================= */
+/* ======================================================
+   HEADER – BASE
+====================================================== */
 
 #app-header {
   position: sticky;
@@ -9,62 +11,92 @@
   grid-template-columns: auto 1fr auto;
   align-items: center;
 
-  height: 72px;
-  padding: 0 32px;
+  height: var(--header-height);
+  padding: 0 36px;
 
-  background: linear-gradient(
-    to bottom,
-    #ffffff 0%,
-    #f8fafc 100%
-  );
-
-  border-bottom: 1px solid rgba(15, 76, 129, 0.12);
-  box-shadow: 0 4px 18px rgba(15, 76, 129, 0.08);
+  background: var(--bg-header);
+  border-bottom: var(--border-light);
+  box-shadow: var(--shadow-header);
 }
 
-/* ---------- IZQUIERDA (LOGO) ---------- */
+/* Línea institucional sutil (UNAM / Apple vibe) */
+#app-header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: var(--header-accent-line);
+  opacity: 0.85;
+}
+
+/* ======================================================
+   IZQUIERDA – LOGO (PROTAGONISTA)
+====================================================== */
 
 .header-left {
   display: flex;
   align-items: center;
+  gap: 14px;
+}
+
+/* Placa blanca para que el logo respire */
+.header-left::before {
+  content: "";
+  position: absolute;
+  left: 24px;
+  height: 44px;
+  width: 64px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(15, 76, 129, 0.12);
+  z-index: -1;
 }
 
 .app-logo {
-  height: 40px;
+  height: 38px;
   width: auto;
   display: block;
 
-  /* mejora contraste del SVG celeste */
-  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15));
+  filter:
+    drop-shadow(0 1px 1px rgba(0,0,0,0.12))
+    drop-shadow(0 0 6px rgba(47,164,169,0.25));
 }
 
-/* ---------- CENTRO (NAV FUTURA) ---------- */
+/* ======================================================
+   CENTRO – NAVEGACIÓN FUTURA
+====================================================== */
 
 .header-nav {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 28px;
+  gap: 32px;
 }
 
 .header-nav a {
-  text-decoration: none;
+  position: relative;
   font-size: 14px;
   font-weight: 500;
+  text-decoration: none;
 
   color: var(--color-muted);
-  position: relative;
-  padding: 6px 0;
+  padding: 8px 0;
 
-  transition: color var(--transition-fast);
+  transition:
+    color var(--transition-fast),
+    transform var(--transition-fast);
 }
 
 .header-nav a:hover {
   color: var(--color-primary);
+  transform: translateY(-1px);
 }
 
 .header-nav a.active {
   color: var(--color-primary);
+  font-weight: 600;
 }
 
 .header-nav a.active::after {
@@ -72,43 +104,65 @@
   position: absolute;
   left: 0;
   right: 0;
-  bottom: -10px;
-  height: 2px;
-  background-color: var(--color-primary);
-  border-radius: 2px;
+  bottom: -12px;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--color-primary);
 }
 
-/* ---------- DERECHA (USUARIO) ---------- */
+/* ======================================================
+   DERECHA – USUARIO / SESIÓN
+====================================================== */
 
 .header-right {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 18px;
 }
 
+/* Email / usuario */
 .header-right span {
   font-size: 13px;
   color: var(--color-text);
+  opacity: 0.85;
+  white-space: nowrap;
 }
 
+/* Botón cerrar sesión */
 .header-right button {
-  padding: 6px 14px;
+  padding: 7px 16px;
   font-size: 13px;
   font-weight: 500;
 
-  background-color: transparent;
+  background: linear-gradient(
+    to bottom,
+    #ffffff,
+    #f1f5f9
+  );
+
   border: 1px solid rgba(15, 76, 129, 0.25);
   border-radius: 999px;
 
   color: var(--color-primary);
   cursor: pointer;
 
+  box-shadow: 0 2px 6px rgba(15, 76, 129, 0.12);
+
   transition:
     background-color var(--transition-fast),
-    border-color var(--transition-fast);
+    border-color var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .header-right button:hover {
-  background-color: var(--color-primary-soft);
+  background: var(--color-primary-soft);
   border-color: var(--color-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(15, 76, 129, 0.18);
+}
+
+.header-right button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(15, 76, 129, 0.12);
 }
