@@ -3,142 +3,143 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Biblioteca Médica Digital</title>
+  <title>Login | Biblioteca Médica</title>
 
   <link rel="stylesheet" href="assets/css/reset.css" />
   <link rel="stylesheet" href="assets/css/variables.css" />
   <link rel="stylesheet" href="assets/css/base.css" />
   <link rel="stylesheet" href="assets/css/layout.css" />
-
-  <link rel="stylesheet" href="assets/css/header.css" />
-  <link rel="stylesheet" href="assets/css/sidebar.css" />
-
-  <link rel="stylesheet" href="assets/css/breadcrumbs.css" />
-  <link rel="stylesheet" href="assets/css/search.css" />
-  <link rel="stylesheet" href="assets/css/favorites.css" />
-  
-  <link rel="stylesheet" href="assets/css/book-card.css" />
-  <link rel="stylesheet" href="assets/css/pdf-modal.css" />
-  <link rel="stylesheet" href="assets/css/notes-panel.css" />
+  <link rel="stylesheet" href="assets/css/components.css" />
   <link rel="stylesheet" href="assets/css/login.css" />
 </head>
 
-<body>
+<body class="login-page">
 
-<!-- ================= HEADER ================= -->
-<header id="app-header">
-
-  <!-- IZQUIERDA: LOGO -->
-  <div class="header-left">
-    <img
-      src="assets/images/mcme-logo.svg"
-      alt="MCME"
-      class="app-logo"
-    />
-  </div>
-
-  <!-- CENTRO: NAV DEMO (temporal) -->
-  <nav class="header-nav">
-    <a href="#" class="active">Inicio</a>
-    <a href="#">Biblioteca</a>
-    <a href="#">Favoritos</a>
-  </nav>
-
-  <!-- DERECHA: USUARIO -->
-  <div class="header-right">
-    <span>usuario@mcme.mx</span>
+  <main class="login-container">
 
     <!-- Toggle Dark Mode -->
     <button id="themeToggle" class="theme-toggle">
-      🌙
+      🌙 Modo oscuro
     </button>
 
-    <button type="button" id="logoutBtn">
-      Cerrar sesión
-    </button>
-  </div>
+    <img
+      src="assets/images/mcme-logo.svg"
+      alt="MCME"
+      style="width: 220px; margin-bottom: 1.5rem;"
+    />
 
-</header>
-<!-- ========================================= -->
-
-<div class="app-container">
-
-  <aside id="app-sidebar"></aside>
-
-  <main class="app-main">
-
-    <section class="search-section">
-      <nav id="breadcrumbs" class="breadcrumbs"></nav>
+    <form id="loginForm" class="login-form">
+      <input
+        type="email"
+        id="email"
+        placeholder="Ingresa tu correo o nombre de usuario"
+        required
+      />
 
       <input
-        type="search"
-        id="search-input"
-        placeholder="Buscar libro, tema o autor…"
+        type="password"
+        id="password"
+        placeholder="Contraseña"
+        required
       />
-    </section>
 
-    <section class="content-area">
-      <section id="booksGrid" class="books-grid"></section>
-    </section>
+      <button type="submit">Iniciar sesión</button>
+    </form>
+
+    <button class="crear-cuenta" type="button"
+      onclick="window.location.href='registro.html'">
+      Crear cuenta nueva
+    </button>
+
+    <p class="login-note">
+      Estado de pruebas (Página en modo beta)
+    </p>
 
   </main>
 
-</div>
+  <script>
+  // ===============================
+  // DARK MODE CONTROL
+  // ===============================
 
-<!-- ================= PDF VIEWER ================= -->
-<section id="pdfViewer" class="pdf-modal hidden">
+  const toggleBtn = document.getElementById("themeToggle");
 
-  <div class="pdf-modal-content">
-
-    <header class="pdf-modal-header">
-      <span id="pdfTitle"></span>
-
-      <div class="actions">
-        <button id="openNotesFromPdf">📝 Notas</button>
-        <button id="closePdfBtn">✕ Cerrar</button>
-      </div>
-    </header>
-
-    <div
-      id="pdfCanvasContainer"
-      class="pdf-canvas-container"
-    ></div>
-
-  </div>
-
-</section>
-<!-- ============================================= -->
-
-<!-- ================= DARK MODE SCRIPT ================= -->
-<script>
-const themeToggle = document.getElementById("themeToggle");
-
-function applySavedTheme() {
-  const savedTheme = localStorage.getItem("mcme-theme");
-  if (savedTheme === "dark") {
+  // Cargar preferencia guardada
+  if (localStorage.getItem("theme") === "dark") {
     document.body.classList.add("dark-mode");
-    if (themeToggle) themeToggle.textContent = "☀️";
   }
-}
 
-if (themeToggle) {
-  themeToggle.onclick = () => {
+  toggleBtn.addEventListener("click", () => {
     document.body.classList.toggle("dark-mode");
 
     if (document.body.classList.contains("dark-mode")) {
-      localStorage.setItem("mcme-theme", "dark");
-      themeToggle.textContent = "☀️";
+      localStorage.setItem("theme", "dark");
+      toggleBtn.textContent = "☀️ Modo claro";
     } else {
-      localStorage.setItem("mcme-theme", "light");
-      themeToggle.textContent = "🌙";
+      localStorage.setItem("theme", "light");
+      toggleBtn.textContent = "🌙 Modo oscuro";
     }
-  };
-}
+  });
 
-applySavedTheme();
-</script>
-<!-- ===================================================== -->
+  // Ajustar texto inicial del botón
+  if (document.body.classList.contains("dark-mode")) {
+    toggleBtn.textContent = "☀️ Modo claro";
+  }
 
-<script type="module" src="assets/js/main.js"></script>
+
+  // ===============================
+  // LOGIN ORIGINAL (SIN CAMBIOS)
+  // ===============================
+
+  const form = document.getElementById("loginForm");
+  const ADMIN_EMAIL = "sorcrar@gmail.com";
+  const ADMIN_PASSWORD = "root";
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ email, name: "Administrador" })
+      );
+      window.location.href = "admin.html";
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "https://mcme-backend.onrender.com/api/auth/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.status === 403) {
+        alert(data.message);
+        return;
+      }
+
+      if (!response.ok) {
+        alert(data.message || "Error al iniciar sesión");
+        return;
+      }
+
+      localStorage.setItem("user", JSON.stringify(data.user));
+      window.location.href = "index.html";
+
+    } catch (error) {
+      alert("No se pudo conectar con el servidor");
+    }
+  });
+  </script>
+
 </body>
 </html>
