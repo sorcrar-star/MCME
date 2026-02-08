@@ -1,66 +1,4 @@
 /* ======================================================
-   BOOK GRID
-====================================================== */
-
-.books-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 1.25rem;
-}
-
-/* ======================================================
-   BOOK CARD (RESTAURADO A ESTILO LIMPIO)
-====================================================== */
-
-.book-card {
-  background: #ffffff;
-  padding: 1.25rem 1.4rem;
-  border-radius: 12px;
-  border: 1px solid rgba(0,0,0,0.05);
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  transition: box-shadow 0.2s ease;
-}
-
-.book-card:hover {
-  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
-}
-
-.book-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-.book-card h3 {
-  font-size: 0.95rem;
-  font-weight: 600;
-}
-
-.book-card p {
-  font-size: 0.85rem;
-  color: var(--color-muted);
-}
-
-.pdf-open-btn {
-  margin-top: auto;
-  align-self: flex-start;
-  padding: 0.4rem 0.9rem;
-  border-radius: 999px;
-  border: none;
-  background: var(--color-primary-soft);
-  color: var(--color-primary);
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.pdf-open-btn:hover {
-  background: var(--color-primary);
-  color: #fff;
-}
-
-/* ======================================================
    FAVORITOS / NOTAS
 ====================================================== */
 
@@ -181,5 +119,6 @@
 .breadcrumb-item:hover {
   text-decoration: underline;
 }
+
 
 
