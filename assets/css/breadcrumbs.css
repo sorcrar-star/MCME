@@ -1,1 +1,26 @@
+/* ================= BREADCRUMBS ================= */
+
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+.breadcrumb-item {
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.breadcrumb-item:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.separator {
+  margin: 0 6px;
+  opacity: 0.5;
+}
 
