@@ -9,70 +9,61 @@
   <link rel="stylesheet" href="assets/css/base.css" />
   <link rel="stylesheet" href="assets/css/layout.css" />
   <link rel="stylesheet" href="assets/css/components.css" />
+  <link rel="stylesheet" href="assets/css/admin.css" />
 </head>
 
-<body>
+<body class="admin-page">
 
 <header id="app-header">
   <div class="header-left">
-    <img
-      src="assets/images/mcme-logo.svg"
-      alt="MCME"
-      class="app-logo"
-    />
+    <img src="assets/images/mcme-logo.svg" alt="MCME" class="app-logo" />
   </div>
 
   <div class="header-right">
-    <strong>Administrador</strong>
-    <button id="logoutBtn">Cerrar sesión</button>
+    <strong class="admin-badge">Administrador</strong>
+    <button id="logoutBtn" class="admin-logout">Cerrar sesión</button>
   </div>
 </header>
 
-<main class="login-page">
-  <section class="login-container" style="max-width:700px">
+<main class="admin-container">
 
-    <!-- ===================== -->
-    <!-- USUARIOS PENDIENTES -->
-    <!-- ===================== -->
-    <h1>Usuarios pendientes</h1>
-    <ul id="users" style="margin-top:1.5rem; list-style:none; padding:0"></ul>
+  <h1 class="admin-title">Panel de Control de Usuarios</h1>
 
-    <!-- ===================== -->
-    <!-- USUARIOS APROBADOS -->
-    <!-- ===================== -->
-    <h1 style="margin-top:2rem">Usuarios aprobados</h1>
-    <ul id="approvedUsers" style="margin-top:1.5rem; list-style:none; padding:0"></ul>
+  <div class="admin-grid">
 
-    <!-- ===================== -->
-    <!-- USUARIOS SUSPENDIDOS -->
-    <!-- ===================== -->
-    <h1 style="margin-top:2rem">Usuarios suspendidos</h1>
-    <ul id="suspendedUsers" style="margin-top:1.5rem; list-style:none; padding:0"></ul>
+    <section class="admin-section pending-section">
+      <h2>Usuarios pendientes</h2>
+      <ul id="users" class="admin-list"></ul>
+    </section>
 
-  </section>
+    <section class="admin-section approved-section">
+      <h2>Usuarios aprobados</h2>
+      <ul id="approvedUsers" class="admin-list"></ul>
+    </section>
+
+    <section class="admin-section suspended-section">
+      <h2>Usuarios suspendidos</h2>
+      <ul id="suspendedUsers" class="admin-list"></ul>
+    </section>
+
+  </div>
+
 </main>
 
 <script>
 const ADMIN_EMAIL = "sorcrar@gmail.com";
 const API = "https://mcme-backend.onrender.com/api/admin";
 
-// ==========================
-// SEGURIDAD BÁSICA
-// ==========================
 const session = JSON.parse(localStorage.getItem("user"));
 if (!session || session.email !== ADMIN_EMAIL) {
   window.location.href = "login.html";
 }
 
-// cerrar sesión
 document.getElementById("logoutBtn").onclick = () => {
   localStorage.removeItem("user");
   window.location.href = "login.html";
 };
 
-// ==========================
-// USUARIOS PENDIENTES
-// ==========================
 async function loadUsers() {
   const res = await fetch(`${API}/pending`, {
     headers: { "x-admin-email": ADMIN_EMAIL }
@@ -83,23 +74,21 @@ async function loadUsers() {
   ul.innerHTML = "";
 
   if (users.length === 0) {
-    ul.innerHTML = "<p>No hay usuarios pendientes.</p>";
+    ul.innerHTML = "<p class='empty-state'>No hay usuarios pendientes.</p>";
     return;
   }
 
   users.forEach(u => {
     const li = document.createElement("li");
-    li.style.marginBottom = "1rem";
-
     li.innerHTML = `
-      <div class="book-card">
-        <strong>${u.name}</strong>
-        <p>${u.email}</p>
-        <div style="margin-top:.8rem">
-          <button onclick="approve('${u.email}')">Aprobar</button>
-          <button onclick="reject('${u.email}')" style="margin-left:.5rem;background:#ccc">
-            Rechazar
-          </button>
+      <div class="admin-card">
+        <div class="admin-user-info">
+          <strong>${u.name}</strong>
+          <span>${u.email}</span>
+        </div>
+        <div class="admin-actions">
+          <button class="btn-approve" onclick="approve('${u.email}')">Aprobar</button>
+          <button class="btn-reject" onclick="reject('${u.email}')">Rechazar</button>
         </div>
       </div>
     `;
@@ -121,9 +110,6 @@ async function approve(email) {
   loadApprovedUsers();
 }
 
-// ==========================
-// RECHAZAR
-// ==========================
 async function reject(email) {
   await fetch(`${API}/reject`, {
     method: "POST",
@@ -137,9 +123,6 @@ async function reject(email) {
   loadUsers();
 }
 
-// ==========================
-// USUARIOS APROBADOS
-// ==========================
 async function loadApprovedUsers() {
   const res = await fetch(`${API}/approved`, {
     headers: { "x-admin-email": ADMIN_EMAIL }
@@ -150,21 +133,19 @@ async function loadApprovedUsers() {
   ul.innerHTML = "";
 
   if (users.length === 0) {
-    ul.innerHTML = "<p>No hay usuarios aprobados.</p>";
+    ul.innerHTML = "<p class='empty-state'>No hay usuarios aprobados.</p>";
     return;
   }
 
   users.forEach(u => {
     const li = document.createElement("li");
-    li.style.marginBottom = "1rem";
-
     li.innerHTML = `
-      <div class="book-card">
-        <strong>${u.name}</strong>
-        <p>${u.email}</p>
-        <button
-          onclick="revoke('${u.email}')"
-          style="margin-top:.5rem;background:#e74c3c;color:#fff">
+      <div class="admin-card approved-card">
+        <div class="admin-user-info">
+          <strong>${u.name}</strong>
+          <span>${u.email}</span>
+        </div>
+        <button class="btn-revoke" onclick="revoke('${u.email}')">
           Quitar acceso
         </button>
       </div>
@@ -187,9 +168,6 @@ async function revoke(email) {
   loadSuspendedUsers();
 }
 
-// ==========================
-// USUARIOS SUSPENDIDOS
-// ==========================
 async function loadSuspendedUsers() {
   const res = await fetch(`${API}/suspended`, {
     headers: { "x-admin-email": ADMIN_EMAIL }
@@ -200,21 +178,19 @@ async function loadSuspendedUsers() {
   ul.innerHTML = "";
 
   if (users.length === 0) {
-    ul.innerHTML = "<p>No hay usuarios suspendidos.</p>";
+    ul.innerHTML = "<p class='empty-state'>No hay usuarios suspendidos.</p>";
     return;
   }
 
   users.forEach(u => {
     const li = document.createElement("li");
-    li.style.marginBottom = "1rem";
-
     li.innerHTML = `
-      <div class="book-card">
-        <strong>${u.name}</strong>
-        <p>${u.email}</p>
-        <button
-          onclick="reactivate('${u.email}')"
-          style="margin-top:.5rem;background:#2ecc71;color:#fff">
+      <div class="admin-card suspended-card">
+        <div class="admin-user-info">
+          <strong>${u.name}</strong>
+          <span>${u.email}</span>
+        </div>
+        <button class="btn-reactivate" onclick="reactivate('${u.email}')">
           Reactivar acceso
         </button>
       </div>
@@ -237,9 +213,6 @@ async function reactivate(email) {
   loadApprovedUsers();
 }
 
-// ==========================
-// INICIO
-// ==========================
 loadUsers();
 loadApprovedUsers();
 loadSuspendedUsers();
