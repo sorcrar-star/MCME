@@ -48,7 +48,7 @@
 
   overflow: hidden;
 
-  transition: background 0.3s ease;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* =====================================================
@@ -176,37 +176,68 @@
 }
 
 /* =====================================================
-   DARK MODE (lector profesional)
+   DARK MODE — LECTOR PROFESIONAL
 ===================================================== */
 
-.pdf-modal.dark-mode .pdf-modal-content {
-  background: #1e293b;
+/* Overlay más profundo */
+.pdf-modal.dark-mode {
+  background: rgba(2, 6, 23, 0.85);
 }
 
+/* Contenedor tipo app premium */
+.pdf-modal.dark-mode .pdf-modal-content {
+  background: linear-gradient(
+    to bottom,
+    #0f172a 0%,
+    #1e293b 100%
+  );
+
+  box-shadow:
+    0 25px 80px rgba(0, 0, 0, 0.7),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+/* Header más sobrio */
 .pdf-modal.dark-mode .pdf-modal-header {
-  background: #0f172a;
+  background: linear-gradient(
+    to right,
+    #0b1120,
+    #0f172a
+  );
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .pdf-modal.dark-mode #pdfTitle {
   color: #e2e8f0;
 }
 
+/* Botones más elegantes */
 .pdf-modal.dark-mode .pdf-modal-header button {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.06);
+  color: #e2e8f0;
 }
 
 .pdf-modal.dark-mode .pdf-modal-header button:hover {
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.15);
 }
 
+/* Fondo profundo tipo Notion / Kindle web */
 .pdf-modal.dark-mode .pdf-canvas-container {
-  background: #0f172a;
+  background: #0b1220;
 }
 
+/* Páginas flotando */
 .pdf-modal.dark-mode .pdf-page {
   background: #f8fafc;
+
   box-shadow:
-    0 8px 30px rgba(0, 0, 0, 0.6);
+    0 10px 40px rgba(0, 0, 0, 0.8),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+/* Scroll oscuro */
+.pdf-modal.dark-mode .pdf-canvas-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 /* =====================================================
