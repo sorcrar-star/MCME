@@ -1,9 +1,8 @@
-
 /* ================= SIDEBAR ================= */
 
 #app-sidebar {
   position: sticky;
-  top: 72px; /* altura del header */
+  top: 72px;
   height: calc(100vh - 72px);
 
   background: linear-gradient(
@@ -16,46 +15,52 @@
   overflow-y: auto;
 
   border-right: 1px solid rgba(15, 76, 129, 0.08);
-  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.6);
 }
 
-/* Scroll elegante */
+/* Scroll limpio */
 #app-sidebar::-webkit-scrollbar {
   width: 6px;
 }
 
 #app-sidebar::-webkit-scrollbar-thumb {
-  background-color: rgba(15, 76, 129, 0.15);
+  background: rgba(15, 76, 129, 0.15);
   border-radius: 999px;
 }
 
-/* ================= SECCIONES ================= */
+/* ================= TITULO ================= */
 
-.sidebar-section {
-  margin-bottom: 1.75rem;
-}
-
-.sidebar-section-title {
-  font-size: 11px;
+#app-sidebar h2 {
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 
   color: var(--color-muted);
   padding: 0 0.75rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
 }
 
-/* ================= ITEMS ================= */
+/* ================= ARBOL ================= */
 
-.sidebar-item {
+.sidebar-tree {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* ================= FOLDER ================= */
+
+.sidebar-folder {
+  margin-bottom: 2px;
+}
+
+/* Fila principal */
+.sidebar-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 
   padding: 10px 12px;
-  margin: 4px 0;
-
   border-radius: 10px;
   cursor: pointer;
 
@@ -65,19 +70,17 @@
 
   transition:
     background-color var(--transition-fast),
-    color var(--transition-fast),
-    transform var(--transition-fast),
-    box-shadow var(--transition-fast);
+    transform var(--transition-fast);
 }
 
 /* Hover satisfactorio */
-.sidebar-item:hover {
+.sidebar-row:hover {
   background-color: var(--color-primary-soft);
   transform: translateX(2px);
 }
 
 /* Activo */
-.sidebar-item.active {
+.sidebar-folder.active > .sidebar-row {
   background: linear-gradient(
     to right,
     rgba(15, 76, 129, 0.12),
@@ -88,45 +91,45 @@
   box-shadow: inset 3px 0 0 var(--color-primary);
 }
 
-/* ================= ICONOS ================= */
+/* ================= TEXTO ================= */
 
-.sidebar-item .icon {
-  width: 18px;
-  height: 18px;
+.sidebar-label {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* ================= FLECHA ================= */
 
-  font-size: 16px;
-  opacity: 0.85;
+.sidebar-arrow {
+  width: 16px;
+  text-align: center;
+  font-size: 12px;
+  opacity: 0.7;
 }
 
 /* ================= SUBCARPETAS ================= */
 
-.sidebar-sublist {
-  margin-left: 18px;
-  margin-top: 4px;
+.sidebar-subfolders {
+  list-style: none;
+  margin: 4px 0 6px 16px;
+  padding-left: 8px;
 
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows var(--transition-normal);
+  border-left: 1px dashed rgba(15, 76, 129, 0.15);
 }
 
-.sidebar-sublist.open {
-  grid-template-rows: 1fr;
+/* Colapsado */
+.sidebar-subfolders.collapsed {
+  display: none;
 }
 
-.sidebar-sublist > div {
-  overflow: hidden;
+/* Animación entrada */
+.sidebar-subfolders .sidebar-folder {
+  animation: fadeSlideIn 0.25s ease forwards;
 }
 
-/* Animación de entrada */
-.sidebar-sublist .sidebar-item {
-  animation: slideFadeIn 0.25s ease forwards;
-}
-
-@keyframes slideFadeIn {
+@keyframes fadeSlideIn {
   from {
     opacity: 0;
     transform: translateY(-4px);
@@ -135,27 +138,4 @@
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-/* ================= CONTADOR / BADGE ================= */
-
-.sidebar-badge {
-  margin-left: auto;
-
-  font-size: 11px;
-  font-weight: 600;
-
-  padding: 2px 8px;
-  border-radius: 999px;
-
-  background-color: rgba(15, 76, 129, 0.1);
-  color: var(--color-primary);
-}
-
-/* ================= ESTADOS VACÍOS ================= */
-
-.sidebar-empty {
-  font-size: 13px;
-  color: var(--color-muted);
-  padding: 0.75rem;
 }
