@@ -1,1 +1,167 @@
 
+/* ================= GRID ================= */
+
+.books-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+  align-items: stretch;
+}
+
+/* ================= CARD BASE ================= */
+
+.book-card {
+  background: linear-gradient(
+    to bottom,
+    #ffffff 0%,
+    #fbfdff 100%
+  );
+
+  border-radius: 16px;
+  padding: 1.25rem;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  border: 1px solid rgba(15, 76, 129, 0.08);
+
+  box-shadow:
+    0 4px 16px rgba(15, 76, 129, 0.05);
+
+  transition:
+    transform 180ms cubic-bezier(.4,0,.2,1),
+    box-shadow 220ms cubic-bezier(.4,0,.2,1),
+    border-color 180ms ease;
+
+  cursor: default;
+}
+
+/* Hover premium */
+.book-card:hover {
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 12px 28px rgba(15, 76, 129, 0.12);
+
+  border-color: rgba(15, 76, 129, 0.15);
+}
+
+/* ================= HEADER ================= */
+
+.book-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.book-card h3 {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--color-text);
+  margin: 0;
+}
+
+/* ================= META INFO ================= */
+
+.book-card p {
+  font-size: 13px;
+  color: var(--color-muted);
+  margin: 0 0 1rem 0;
+}
+
+/* ================= ACTIONS (ICONOS) ================= */
+
+.card-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.card-actions button {
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+
+  padding: 6px;
+  border-radius: 8px;
+
+  transition:
+    background 150ms ease,
+    transform 120ms ease;
+}
+
+.card-actions button:hover {
+  background: rgba(15, 76, 129, 0.08);
+  transform: scale(1.08);
+}
+
+.card-actions button:active {
+  transform: scale(0.95);
+}
+
+/* Favorito activo (visual más fuerte) */
+.favorite-btn {
+  color: #d4a017;
+}
+
+/* ================= BOTÓN PDF ================= */
+
+.pdf-open-btn {
+  margin-top: auto;
+
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: none;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  background: linear-gradient(
+    to right,
+    var(--color-primary),
+    #2fa4a9
+  );
+
+  color: white;
+
+  cursor: pointer;
+
+  transition:
+    transform 150ms ease,
+    box-shadow 200ms ease,
+    filter 150ms ease;
+}
+
+/* Hover botón principal */
+.pdf-open-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(15, 76, 129, 0.25);
+  filter: brightness(1.05);
+}
+
+.pdf-open-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(15, 76, 129, 0.2);
+}
+
+/* ================= MICRO-INTERACCIONES ================= */
+
+/* Animación suave al aparecer en grid */
+.book-card {
+  animation: cardFadeIn 240ms ease forwards;
+}
+
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
