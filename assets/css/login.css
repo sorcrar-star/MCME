@@ -1,0 +1,146 @@
+/* =====================================================
+   LOGIN PAGE — MISMO ADN VISUAL QUE INDEX
+===================================================== */
+
+body.login-page {
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: linear-gradient(
+    135deg,
+    #0f4c81 0%,
+    #1e6091 40%,
+    #f4f7fb 100%
+  );
+}
+
+/* =====================================================
+   CONTENEDOR
+===================================================== */
+
+.login-container {
+  width: 100%;
+  max-width: 420px;
+
+  background: linear-gradient(
+    to bottom,
+    #ffffff,
+    #f8fbff
+  );
+
+  padding: 2.5rem 2rem;
+  border-radius: 20px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  box-shadow:
+    0 30px 80px rgba(15, 76, 129, 0.35),
+    0 8px 25px rgba(0, 0, 0, 0.15);
+
+  backdrop-filter: blur(10px);
+}
+
+/* =====================================================
+   FORM
+===================================================== */
+
+.login-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.login-form input {
+  padding: 12px 14px;
+
+  border-radius: 10px;
+  border: 1px solid rgba(15, 76, 129, 0.15);
+
+  font-size: 14px;
+
+  background: #ffffff;
+
+  transition: 
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.login-form input:focus {
+  outline: none;
+  border-color: #0f4c81;
+  box-shadow: 0 0 0 3px rgba(15, 76, 129, 0.15);
+}
+
+/* =====================================================
+   BOTÓN PRINCIPAL
+===================================================== */
+
+.login-form button {
+  margin-top: 0.5rem;
+
+  padding: 12px;
+
+  border-radius: 10px;
+  border: none;
+
+  background: linear-gradient(
+    to right,
+    #0f4c81,
+    #1e6091
+  );
+
+  color: white;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+
+  cursor: pointer;
+
+  transition: 
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.login-form button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(15, 76, 129, 0.4);
+  opacity: 0.95;
+}
+
+/* =====================================================
+   CREAR CUENTA
+===================================================== */
+
+.crear-cuenta {
+  margin-top: 1.2rem;
+
+  background: transparent;
+  border: none;
+
+  color: #0f4c81;
+  font-weight: 500;
+  cursor: pointer;
+
+  transition: opacity 0.2s ease;
+}
+
+.crear-cuenta:hover {
+  opacity: 0.7;
+}
+
+/* =====================================================
+   NOTA
+===================================================== */
+
+.login-note {
+  margin-top: 1.5rem;
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
