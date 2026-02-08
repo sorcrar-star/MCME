@@ -1,37 +1,65 @@
+/* ================= LAYOUT GLOBAL ================= */
+
+/* El body define el fondo general */
+body {
+  background-color: var(--color-bg);
+}
+
+/* Header vive fuera del grid principal */
+#app-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* Contenedor principal debajo del header */
 .app-container {
   display: grid;
   grid-template-columns: 260px 1fr;
-  min-height: 100vh;
+  min-height: calc(100vh - 72px); /* altura real del header */
 }
 
-.app-main {
-  padding: 2rem 3rem;
-}
-
+/* Sidebar */
 #app-sidebar {
-  background: var(--bg-sidebar);
-  padding: 2rem 1.5rem;
-  box-shadow: var(--shadow-soft);
+  background-color: var(--color-white);
+  border-right: 1px solid rgba(15, 76, 129, 0.08);
 }
 
-#app-header {
-  padding: 1.5rem 3rem;
-  background: var(--bg-card);
-  box-shadow: var(--shadow-soft);
+/* Main content */
+.app-main {
+  padding: 2.5rem 3rem;
+  background-color: var(--color-bg);
 }
+
+/* Área de búsqueda */
+.search-section {
+  margin-bottom: 2rem;
+}
+
+/* Contenido */
+.content-area {
+  display: block;
+}
+
+/* ================= LOGIN ================= */
 
 .login-page {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #eef4fb, #f8fbff);
+
+  background: linear-gradient(
+    135deg,
+    #eef4fb,
+    #f8fbff
+  );
 }
 
 .login-container {
-  background: var(--bg-card);
+  background: var(--color-white);
   padding: 3rem;
-  border-radius: var(--radius-lg);
+  border-radius: var(--border-radius);
   box-shadow: var(--shadow-soft);
   max-width: 420px;
   width: 100%;
