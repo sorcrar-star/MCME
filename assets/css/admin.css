@@ -1,1 +1,219 @@
 
+/* =====================================================
+   ADMIN PAGE BASE
+===================================================== */
+
+body.admin-page {
+  min-height: 100vh;
+  background: linear-gradient(
+    135deg,
+    #0f4c81 0%,
+    #1e6091 30%,
+    #f4f7fb 100%
+  );
+}
+
+/* =====================================================
+   HEADER AJUSTES
+===================================================== */
+
+.admin-badge {
+  color: #0f4c81;
+  font-weight: 600;
+}
+
+.admin-logout {
+  margin-left: 1rem;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  background: rgba(220, 38, 38, 0.1);
+  color: #b91c1c;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin-logout:hover {
+  background: #b91c1c;
+  color: white;
+}
+
+/* =====================================================
+   CONTENEDOR PRINCIPAL
+===================================================== */
+
+.admin-container {
+  max-width: 1300px;
+  margin: 2rem auto;
+  padding: 2rem;
+}
+
+.admin-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #0f4c81;
+  margin-bottom: 2rem;
+}
+
+/* =====================================================
+   GRID
+===================================================== */
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
+/* =====================================================
+   SECCIONES
+===================================================== */
+
+.admin-section {
+  background: white;
+  border-radius: 18px;
+  padding: 1.5rem;
+  box-shadow:
+    0 15px 40px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-section h2 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 1.2rem;
+}
+
+/* Colores por estado */
+
+.pending-section h2 {
+  color: #b45309;
+}
+
+.approved-section h2 {
+  color: #15803d;
+}
+
+.suspended-section h2 {
+  color: #b91c1c;
+}
+
+/* =====================================================
+   LISTA
+===================================================== */
+
+.admin-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.admin-list li {
+  margin-bottom: 1rem;
+}
+
+/* =====================================================
+   CARD USUARIO
+===================================================== */
+
+.admin-user-card {
+  padding: 1rem;
+  border-radius: 12px;
+  background: #f8fbff;
+  border: 1px solid rgba(15, 76, 129, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: box-shadow 0.2s ease;
+}
+
+.admin-user-card:hover {
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+}
+
+.admin-user-card strong {
+  font-size: 14px;
+}
+
+.admin-user-card p {
+  font-size: 13px;
+  color: #475569;
+  margin: 0;
+}
+
+/* =====================================================
+   BOTONES
+===================================================== */
+
+.admin-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+}
+
+.admin-btn {
+  flex: 1;
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Aprobar */
+
+.btn-approve {
+  background: #15803d;
+  color: white;
+}
+
+.btn-approve:hover {
+  background: #166534;
+  transform: translateY(-1px);
+}
+
+/* Rechazar */
+
+.btn-reject {
+  background: #b91c1c;
+  color: white;
+}
+
+.btn-reject:hover {
+  background: #991b1b;
+  transform: translateY(-1px);
+}
+
+/* Quitar acceso */
+
+.btn-revoke {
+  background: #dc2626;
+  color: white;
+}
+
+.btn-revoke:hover {
+  background: #991b1b;
+}
+
+/* Reactivar */
+
+.btn-reactivate {
+  background: #16a34a;
+  color: white;
+}
+
+.btn-reactivate:hover {
+  background: #15803d;
+}
+
+/* =====================================================
+   VACÍO
+===================================================== */
+
+.admin-list p {
+  font-size: 13px;
+  color: #64748b;
+}
