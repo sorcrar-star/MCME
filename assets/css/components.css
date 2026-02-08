@@ -3,30 +3,26 @@
 ====================================================== */
 
 #app-header {
-  position: relative;
-  z-index: 100;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: var(--color-white);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary),
+    #0b3b66
+  );
   padding: 1rem 2rem;
-  border-bottom: 1px solid rgba(15, 76, 129, 0.08);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.03);
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
 }
 
 .app-logo {
-  height: 48px;
+  height: 46px;
   width: auto;
-  display: block;
 }
 
 #app-header h1 {
-  color: var(--color-primary);
+  color: var(--color-white);
   font-weight: 700;
 }
 
@@ -37,8 +33,8 @@
 }
 
 #logoutBtn {
-  background: var(--color-primary);
-  color: white;
+  background: var(--color-white);
+  color: var(--color-primary);
   border: none;
   padding: 0.5rem 1.1rem;
   border-radius: 999px;
@@ -46,7 +42,7 @@
 }
 
 #logoutBtn:hover {
-  background: var(--color-accent);
+  background: var(--color-primary-soft);
   transform: translateY(-1px);
 }
 
@@ -58,8 +54,7 @@
   background: var(--color-white);
   padding: 2rem 1.5rem;
   box-shadow: var(--shadow-soft);
-  position: relative;
-  z-index: 10;
+  border-right: 1px solid rgba(15,76,129,0.06);
 }
 
 #app-sidebar ul {
@@ -201,19 +196,25 @@
   min-height: 180px;
   transition: var(--transition-slow);
   animation: fadeIn 0.4s ease;
-  position: relative;
-  z-index: 1;
+  border: 1px solid rgba(15,76,129,0.06);
 }
 
 .book-card:hover {
   transform: translateY(-4px);
-  box-shadow: var(--shadow-hover);
+  box-shadow:
+    0 12px 30px rgba(15,76,129,0.15),
+    0 2px 6px rgba(0,0,0,0.05);
 }
 
 .book-card-header {
   display: flex;
   justify-content: space-between;
   align-items: start;
+}
+
+.card-actions {
+  display: flex;
+  gap: 0.4rem;
 }
 
 .book-card h3 {
@@ -227,67 +228,41 @@
   margin: 0;
 }
 
-.book-card a {
+.pdf-open-btn {
   margin-top: auto;
   align-self: flex-start;
-  padding: 0.45rem 0.9rem;
+  padding: 0.5rem 1rem;
   border-radius: 999px;
-  background: var(--color-primary-soft);
-  color: var(--color-primary);
+  border: none;
+  background: var(--color-primary);
+  color: white;
   font-size: 0.85rem;
   font-weight: 600;
+  cursor: pointer;
   transition: var(--transition-fast);
 }
 
-.book-card a:hover {
-  background: var(--color-primary);
-  color: white;
+.pdf-open-btn:hover {
+  background: var(--color-accent);
 }
 
 /* ======================================================
-   FAVORITOS
+   FAVORITOS / NOTAS
 ====================================================== */
 
-.favorite-btn {
+.favorite-btn,
+.notes-btn {
   background: none;
   border: none;
   font-size: 1.3rem;
   color: var(--color-accent);
-  transition: transform var(--transition-fast);
   cursor: pointer;
+  transition: transform var(--transition-fast);
 }
 
-/* ======================================================
-   SEARCH
-====================================================== */
-
-#search-input {
-  padding: 0.75rem 1rem;
-  border-radius: 999px;
-  border: 1px solid #ddd;
-  transition: var(--transition-fast);
-}
-
-#search-input:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px var(--color-primary-soft);
-}
-
-/* ======================================================
-   LOGIN
-====================================================== */
-
-.login-page {
-  background: linear-gradient(
-    135deg,
-    var(--color-primary-soft),
-    var(--color-bg)
-  );
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.favorite-btn:hover,
+.notes-btn:hover {
+  transform: scale(1.2);
 }
 
 /* ======================================================
@@ -297,11 +272,11 @@
 .pdf-modal {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.85);
-  z-index: 2000;
+  background: rgba(0,0,0,0.45);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  z-index: 2000;
 }
 
 .pdf-modal.hidden {
@@ -309,35 +284,115 @@
 }
 
 .pdf-modal-content {
-  width: 90%;
-  height: 90%;
-  background: white;
-  border-radius: 12px;
+  background: var(--color-white);
+  width: 90vw;
+  height: 90vh;
+  border-radius: var(--border-radius);
   display: flex;
   flex-direction: column;
-  pointer-events: auto;
+  box-shadow: 0 40px 120px rgba(0,0,0,0.45);
 }
 
 .pdf-modal-header {
-  flex-shrink: 0;
+  padding: 1rem 1.25rem;
+  background: var(--color-primary-soft);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.75rem 1rem;
-  background: var(--color-primary-soft);
 }
 
 .pdf-canvas-container {
   flex: 1;
   overflow-y: auto;
   padding: 1rem;
+  pointer-events: auto;
+}
+
+.pdf-page {
+  display: block;
+  margin: 0 auto 1.5rem;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.18);
 }
 
 /* ======================================================
-   ANIMATIONS
+   NOTES PANEL
 ====================================================== */
+
+.notes-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 360px;
+  height: 100vh;
+  background: linear-gradient(
+    180deg,
+    #ffffff,
+    #f4f7fb
+  );
+  box-shadow: -8px 0 24px rgba(0,0,0,0.12);
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  animation: slideInNotes 0.35s ease forwards;
+}
+
+.notes-header {
+  padding: 1rem;
+  background: var(--color-primary-soft);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.note-create {
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.note-create textarea {
+  width: 100%;
+  min-height: 80px;
+  resize: vertical;
+}
+
+.note-create-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+.notes-history {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.notes-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.note-item {
+  background: var(--color-bg);
+  padding: 0.75rem;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+}
+
+.note-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+}
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+@keyframes slideInNotes {
+  from { transform: translateX(100%); }
+  to   { transform: transl
