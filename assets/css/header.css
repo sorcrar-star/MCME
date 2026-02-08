@@ -1,27 +1,28 @@
-/* ============================
-   HEADER – Escalable y legible
-   ============================ */
+/* ================= HEADER ================= */
 
 #app-header {
-  height: 68px;
-  padding: 0 32px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: 32px;
 
-  /* FONDO NEUTRO (clave para el logo) */
-  background: #ffffff;
+  height: 72px;
+  padding: 0 32px;
 
-  border-bottom: 1px solid #e3e8ef;
+  background: linear-gradient(
+    to bottom,
+    #ffffff 0%,
+    #f8fafc 100%
+  );
 
-  position: sticky;
-  top: 0;
-  z-index: 300;
+  border-bottom: 1px solid rgba(15, 76, 129, 0.12);
+  box-shadow: 0 4px 18px rgba(15, 76, 129, 0.08);
 }
 
-/* ================= LOGO ================= */
+/* ---------- IZQUIERDA (LOGO) ---------- */
 
 .header-left {
   display: flex;
@@ -31,84 +32,83 @@
 .app-logo {
   height: 40px;
   width: auto;
+  display: block;
 
-  /* Fondo 100% neutro */
-  background: #ffffff;
-  padding: 4px 6px;
-  border-radius: 6px;
-
-  /* Separación visual sin color */
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  /* mejora contraste del SVG celeste */
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15));
 }
 
-/* ================= NAV ================= */
+/* ---------- CENTRO (NAV FUTURA) ---------- */
 
 .header-nav {
   display: flex;
   align-items: center;
-  gap: 24px;
+  justify-content: center;
+  gap: 28px;
 }
 
 .header-nav a {
-  position: relative;
-
+  text-decoration: none;
   font-size: 14px;
   font-weight: 500;
-  text-decoration: none;
 
-  color: #2c3e50;
+  color: var(--color-muted);
+  position: relative;
+  padding: 6px 0;
 
-  padding: 6px 2px;
-
-  transition: color 0.2s ease;
+  transition: color var(--transition-fast);
 }
 
 .header-nav a:hover {
   color: var(--color-primary);
 }
 
-/* Indicador activo / hover institucional */
-.header-nav a::after {
+.header-nav a.active {
+  color: var(--color-primary);
+}
+
+.header-nav a.active::after {
   content: "";
   position: absolute;
   left: 0;
   right: 0;
   bottom: -10px;
-
   height: 2px;
-  background: var(--color-primary);
-
-  transform: scaleX(0);
-  transition: transform 0.25s ease;
+  background-color: var(--color-primary);
+  border-radius: 2px;
 }
 
-.header-nav a:hover::after,
-.header-nav a.active::after {
-  transform: scaleX(1);
-}
-
-/* ================= DERECHA ================= */
+/* ---------- DERECHA (USUARIO) ---------- */
 
 .header-right {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
+}
+
+.header-right span {
+  font-size: 13px;
+  color: var(--color-text);
 }
 
 .header-right button {
-  background: #f4f6f9;
-  border: 1px solid #d9e0ea;
-
-  color: #2c3e50;
+  padding: 6px 14px;
   font-size: 13px;
+  font-weight: 500;
 
-  padding: 6px 12px;
-  border-radius: 6px;
+  background-color: transparent;
+  border: 1px solid rgba(15, 76, 129, 0.25);
+  border-radius: 999px;
 
+  color: var(--color-primary);
   cursor: pointer;
-  transition: all 0.2s ease;
+
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast);
 }
 
 .header-right button:hover {
-  background: #e9eef5;
+  background-color: var(--color-primary-soft);
+  border-color: var(--color-primary);
 }
