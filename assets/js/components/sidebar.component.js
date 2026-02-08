@@ -1,150 +1,141 @@
-// assets/js/components/sidebar.component.js
-// Renderiza el árbol de carpetas virtuales
+/* ================= SIDEBAR ================= */
 
-import { getChildFolders } from "../services/folder.service.js";
+#app-sidebar {
+  position: sticky;
+  top: 72px;
+  height: calc(100vh - 72px);
 
-/**
- * Crea un nodo visual de carpeta (recursivo)
- */
-function createFolderNode(folder) {
-  const li = document.createElement("li");
-  li.className = "sidebar-folder";
+  background: linear-gradient(
+    to bottom,
+    #f9fbfd 0%,
+    #ffffff 100%
+  );
 
-  if (folder.id === window.__ACTIVE_FOLDER_ID__) {
-    li.classList.add("active");
-  }
+  padding: 1.5rem 1rem;
+  overflow-y: auto;
 
-  // Si esta carpeta es parte de la ruta activa, abrirla
-  if (window.__ACTIVE_FOLDER_PATH__?.includes(folder.id)) {
-    li.classList.add("expanded");
-  }
-
-
-
-  // Contenedor interno (flecha + nombre)
-  const row = document.createElement("div");
-  row.className = "sidebar-row";
-
- // Flecha (solo visual si hay hijos)
- const arrow = document.createElement("span");
-arrow.className = "sidebar-arrow";
-arrow.textContent = "";
-
-
-  // Título
-  const label = document.createElement("span");
-  label.className = "sidebar-label";
-  label.textContent = folder.name;
-
-  // Armar fila
-  row.appendChild(arrow);
-  row.appendChild(label);
-  li.appendChild(row);
-
-  li.dataset.folderId = folder.id;
-arrow.addEventListener("click", (e) => {if (children.length > 0) {
-  arrow.addEventListener("click", (e) => {
-    e.stopPropagation();
-
-    li.classList.toggle("expanded");
-
-    const sub = li.querySelector(".sidebar-subfolders");
-    if (sub) {
-      sub.classList.toggle("collapsed");
-    }
-
-    arrow.textContent = li.classList.contains("expanded") ? "▼" : "▶";
-  });
+  border-right: 1px solid rgba(15, 76, 129, 0.08);
 }
 
-  e.stopPropagation();
+/* Scroll limpio */
+#app-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
 
-  li.classList.toggle("expanded");
+#app-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(15, 76, 129, 0.15);
+  border-radius: 999px;
+}
 
-  const sub = li.querySelector(".sidebar-subfolders");
-  if (sub) {
-    sub.classList.toggle("collapsed");
+/* ================= TITULO ================= */
+
+#app-sidebar h2 {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  color: var(--color-muted);
+  padding: 0 0.75rem;
+  margin-bottom: 1rem;
+}
+
+/* ================= ARBOL ================= */
+
+.sidebar-tree {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* ================= FOLDER ================= */
+
+.sidebar-folder {
+  margin-bottom: 2px;
+}
+
+/* Fila principal */
+.sidebar-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text);
+
+  transition:
+    background-color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+/* Hover satisfactorio */
+.sidebar-row:hover {
+  background-color: var(--color-primary-soft);
+  transform: translateX(2px);
+}
+
+/* Activo */
+.sidebar-folder.active > .sidebar-row {
+  background: linear-gradient(
+    to right,
+    rgba(15, 76, 129, 0.12),
+    rgba(47, 164, 169, 0.08)
+  );
+
+  color: var(--color-primary);
+  box-shadow: inset 3px 0 0 var(--color-primary);
+}
+
+/* ================= TEXTO ================= */
+
+.sidebar-label {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ================= FLECHA ================= */
+
+.sidebar-arrow {
+  width: 16px;
+  text-align: center;
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+/* ================= SUBCARPETAS ================= */
+
+.sidebar-subfolders {
+  list-style: none;
+  margin: 4px 0 6px 16px;
+  padding-left: 8px;
+
+  border-left: 1px dashed rgba(15, 76, 129, 0.15);
+}
+
+/* Colapsado */
+.sidebar-subfolders.collapsed {
+  display: none;
+}
+
+/* Animación entrada */
+.sidebar-subfolders .sidebar-folder {
+  animation: fadeSlideIn 0.25s ease forwards;
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
   }
-
-  arrow.textContent = li.classList.contains("expanded") ? "▼" : "▶";
-});
-
-  label.addEventListener("click", (e) => {
-
-  e.stopPropagation();
-
-  // quitar activo anterior
-  document
-    .querySelectorAll(".sidebar-folder.active")
-    .forEach(el => el.classList.remove("active"));
-
-  // marcar activo actual
-  li.classList.add("active");
-
-  const event = new CustomEvent("folder:selected", {
-    detail: { folderId: folder.id }
-  });
-
-  document.dispatchEvent(event);
-});
-
-
-  const children = getChildFolders(folder.id);
-  if (children.length > 0) {
-    arrow.textContent = window.__ACTIVE_FOLDER_PATH__?.includes(folder.id)
-  ? "▼"
-  : "▶";
-
-    li.classList.add("has-children");
-
-// Flecha abierta si está en ruta activa
-if (window.__ACTIVE_FOLDER_PATH__?.includes(folder.id)) {
-  arrow.textContent = "▼";
-}
-
-    const ul = document.createElement("ul");
-ul.className = "sidebar-subfolders";
-
- // Si la carpeta NO está en la ruta activa → colapsar
- if (!window.__ACTIVE_FOLDER_PATH__?.includes(folder.id)) {
-  ul.classList.add("collapsed");
-}
-;
-
-
-    children.forEach(child => {
-      ul.appendChild(createFolderNode(child));
-    });
-
-    li.classList.add("has-children");
-
-    li.appendChild(ul);
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-
-  return li;
-}
-
-
-/**
- * Renderiza la sidebar completa
- */
-
-export function renderSidebar(activeFolderId, containerId = "app-sidebar") {
-  window.__ACTIVE_FOLDER_ID__ = activeFolderId;
-
-  const container = document.getElementById(containerId);
-  if (!container) return;
-
-  container.innerHTML = "<h2>Carpetas</h2>";
-
-  const ul = document.createElement("ul");
-  ul.className = "sidebar-tree";
-
-  // Raíz lógica
-  const rootFolders = getChildFolders("root");
-  rootFolders.forEach(folder => {
-    ul.appendChild(createFolderNode(folder));
-  });
-
-  container.appendChild(ul);
 }
