@@ -13,9 +13,9 @@
   <link rel="stylesheet" href="assets/css/registro.css" />
 </head>
 
-<body class="login-page">
+<body class="register-page">
 
-<main class="login-container">
+<main class="register-container">
 
   <!-- Toggle Dark Mode -->
   <button id="themeToggle" class="theme-toggle">
@@ -25,10 +25,12 @@
   <img 
     src="assets/images/mcme-logo.svg" 
     alt="MCME"
-    style="width:220px;margin-bottom:1.5rem" 
+    class="register-logo"
   />
 
-  <form id="registerForm" class="login-form">
+  <h2 class="register-title">Crear nueva cuenta</h2>
+
+  <form id="registerForm" class="register-form">
     <input placeholder="Nombres" id="nombres" required />
     <input placeholder="Apellidos" id="apellidos" required />
     <input type="date" id="nacimiento" required />
@@ -41,7 +43,7 @@
   </form>
 
   <button 
-    class="crear-cuenta" 
+    class="volver-login" 
     type="button"
     onclick="window.location.href='login.html'">
     Volver al login
@@ -51,13 +53,14 @@
 
 <script>
 /* ===============================
-   DARK MODE (MISMO SISTEMA LOGIN)
+   DARK MODE
 ================================ */
 
 const toggleBtn = document.getElementById("themeToggle");
 
 if (localStorage.getItem("theme") === "dark") {
   document.body.classList.add("dark-mode");
+  toggleBtn.textContent = "☀️ Modo claro";
 }
 
 toggleBtn.addEventListener("click", () => {
@@ -71,10 +74,6 @@ toggleBtn.addEventListener("click", () => {
     toggleBtn.textContent = "🌙 Modo oscuro";
   }
 });
-
-if (document.body.classList.contains("dark-mode")) {
-  toggleBtn.textContent = "☀️ Modo claro";
-}
 
 
 /* ===============================
