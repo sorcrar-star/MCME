@@ -144,3 +144,23 @@ function renderBreadcrumbs(folderId) {
     }
   });
 }
+/* ===============================
+   HEADER: usuario + logout
+=============================== */
+const userData = JSON.parse(localStorage.getItem("user"));
+
+const userSpan = document.querySelector("#app-header .header-right span");
+const logoutBtn = document.getElementById("logoutBtn");
+
+if (userSpan && userData) {
+  // Prioridad: name > email
+  userSpan.textContent = userData.name || userData.email;
+}
+
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", () => {
+    localStorage.removeItem("user");
+    window.location.href = "login.html";
+  });
+}
+
