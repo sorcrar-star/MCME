@@ -117,25 +117,18 @@
   padding-left: 8px;
 
   border-left: 1px dashed rgba(15, 76, 129, 0.15);
+
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+
+  transition:
+    max-height 220ms ease,
+    opacity 160ms ease;
 }
 
-/* Colapsado */
-.sidebar-subfolders.collapsed {
-  display: none;
-}
-
-/* Animación entrada */
-.sidebar-subfolders .sidebar-folder {
-  animation: fadeSlideIn 0.25s ease forwards;
-}
-
-@keyframes fadeSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Abierto */
+.sidebar-subfolders:not(.collapsed) {
+  max-height: 500px;
+  opacity: 1;
 }
