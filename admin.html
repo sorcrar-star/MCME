@@ -21,7 +21,15 @@
 
   <div class="header-right">
     <strong class="admin-badge">Administrador</strong>
-    <button id="logoutBtn" class="admin-logout">Cerrar sesión</button>
+
+    <!-- Toggle Dark Mode -->
+    <button id="themeToggle" class="admin-theme-toggle">
+      🌙
+    </button>
+
+    <button id="logoutBtn" class="admin-logout">
+      Cerrar sesión
+    </button>
   </div>
 </header>
 
@@ -54,6 +62,9 @@
 const ADMIN_EMAIL = "sorcrar@gmail.com";
 const API = "https://mcme-backend.onrender.com/api/admin";
 
+/* ==========================
+   SEGURIDAD
+========================== */
 const session = JSON.parse(localStorage.getItem("user"));
 if (!session || session.email !== ADMIN_EMAIL) {
   window.location.href = "login.html";
@@ -63,6 +74,38 @@ document.getElementById("logoutBtn").onclick = () => {
   localStorage.removeItem("user");
   window.location.href = "login.html";
 };
+
+/* ==========================
+   DARK MODE
+========================== */
+
+const themeToggle = document.getElementById("themeToggle");
+
+function applySavedTheme() {
+  const savedTheme = localStorage.getItem("admin-theme");
+  if (savedTheme === "dark") {
+    document.body.classList.add("dark-mode");
+    themeToggle.textContent = "☀️";
+  }
+}
+
+themeToggle.onclick = () => {
+  document.body.classList.toggle("dark-mode");
+
+  if (document.body.classList.contains("dark-mode")) {
+    localStorage.setItem("admin-theme", "dark");
+    themeToggle.textContent = "☀️";
+  } else {
+    localStorage.setItem("admin-theme", "light");
+    themeToggle.textContent = "🌙";
+  }
+};
+
+applySavedTheme();
+
+/* ==========================
+   USUARIOS
+========================== */
 
 async function loadUsers() {
   const res = await fetch(`${API}/pending`, {
@@ -87,8 +130,8 @@ async function loadUsers() {
           <span>${u.email}</span>
         </div>
         <div class="admin-actions">
-          <button class="btn-approve" onclick="approve('${u.email}')">Aprobar</button>
-          <button class="btn-reject" onclick="reject('${u.email}')">Rechazar</button>
+          <button class="admin-btn btn-approve" onclick="approve('${u.email}')">Aprobar</button>
+          <button class="admin-btn btn-reject" onclick="reject('${u.email}')">Rechazar</button>
         </div>
       </div>
     `;
@@ -145,7 +188,7 @@ async function loadApprovedUsers() {
           <strong>${u.name}</strong>
           <span>${u.email}</span>
         </div>
-        <button class="btn-revoke" onclick="revoke('${u.email}')">
+        <button class="admin-btn btn-revoke" onclick="revoke('${u.email}')">
           Quitar acceso
         </button>
       </div>
@@ -190,7 +233,7 @@ async function loadSuspendedUsers() {
           <strong>${u.name}</strong>
           <span>${u.email}</span>
         </div>
-        <button class="btn-reactivate" onclick="reactivate('${u.email}')">
+        <button class="admin-btn btn-reactivate" onclick="reactivate('${u.email}')">
           Reactivar acceso
         </button>
       </div>
