@@ -2,7 +2,8 @@ const STORAGE_KEY_UNDERLINE = "mcme_pdf_highlights";
 
 let currentBookId = null;
 let selectionPopup = null;
-let selectedColor = "rgba(255,230,0,0.4)";
+let selectedColor = "#ffe600";
+
 
 /* =====================================================
    INIT
@@ -149,7 +150,9 @@ export function applyHighlights() {
         overlay.style.left = `${h.left}px`;
         overlay.style.width = `${h.width}px`;
         overlay.style.height = `${h.height}px`;
-        overlay.style.background = h.color;
+        overlay.style.background = h.color || "#ffe600";
+        overlay.style.mixBlendMode = "multiply";
+        overlay.style.opacity = "0.55";
         overlay.style.pointerEvents = "none";
 
         page.appendChild(overlay);
