@@ -24,27 +24,20 @@
   transition: opacity 0.2s ease;
 }
 
-/* Mostrar popup */
 .underline-popup.visible {
   opacity: 1;
   pointer-events: auto;
 }
 
-/* Subrayado en el texto */
+/* Subrayado */
 .pdf-highlight {
   position: relative;
-  z-index: 5;
+  z-index: 20;
   cursor: pointer;
-  border-radius: 2px;
   transition: background-color 0.2s ease;
 }
 
-.textLayer {
-  z-index: 10;
-}
-
-
-/* Mini panel al pasar sobre subrayado con enlace */
+/* Mini panel al pasar sobre subrayado */
 .underline-link-popup {
   position: absolute;
   padding: 4px 8px;
@@ -75,5 +68,3 @@
   border: 2px solid white;
   cursor: pointer;
 }
-
-
