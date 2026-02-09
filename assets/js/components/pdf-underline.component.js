@@ -8,6 +8,7 @@ let currentBookId = null;
 let selectionPopup = null;
 let linkPopup = null;
 let currentRange = null;
+let selectedColor = "yellow"; // color por defecto
 
 /* =====================================================
    INIT
@@ -27,12 +28,11 @@ export function initUnderlineTool(bookId) {
   container.removeEventListener("mouseup", handleTextSelection);
   container.addEventListener("mouseup", handleTextSelection);
 
-  // Reaplicar después de pequeño delay (lazy render)
   setTimeout(() => applyHighlights(), 400);
 }
 
 /* =====================================================
-   PAGE DETECTION (LOCAL)
+   PAGE DETECTION
 ===================================================== */
 
 function detectCurrentPageNumber() {
@@ -62,11 +62,25 @@ function detectCurrentPageNumber() {
 function createSelectionPopup() {
   selectionPopup = document.createElement("div");
   selectionPopup.className = "underline-popup";
+
   selectionPopup.innerHTML = `
+    <div class="color-picker">
+      <button class="color-option" data-color="yellow" style="background:yellow"></button>
+      <button class="color-option" data-color="lightgreen" style="background:lightgreen"></button>
+      <button class="color-option" data-color="cyan" style="background:cyan"></button>
+      <button class="color-option" data-color="pink" style="background:pink"></button>
+    </div>
     <button id="highlightBtn">Subrayar</button>
     <button id="highlightLinkBtn">Agregar enlace</button>
   `;
+
   document.body.appendChild(selectionPopup);
+
+  selectionPopup.querySelectorAll(".color-option").forEach(btn => {
+    btn.onclick = () => {
+      selectedColor = btn.dataset.color;
+    };
+  });
 
   selectionPopup.querySelector("#highlightBtn").onclick = () => {
     applyCurrentSelection();
@@ -91,8 +105,6 @@ function showSelectionPopup(x, y) {
   selectionPopup.style.top = `${y + window.scrollY}px`;
   selectionPopup.style.left = `${x + window.scrollX}px`;
   selectionPopup.classList.add("visible");
-
-  setTimeout(() => hideSelectionPopup(), 5000);
 }
 
 function hideSelectionPopup() {
@@ -110,7 +122,6 @@ function handleTextSelection() {
 
   const range = selection.getRangeAt(0);
 
-  // Solo permitir dentro del PDF
   const container = document.querySelector(".pdf-canvas-container");
   if (!container.contains(range.commonAncestorContainer)) return;
 
@@ -148,7 +159,9 @@ export function applyCurrentSelection(link = null) {
 
   const span = document.createElement("span");
   span.className = "pdf-highlight";
+  span.style.backgroundColor = selectedColor;
   span.textContent = selectedText;
+
   if (link) span.dataset.link = link;
 
   currentRange.deleteContents();
@@ -159,7 +172,8 @@ export function applyCurrentSelection(link = null) {
     bookId: currentBookId,
     page: detectCurrentPageNumber(),
     text: selectedText,
-    link: link || null
+    link: link || null,
+    color: selectedColor
   });
 
   saveHighlights(highlights);
@@ -183,6 +197,7 @@ export function applyHighlights() {
     highlights
       .filter(h => h.bookId === currentBookId && h.page === pageNum)
       .forEach(h => {
+
         const walker = document.createTreeWalker(
           pageDiv,
           NodeFilter.SHOW_TEXT,
@@ -196,6 +211,7 @@ export function applyHighlights() {
 
           const span = document.createElement("span");
           span.className = "pdf-highlight";
+          span.style.backgroundColor = h.color || "yellow";
           if (h.link) span.dataset.link = h.link;
           span.textContent = h.text;
 
