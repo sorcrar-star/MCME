@@ -10,6 +10,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
 let pdfDoc = null;
 let currentPage = 1;
 let currentBook = null;
+let modalRoot = null; // 👈 referencia fija al modal
 
 const renderedPages = new Set();
 const PAGE_BUFFER = 1.5;
@@ -23,24 +24,23 @@ export async function openPdfModal(book) {
     currentBook = book;
     currentPage = 1;
 
-    const viewer = document.getElementById("pdfViewer");
-    const container = document.querySelector(".pdf-canvas-container");
-    const title = document.getElementById("pdfTitle");
+    modalRoot = document.getElementById("pdfViewer");
+    const container = modalRoot?.querySelector(".pdf-canvas-container");
+    const title = modalRoot?.querySelector("#pdfTitle");
 
-    if (!viewer || !container) return;
+    if (!modalRoot || !container) return;
 
     container.innerHTML = "";
     container.scrollTop = 0;
     renderedPages.clear();
 
     title.textContent = book.title;
-    viewer.classList.remove("hidden");
+    modalRoot.classList.remove("hidden");
 
-    addHeaderButtons(viewer);
+    addHeaderButtons(modalRoot);
 
     pdfDoc = await pdfjsLib.getDocument(book.pdfUrl).promise;
 
-    // Crear placeholders
     for (let i = 1; i <= pdfDoc.numPages; i++) {
       const placeholder = document.createElement("div");
       placeholder.className = "pdf-page";
@@ -54,7 +54,7 @@ export async function openPdfModal(book) {
 
     await lazyRenderPages();
     detectCurrentPage();
-    syncDarkMode(viewer);
+    syncDarkMode();
 
     initUnderlineTool(book.id);
 
@@ -77,7 +77,7 @@ function handleScroll() {
 ===================================================== */
 
 async function lazyRenderPages() {
-  const container = document.querySelector(".pdf-canvas-container");
+  const container = modalRoot?.querySelector(".pdf-canvas-container");
   if (!container || !pdfDoc) return;
 
   const scrollTop = container.scrollTop;
@@ -103,7 +103,7 @@ async function lazyRenderPages() {
 }
 
 /* =====================================================
-   RENDER PAGE (PDFJS v5 CORRECTO)
+   RENDER PAGE
 ===================================================== */
 
 async function renderPage(pageNum, placeholder) {
@@ -117,14 +117,12 @@ async function renderPage(pageNum, placeholder) {
     wrapper.style.height = `${viewport.height}px`;
     wrapper.style.margin = "0 auto";
 
-    // ===== CANVAS =====
     const canvas = document.createElement("canvas");
     canvas.width = viewport.width;
     canvas.height = viewport.height;
     const ctx = canvas.getContext("2d");
     wrapper.appendChild(canvas);
 
-    // ===== TEXT LAYER =====
     const textLayerDiv = document.createElement("div");
     textLayerDiv.className = "textLayer";
     wrapper.appendChild(textLayerDiv);
@@ -132,7 +130,6 @@ async function renderPage(pageNum, placeholder) {
     placeholder.innerHTML = "";
     placeholder.appendChild(wrapper);
 
-    // ⚠️ Forma correcta en v5
     const renderTask = page.render({
       canvasContext: ctx,
       viewport,
@@ -143,7 +140,6 @@ async function renderPage(pageNum, placeholder) {
 
     await renderTask.promise;
 
-    // Reaplicar subrayados
     setTimeout(() => applyHighlights(), 80);
 
   } catch (err) {
@@ -156,7 +152,7 @@ async function renderPage(pageNum, placeholder) {
 ===================================================== */
 
 export function detectCurrentPage() {
-  const container = document.querySelector(".pdf-canvas-container");
+  const container = modalRoot?.querySelector(".pdf-canvas-container");
   if (!container) return;
 
   const pages = container.querySelectorAll(".pdf-page");
@@ -193,7 +189,7 @@ export function getCurrentPdfPage() {
 ===================================================== */
 
 export function goToPdfPage(pageNumber) {
-  const container = document.querySelector(".pdf-canvas-container");
+  const container = modalRoot?.querySelector(".pdf-canvas-container");
   if (!container) return;
 
   const target = container.querySelector(
@@ -240,11 +236,10 @@ function addHeaderButtons(viewer) {
 ===================================================== */
 
 document.addEventListener("click", (e) => {
-  const viewer = document.getElementById("pdfViewer");
-  if (!viewer) return;
+  if (!modalRoot) return;
 
   if (e.target.id === "closePdfBtn") {
-    viewer.classList.add("hidden");
+    modalRoot.classList.add("hidden");
     currentBook = null;
     renderedPages.clear();
   }
@@ -255,8 +250,8 @@ document.addEventListener("click", (e) => {
   }
 
   if (e.target.id === "togglePdfDarkMode") {
-    viewer.classList.toggle("dark-mode");
-    updateDarkModeButton(viewer);
+    modalRoot.classList.toggle("dark-mode");
+    updateDarkModeButton();
   }
 });
 
@@ -264,21 +259,24 @@ document.addEventListener("click", (e) => {
    DARK MODE
 ===================================================== */
 
-function updateDarkModeButton(viewer) {
-  const btn = viewer.querySelector("#togglePdfDarkMode");
+function updateDarkModeButton() {
+  const btn = modalRoot?.querySelector("#togglePdfDarkMode");
   if (!btn) return;
 
-  const isDark = viewer.classList.contains("dark-mode");
+  const isDark = modalRoot.classList.contains("dark-mode");
   btn.textContent = isDark
     ? "☀️ Modo normal"
     : "🌙 Modo lector";
 }
 
-function syncDarkMode(viewer) {
+function syncDarkMode() {
+  if (!modalRoot) return;
+
   if (document.body.classList.contains("dark-mode")) {
-    viewer.classList.add("dark-mode");
+    modalRoot.classList.add("dark-mode");
   } else {
-    viewer.classList.remove("dark-mode");
+    modalRoot.classList.remove("dark-mode");
   }
-  updateDarkModeButton(viewer);
+
+  updateDarkModeButton();
 }
