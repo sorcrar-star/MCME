@@ -1,5 +1,8 @@
 /* =====================================================
-   PDF UNDERLINE / HIGHLIGHT TOOL
+   PDF UNDERLINE / HIGHLIGHT TOOL (FIXED VERSION)
+   ✔ No reemplaza nodos
+   ✔ No rompe layout
+   ✔ Solo agrega clases a spans existentes
 ===================================================== */
 
 const STORAGE_KEY_UNDERLINE = "mcme_pdf_highlights";
@@ -7,8 +10,7 @@ const STORAGE_KEY_UNDERLINE = "mcme_pdf_highlights";
 let currentBookId = null;
 let selectionPopup = null;
 let linkPopup = null;
-let currentRange = null;
-let selectedColor = "yellow"; // color por defecto
+let selectedColor = "yellow";
 
 /* =====================================================
    INIT
@@ -71,7 +73,6 @@ function createSelectionPopup() {
       <button class="color-option" data-color="pink" style="background:pink"></button>
     </div>
     <button id="highlightBtn">Subrayar</button>
-    <button id="highlightLinkBtn">Agregar enlace</button>
   `;
 
   document.body.appendChild(selectionPopup);
@@ -84,13 +85,6 @@ function createSelectionPopup() {
 
   selectionPopup.querySelector("#highlightBtn").onclick = () => {
     applyCurrentSelection();
-    hideSelectionPopup();
-  };
-
-  selectionPopup.querySelector("#highlightLinkBtn").onclick = () => {
-    const url = prompt("Ingresa el enlace:");
-    if (!url) return;
-    applyCurrentSelection(url);
     hideSelectionPopup();
   };
 }
@@ -125,8 +119,6 @@ function handleTextSelection() {
   const container = document.querySelector(".pdf-canvas-container");
   if (!container.contains(range.commonAncestorContainer)) return;
 
-  currentRange = range;
-
   const rect = range.getBoundingClientRect();
   showSelectionPopup(rect.right, rect.top - 40);
 }
@@ -148,42 +140,45 @@ function saveHighlights(highlights) {
 }
 
 /* =====================================================
-   APPLY SELECTION
+   APPLY SELECTION (FIXED CORE)
 ===================================================== */
 
-export function applyCurrentSelection(link = null) {
-  if (!currentRange || currentRange.collapsed) return;
+export function applyCurrentSelection() {
+  const selection = window.getSelection();
+  if (!selection || selection.isCollapsed) return;
 
-  const selectedText = currentRange.toString();
-  if (!selectedText.trim()) return;
+  const range = selection.getRangeAt(0);
 
-  const span = document.createElement("span");
-  span.className = "pdf-highlight";
-  span.style.backgroundColor = selectedColor;
-  span.textContent = selectedText;
+  const container = document.querySelector(".pdf-canvas-container");
+  if (!container.contains(range.commonAncestorContainer)) return;
 
-  if (link) span.dataset.link = link;
+  const pageNumber = detectCurrentPageNumber();
 
-  currentRange.deleteContents();
-  currentRange.insertNode(span);
+  const spans = container.querySelectorAll(".textLayer span");
 
   const highlights = getHighlights();
-  highlights.push({
-    bookId: currentBookId,
-    page: detectCurrentPageNumber(),
-    text: selectedText,
-    link: link || null,
-    color: selectedColor
+
+  spans.forEach(span => {
+    if (range.intersectsNode(span)) {
+      span.classList.add("pdf-highlight");
+      span.style.backgroundColor = selectedColor;
+
+      highlights.push({
+        bookId: currentBookId,
+        page: pageNumber,
+        text: span.textContent,
+        color: selectedColor
+      });
+    }
   });
 
   saveHighlights(highlights);
 
-  currentRange = null;
-  window.getSelection().removeAllRanges();
+  selection.removeAllRanges();
 }
 
 /* =====================================================
-   REAPPLY HIGHLIGHTS
+   REAPPLY HIGHLIGHTS (SAFE)
 ===================================================== */
 
 export function applyHighlights() {
@@ -197,58 +192,14 @@ export function applyHighlights() {
     highlights
       .filter(h => h.bookId === currentBookId && h.page === pageNum)
       .forEach(h => {
+        const spans = pageDiv.querySelectorAll(".textLayer span");
 
-        const walker = document.createTreeWalker(
-          pageDiv,
-          NodeFilter.SHOW_TEXT,
-          null,
-          false
-        );
-
-        let node;
-        while (node = walker.nextNode()) {
-          if (!node.nodeValue.includes(h.text)) continue;
-
-          const span = document.createElement("span");
-          span.className = "pdf-highlight";
-          span.style.backgroundColor = h.color || "yellow";
-          if (h.link) span.dataset.link = h.link;
-          span.textContent = h.text;
-
-          const parts = node.nodeValue.split(h.text);
-          const fragment = document.createDocumentFragment();
-
-          fragment.appendChild(document.createTextNode(parts[0]));
-          fragment.appendChild(span);
-          fragment.appendChild(document.createTextNode(parts[1] || ""));
-
-          node.parentNode.replaceChild(fragment, node);
-        }
+        spans.forEach(span => {
+          if (span.textContent.trim() === h.text.trim()) {
+            span.classList.add("pdf-highlight");
+            span.style.backgroundColor = h.color || "yellow";
+          }
+        });
       });
   });
 }
-
-/* =====================================================
-   LINK MINI POPUP
-===================================================== */
-
-document.addEventListener("mouseover", (e) => {
-  if (!linkPopup) return;
-
-  if (e.target.classList.contains("pdf-highlight") && e.target.dataset.link) {
-    linkPopup.textContent = e.target.dataset.link;
-
-    const rect = e.target.getBoundingClientRect();
-    linkPopup.style.top = `${rect.top + window.scrollY - 30}px`;
-    linkPopup.style.left = `${rect.left + window.scrollX}px`;
-    linkPopup.classList.add("visible");
-  }
-});
-
-document.addEventListener("mouseout", (e) => {
-  if (!linkPopup) return;
-
-  if (e.target.classList.contains("pdf-highlight")) {
-    linkPopup.classList.remove("visible");
-  }
-});
