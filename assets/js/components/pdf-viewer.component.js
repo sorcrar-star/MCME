@@ -1,6 +1,10 @@
 import * as pdfjsLib from "../vendor/pdfjs/build/pdf.mjs";
 import { openNotesPanel } from "./book-notes.component.js";
-import { initUnderlineTool, applyHighlights } from "./pdf-underline.component.js";
+import { 
+  initUnderlineTool, 
+  applyHighlights,
+  applyCurrentSelection 
+} from "./pdf-underline.component.js";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
   "../vendor/pdfjs/build/pdf.worker.mjs",
@@ -103,7 +107,7 @@ async function lazyRenderPages() {
 }
 
 /* =====================================================
-   RENDER PAGE (PDFJS v5 CORRECTO)
+   RENDER PAGE (PDFJS v5)
 ===================================================== */
 
 async function renderPage(pageNum, placeholder) {
@@ -117,14 +121,12 @@ async function renderPage(pageNum, placeholder) {
     wrapper.style.height = `${viewport.height}px`;
     wrapper.style.margin = "0 auto";
 
-    // ===== CANVAS =====
     const canvas = document.createElement("canvas");
     canvas.width = viewport.width;
     canvas.height = viewport.height;
     const ctx = canvas.getContext("2d");
     wrapper.appendChild(canvas);
 
-    // ===== TEXT LAYER =====
     const textLayerDiv = document.createElement("div");
     textLayerDiv.className = "textLayer";
     textLayerDiv.style.position = "absolute";
@@ -137,13 +139,11 @@ async function renderPage(pageNum, placeholder) {
     placeholder.innerHTML = "";
     placeholder.appendChild(wrapper);
 
-    // Render canvas primero
     await page.render({
       canvasContext: ctx,
       viewport
     }).promise;
 
-    // 🔥 Render de texto correcto para v5
     const textContent = await page.getTextContent();
 
     const textLayer = new pdfjsLib.TextLayer({
@@ -154,7 +154,6 @@ async function renderPage(pageNum, placeholder) {
 
     await textLayer.render();
 
-    // Reaplicar subrayados
     setTimeout(() => applyHighlights(), 80);
 
   } catch (err) {
@@ -239,8 +238,18 @@ function addHeaderButtons(viewer) {
     const underlineBtn = document.createElement("button");
     underlineBtn.id = "underlineInfoBtn";
     underlineBtn.textContent = "✏ Subrayar";
-    underlineBtn.onclick = () =>
-      alert("Selecciona texto dentro del PDF para subrayar.");
+
+    underlineBtn.onclick = () => {
+      const selection = window.getSelection();
+
+      if (!selection || selection.isCollapsed) {
+        alert("Primero selecciona el texto que quieres subrayar.");
+        return;
+      }
+
+      applyCurrentSelection();
+    };
+
     header.prepend(underlineBtn);
   }
 
