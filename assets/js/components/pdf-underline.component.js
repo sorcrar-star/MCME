@@ -2,8 +2,7 @@ const STORAGE_KEY_UNDERLINE = "mcme_pdf_highlights";
 
 let currentBookId = null;
 let selectionPopup = null;
-let linkPopup = null;
-let selectedColor = "rgba(255,230,0,0.6)";
+let selectedColor = "rgba(255,230,0,0.4)";
 
 /* =====================================================
    INIT
@@ -13,8 +12,6 @@ export function initUnderlineTool(bookId) {
   currentBookId = bookId;
 
   if (!selectionPopup) createSelectionPopup();
-  if (!linkPopup) createLinkPopup();
-
   hideSelectionPopup();
 
   const container = document.querySelector(".pdf-canvas-container");
@@ -27,65 +24,21 @@ export function initUnderlineTool(bookId) {
 }
 
 /* =====================================================
-   PAGE DETECTION
-===================================================== */
-
-function detectCurrentPageNumber() {
-  const container = document.querySelector(".pdf-canvas-container");
-  if (!container) return 1;
-
-  const pages = container.querySelectorAll(".pdf-page");
-  const middle = container.scrollTop + container.clientHeight / 2;
-
-  let detected = 1;
-
-  pages.forEach(page => {
-    const top = page.offsetTop;
-    const bottom = top + page.clientHeight;
-    if (middle >= top && middle < bottom) {
-      detected = Number(page.dataset.page);
-    }
-  });
-
-  return detected;
-}
-
-/* =====================================================
-   POPUPS
+   POPUP
 ===================================================== */
 
 function createSelectionPopup() {
   selectionPopup = document.createElement("div");
   selectionPopup.className = "underline-popup";
-
   selectionPopup.innerHTML = `
-    <div class="color-picker">
-      <button class="color-option" data-color="rgba(255,230,0,0.6)" style="background:yellow"></button>
-      <button class="color-option" data-color="rgba(144,238,144,0.6)" style="background:lightgreen"></button>
-      <button class="color-option" data-color="rgba(0,255,255,0.6)" style="background:cyan"></button>
-      <button class="color-option" data-color="rgba(255,182,193,0.6)" style="background:pink"></button>
-    </div>
     <button id="highlightBtn">Subrayar</button>
   `;
-
   document.body.appendChild(selectionPopup);
-
-  selectionPopup.querySelectorAll(".color-option").forEach(btn => {
-    btn.onclick = () => {
-      selectedColor = btn.dataset.color;
-    };
-  });
 
   selectionPopup.querySelector("#highlightBtn").onclick = () => {
     applyCurrentSelection();
     hideSelectionPopup();
   };
-}
-
-function createLinkPopup() {
-  linkPopup = document.createElement("div");
-  linkPopup.className = "underline-link-popup";
-  document.body.appendChild(linkPopup);
 }
 
 function showSelectionPopup(x, y) {
@@ -127,12 +80,12 @@ function getHighlights() {
   }
 }
 
-function saveHighlights(highlights) {
-  localStorage.setItem(STORAGE_KEY_UNDERLINE, JSON.stringify(highlights));
+function saveHighlights(data) {
+  localStorage.setItem(STORAGE_KEY_UNDERLINE, JSON.stringify(data));
 }
 
 /* =====================================================
-   APPLY SELECTION
+   APPLY SELECTION (PRO VERSION)
 ===================================================== */
 
 export function applyCurrentSelection() {
@@ -143,55 +96,63 @@ export function applyCurrentSelection() {
   const container = document.querySelector(".pdf-canvas-container");
   if (!container.contains(range.commonAncestorContainer)) return;
 
-  const pageNumber = detectCurrentPageNumber();
-  const spans = container.querySelectorAll(".textLayer span");
+  const rects = Array.from(range.getClientRects());
+
+  const page = range.startContainer.parentElement.closest(".pdf-page");
+  if (!page) return;
+
+  const pageRect = page.getBoundingClientRect();
 
   const highlights = getHighlights();
 
-  spans.forEach(span => {
-    if (range.intersectsNode(span)) {
+  rects.forEach(r => {
+    const highlight = {
+      bookId: currentBookId,
+      page: Number(page.dataset.page),
+      top: r.top - pageRect.top + page.scrollTop,
+      left: r.left - pageRect.left,
+      width: r.width,
+      height: r.height,
+      color: selectedColor
+    };
 
-      if (!span.classList.contains("pdf-highlight")) {
-        span.classList.add("pdf-highlight");
-        span.style.backgroundColor = selectedColor;
-
-        highlights.push({
-          bookId: currentBookId,
-          page: pageNumber,
-          text: span.textContent.trim(),
-          color: selectedColor
-        });
-      }
-    }
+    highlights.push(highlight);
   });
 
   saveHighlights(highlights);
   selection.removeAllRanges();
+
+  applyHighlights();
 }
 
 /* =====================================================
-   REAPPLY
+   RENDER HIGHLIGHTS (OVERLAY SYSTEM)
 ===================================================== */
 
 export function applyHighlights() {
-  const highlights = getHighlights();
   const container = document.querySelector(".pdf-canvas-container");
   if (!container) return;
 
-  container.querySelectorAll(".pdf-page").forEach(pageDiv => {
-    const pageNum = Number(pageDiv.dataset.page);
+  const highlights = getHighlights();
+
+  container.querySelectorAll(".pdf-page").forEach(page => {
+    page.querySelectorAll(".pdf-overlay-highlight").forEach(el => el.remove());
 
     highlights
-      .filter(h => h.bookId === currentBookId && h.page === pageNum)
+      .filter(h => h.bookId === currentBookId && h.page === Number(page.dataset.page))
       .forEach(h => {
-        const spans = pageDiv.querySelectorAll(".textLayer span");
+        const overlay = document.createElement("div");
+        overlay.className = "pdf-overlay-highlight";
 
-        spans.forEach(span => {
-          if (span.textContent.trim() === h.text.trim()) {
-            span.classList.add("pdf-highlight");
-            span.style.backgroundColor = h.color;
-          }
-        });
+        overlay.style.position = "absolute";
+        overlay.style.top = `${h.top}px`;
+        overlay.style.left = `${h.left}px`;
+        overlay.style.width = `${h.width}px`;
+        overlay.style.height = `${h.height}px`;
+        overlay.style.background = h.color;
+        overlay.style.pointerEvents = "none";
+
+        page.appendChild(overlay);
       });
   });
 }
