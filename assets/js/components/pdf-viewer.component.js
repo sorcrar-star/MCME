@@ -36,6 +36,8 @@ export async function openPdfModal(book) {
     title.textContent = book.title;
     viewer.classList.remove("hidden");
 
+    addHeaderButtons(viewer);
+
     pdfDoc = await pdfjsLib.getDocument(book.pdfUrl).promise;
 
     for (let i = 1; i <= pdfDoc.numPages; i++) {
@@ -100,7 +102,7 @@ async function lazyRenderPages() {
 }
 
 /* =====================================================
-   RENDER PAGE (API CORRECTA v5)
+   RENDER PAGE (CORRECTO v5)
 ===================================================== */
 
 async function renderPage(pageNum, placeholder) {
@@ -114,7 +116,6 @@ async function renderPage(pageNum, placeholder) {
     wrapper.style.height = `${viewport.height}px`;
     wrapper.style.margin = "0 auto";
 
-    // ===== CANVAS =====
     const canvas = document.createElement("canvas");
     canvas.width = viewport.width;
     canvas.height = viewport.height;
@@ -122,7 +123,6 @@ async function renderPage(pageNum, placeholder) {
 
     wrapper.appendChild(canvas);
 
-    // ===== TEXT LAYER =====
     const textLayerDiv = document.createElement("div");
     textLayerDiv.className = "textLayer";
     wrapper.appendChild(textLayerDiv);
@@ -130,17 +130,20 @@ async function renderPage(pageNum, placeholder) {
     placeholder.innerHTML = "";
     placeholder.appendChild(wrapper);
 
-    const renderTask = page.render({
+    await page.render({
       canvasContext: ctx,
-      viewport,
-      textLayer: {
-        container: textLayerDiv
-      }
+      viewport
+    }).promise;
+
+    const textContent = await page.getTextContent();
+
+    await pdfjsLib.renderTextLayer({
+      textContentSource: textContent,
+      container: textLayerDiv,
+      viewport
     });
 
-    await renderTask.promise;
-
-    setTimeout(() => applyHighlights(), 50);
+    setTimeout(() => applyHighlights(), 80);
 
   } catch (err) {
     console.error("Render error:", err);
@@ -207,12 +210,36 @@ export function goToPdfPage(pageNumber) {
 }
 
 /* =====================================================
+   HEADER BUTTONS
+===================================================== */
+
+function addHeaderButtons(viewer) {
+  const header = viewer.querySelector(".pdf-modal-header .actions");
+  if (!header) return;
+
+  if (!header.querySelector("#togglePdfDarkMode")) {
+    const darkBtn = document.createElement("button");
+    darkBtn.id = "togglePdfDarkMode";
+    darkBtn.textContent = "🌙 Modo lector";
+    header.prepend(darkBtn);
+  }
+
+  if (!header.querySelector("#underlineInfoBtn")) {
+    const underlineBtn = document.createElement("button");
+    underlineBtn.id = "underlineInfoBtn";
+    underlineBtn.textContent = "✏ Subrayar";
+    underlineBtn.onclick = () =>
+      alert("Selecciona texto dentro del PDF para subrayar.");
+    header.prepend(underlineBtn);
+  }
+}
+
+/* =====================================================
    GLOBAL BUTTON EVENTS
 ===================================================== */
 
 document.addEventListener("click", (e) => {
   const viewer = document.getElementById("pdfViewer");
-
   if (!viewer) return;
 
   if (e.target.id === "closePdfBtn") {
