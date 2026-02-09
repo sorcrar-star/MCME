@@ -19,7 +19,7 @@ export async function openPdfModal(book) {
     const container = document.querySelector(".pdf-canvas-container");
     const title = document.getElementById("pdfTitle");
 
-    // 🔹 Limpiar canvas y scroll
+    // 🔹 Limpiar contenido y scroll
     container.innerHTML = "";
     container.scrollTop = 0;
     container.removeEventListener("scroll", detectCurrentPage);
@@ -29,7 +29,7 @@ export async function openPdfModal(book) {
 
     pdfDoc = await pdfjsLib.getDocument(book.pdfUrl).promise;
 
-    // 🔹 Render secuencial
+    // 🔹 Render secuencial seguro
     for (let i = 1; i <= pdfDoc.numPages; i++) {
       const page = await pdfDoc.getPage(i);
       const viewport = page.getViewport({ scale: 1.5 });
@@ -42,16 +42,24 @@ export async function openPdfModal(book) {
       canvas.width = viewport.width;
       canvas.height = viewport.height;
 
-      container.appendChild(canvas); // Primero agregamos
+      // 🔹 Esperar render antes de añadir
       await page.render({ canvasContext: ctx, viewport }).promise;
+      container.appendChild(canvas);
     }
 
-    // 🔹 Forzar scroll inicial a página 1
+    // 🔹 Scroll inicial seguro a página 1
     container.scrollTo({ top: 0, behavior: "auto" });
 
-    // 🔹 Agregar listener y calcular página visible
+    // 🔹 Listener para detectar página visible
     container.addEventListener("scroll", detectCurrentPage);
     detectCurrentPage();
+
+    // 🔹 Aplicar modo oscuro si estaba activado
+    if (document.body.classList.contains("dark-mode")) {
+      viewer.classList.add("dark-mode");
+    } else {
+      viewer.classList.remove("dark-mode");
+    }
 
   } catch (err) {
     console.error("Error PDF:", err);
@@ -103,8 +111,10 @@ export function goToPdfPage(pageNumber) {
 }
 
 document.addEventListener("click", (e) => {
+  const viewer = document.getElementById("pdfViewer");
+
   if (e.target.id === "closePdfBtn") {
-    document.getElementById("pdfViewer")?.classList.add("hidden");
+    viewer?.classList.add("hidden");
     currentBook = null;
   }
 
