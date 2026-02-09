@@ -146,11 +146,10 @@
 
 /* ✅ Highlight visible correctamente */
 .textLayer span.pdf-highlight {
-  background: rgba(255, 230, 0, 0.7) !important;
-  color: black !important;
-  mix-blend-mode: multiply;
+  background-color: rgba(255, 230, 0, 0.6);
   border-radius: 2px;
 }
+
 
 .textLayer span::selection {
   background: rgba(15, 76, 129, 0.35);
