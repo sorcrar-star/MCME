@@ -103,7 +103,7 @@ async function lazyRenderPages() {
 }
 
 /* =====================================================
-   RENDER PAGE (CORRECTO PARA PDFJS v5)
+   RENDER PAGE (PDFJS v5 CORRECTO)
 ===================================================== */
 
 async function renderPage(pageNum, placeholder) {
@@ -117,12 +117,14 @@ async function renderPage(pageNum, placeholder) {
     wrapper.style.height = `${viewport.height}px`;
     wrapper.style.margin = "0 auto";
 
+    // ===== CANVAS =====
     const canvas = document.createElement("canvas");
     canvas.width = viewport.width;
     canvas.height = viewport.height;
     const ctx = canvas.getContext("2d");
     wrapper.appendChild(canvas);
 
+    // ===== TEXT LAYER =====
     const textLayerDiv = document.createElement("div");
     textLayerDiv.className = "textLayer";
     textLayerDiv.style.position = "absolute";
@@ -135,22 +137,24 @@ async function renderPage(pageNum, placeholder) {
     placeholder.innerHTML = "";
     placeholder.appendChild(wrapper);
 
-    // Render canvas
+    // Render canvas primero
     await page.render({
       canvasContext: ctx,
       viewport
     }).promise;
 
-    // Render text layer manual (FORMA CORRECTA)
+    // 🔥 Render de texto correcto para v5
     const textContent = await page.getTextContent();
 
-    await pdfjsLib.renderTextLayer({
+    const textLayer = new pdfjsLib.TextLayer({
       textContentSource: textContent,
       container: textLayerDiv,
-      viewport: viewport,
-      textDivs: []
+      viewport: viewport
     });
 
+    await textLayer.render();
+
+    // Reaplicar subrayados
     setTimeout(() => applyHighlights(), 80);
 
   } catch (err) {
