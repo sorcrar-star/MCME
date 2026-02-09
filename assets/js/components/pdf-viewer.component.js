@@ -1,7 +1,3 @@
-/* =====================================================
-    pdf-viewer.component.js optimizado + textLayer seleccionable + scroll flui
-===================================================== */
-
 import * as pdfjsLib from "../vendor/pdfjs/build/pdf.mjs";
 import { openNotesPanel } from "./book-notes.component.js";
 import { initUnderlineTool, applyHighlights } from "./pdf-underline.component.js";
@@ -44,7 +40,6 @@ export async function openPdfModal(book) {
 
     pdfDoc = await pdfjsLib.getDocument(book.pdfUrl).promise;
 
-    // Crear placeholders
     for (let i = 1; i <= pdfDoc.numPages; i++) {
       const placeholder = document.createElement("div");
       placeholder.className = "pdf-page";
@@ -57,7 +52,6 @@ export async function openPdfModal(book) {
 
     await lazyRenderPages();
     detectCurrentPage();
-
     syncDarkMode(viewer);
 
     initUnderlineTool(book.id);
@@ -68,7 +62,7 @@ export async function openPdfModal(book) {
 }
 
 /* =====================================================
-   SCROLL HANDLER
+   SCROLL
 ===================================================== */
 
 function handleScroll() {
@@ -77,7 +71,7 @@ function handleScroll() {
 }
 
 /* =====================================================
-   LAZY RENDER OPTIMIZADO
+   LAZY RENDER
 ===================================================== */
 
 async function lazyRenderPages() {
@@ -86,7 +80,6 @@ async function lazyRenderPages() {
 
   const scrollTop = container.scrollTop;
   const clientHeight = container.clientHeight;
-
   const pages = container.querySelectorAll(".pdf-page");
 
   for (let placeholder of pages) {
@@ -108,7 +101,7 @@ async function lazyRenderPages() {
 }
 
 /* =====================================================
-   RENDER PAGE (CON SELECCIÓN FUNCIONAL)
+   RENDER PAGE (CORRECTO)
 ===================================================== */
 
 async function renderPage(pageNum, placeholder) {
@@ -122,30 +115,17 @@ async function renderPage(pageNum, placeholder) {
     wrapper.style.height = `${viewport.height}px`;
     wrapper.style.margin = "0 auto";
 
-    // 🔹 Canvas (SOLO VISUAL - no debe capturar eventos)
     const canvas = document.createElement("canvas");
     canvas.width = viewport.width;
     canvas.height = viewport.height;
-    canvas.style.pointerEvents = "none";
-    canvas.style.userSelect = "none";
 
     const ctx = canvas.getContext("2d");
     await page.render({ canvasContext: ctx, viewport }).promise;
 
     wrapper.appendChild(canvas);
 
-    // 🔹 TextLayer (INTERACTIVA)
     const textLayerDiv = document.createElement("div");
     textLayerDiv.className = "textLayer";
-    textLayerDiv.style.position = "absolute";
-    textLayerDiv.style.top = "0";
-    textLayerDiv.style.left = "0";
-    textLayerDiv.style.width = `${viewport.width}px`;
-    textLayerDiv.style.height = `${viewport.height}px`;
-    textLayerDiv.style.pointerEvents = "auto";
-    textLayerDiv.style.userSelect = "text";
-    textLayerDiv.style.cursor = "text";
-
     wrapper.appendChild(textLayerDiv);
 
     placeholder.innerHTML = "";
@@ -153,19 +133,16 @@ async function renderPage(pageNum, placeholder) {
 
     const textContent = await page.getTextContent();
 
-    pdfjsLib.renderTextLayer({
+    await pdfjsLib.renderTextLayer({
       textContent,
       container: textLayerDiv,
       viewport,
     });
 
-    // Reaplicar highlights después de renderizar
-    setTimeout(() => {
-      applyHighlights();
-    }, 80);
+    setTimeout(() => applyHighlights(), 50);
 
   } catch (err) {
-    console.error("Render page error:", err);
+    console.error("Render error:", err);
   }
 }
 
@@ -185,7 +162,6 @@ export function detectCurrentPage() {
   pages.forEach(page => {
     const top = page.offsetTop;
     const bottom = top + page.clientHeight;
-
     if (middle >= top && middle < bottom) {
       detected = Number(page.dataset.page);
     }
@@ -193,7 +169,6 @@ export function detectCurrentPage() {
 
   if (detected !== currentPage) {
     currentPage = detected;
-
     document.dispatchEvent(
       new CustomEvent("pdf:pageChanged", {
         detail: { page: currentPage }
@@ -229,30 +204,6 @@ export function goToPdfPage(pageNumber) {
 }
 
 /* =====================================================
-   GLOBAL EVENTS
-===================================================== */
-
-document.addEventListener("click", (e) => {
-  const viewer = document.getElementById("pdfViewer");
-
-  if (e.target.id === "closePdfBtn") {
-    viewer?.classList.add("hidden");
-    currentBook = null;
-    renderedPages.clear();
-  }
-
-  if (e.target.id === "openNotesFromPdf") {
-    if (!currentBook) return;
-    openNotesPanel(currentBook, currentPage);
-  }
-
-  if (e.target.id === "togglePdfDarkMode") {
-    viewer.classList.toggle("dark-mode");
-    updateDarkModeButton(viewer);
-  }
-});
-
-/* =====================================================
    HEADER BUTTONS
 ===================================================== */
 
@@ -281,11 +232,8 @@ function addHeaderButtons(viewer) {
 function updateDarkModeButton(viewer) {
   const btn = viewer.querySelector("#togglePdfDarkMode");
   if (!btn) return;
-
   const isDark = viewer.classList.contains("dark-mode");
-  btn.textContent = isDark
-    ? "☀️ Modo normal"
-    : "🌙 Modo lector";
+  btn.textContent = isDark ? "☀️ Modo normal" : "🌙 Modo lector";
 }
 
 function syncDarkMode(viewer) {
