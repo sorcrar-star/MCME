@@ -10,12 +10,6 @@ let pdfDoc = null;
 let currentPage = 1;
 let currentBook = null;
 
-const STORAGE_READER_MODE = "mcme_reader_mode";
-
-/* ======================================================
-   OPEN MODAL
-====================================================== */
-
 export async function openPdfModal(book) {
   try {
     currentBook = book;
@@ -24,36 +18,17 @@ export async function openPdfModal(book) {
     const viewer = document.getElementById("pdfViewer");
     const container = document.querySelector(".pdf-canvas-container");
     const title = document.getElementById("pdfTitle");
-    const headerActions = document.querySelector(".pdf-modal-header .actions");
 
+    // 🔥 Limpieza total
     container.innerHTML = "";
+    container.removeEventListener("scroll", detectCurrentPage);
+
     title.textContent = book.title;
     viewer.classList.remove("hidden");
 
-    /* ===============================
-       BOTÓN MODO LECTOR
-    =============================== */
-
-    if (!document.getElementById("toggleReaderMode")) {
-      const readerBtn = document.createElement("button");
-      readerBtn.id = "toggleReaderMode";
-      readerBtn.textContent = "🌙 Modo lector";
-
-      headerActions.prepend(readerBtn);
-
-      readerBtn.addEventListener("click", () => {
-        toggleReaderMode();
-      });
-    }
-
-    applySavedReaderMode();
-
-    /* ===============================
-       RENDER PDF
-    =============================== */
-
     pdfDoc = await pdfjsLib.getDocument(book.pdfUrl).promise;
 
+    // 🔥 Render secuencial limpio
     for (let i = 1; i <= pdfDoc.numPages; i++) {
       const page = await pdfDoc.getPage(i);
       const viewport = page.getViewport({ scale: 1.5 });
@@ -66,62 +41,31 @@ export async function openPdfModal(book) {
       canvas.width = viewport.width;
       canvas.height = viewport.height;
 
+      container.appendChild(canvas); // 👈 Se agrega antes de renderizar
+
       await page.render({ canvasContext: ctx, viewport }).promise;
-      container.appendChild(canvas);
     }
 
-    container.addEventListener("scroll", detectCurrentPage);
-    detectCurrentPage();
+    // 🔥 Esperar a que el DOM termine de acomodarse
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        container.addEventListener("scroll", detectCurrentPage);
+        detectCurrentPage();
+      });
+    });
 
   } catch (err) {
     console.error("Error PDF:", err);
   }
 }
 
-/* ======================================================
-   READER MODE
-====================================================== */
-
-function toggleReaderMode() {
-  const viewer = document.getElementById("pdfViewer");
-  const isActive = viewer.classList.toggle("dark-mode");
-
-  localStorage.setItem(STORAGE_READER_MODE, isActive ? "dark" : "light");
-
-  updateReaderButtonText(isActive);
-}
-
-function applySavedReaderMode() {
-  const viewer = document.getElementById("pdfViewer");
-  const saved = localStorage.getItem(STORAGE_READER_MODE);
-
-  if (saved === "dark") {
-    viewer.classList.add("dark-mode");
-    updateReaderButtonText(true);
-  } else {
-    viewer.classList.remove("dark-mode");
-    updateReaderButtonText(false);
-  }
-}
-
-function updateReaderButtonText(isDark) {
-  const btn = document.getElementById("toggleReaderMode");
-  if (!btn) return;
-
-  btn.textContent = isDark
-    ? "☀ Modo clásico"
-    : "🌙 Modo lector";
-}
-
-/* ======================================================
-   PAGE DETECTION
-====================================================== */
 
 export function detectCurrentPage() {
   const container = document.querySelector(".pdf-canvas-container");
   if (!container) return;
 
   const pages = container.querySelectorAll(".pdf-page");
+
   const middle = container.scrollTop + container.clientHeight / 2;
 
   let detected = 1;
@@ -138,6 +82,7 @@ export function detectCurrentPage() {
   if (detected !== currentPage) {
     currentPage = detected;
 
+    // 🔥 Disparar evento para el panel
     document.dispatchEvent(
       new CustomEvent("pdf:pageChanged", {
         detail: { page: currentPage }
@@ -165,10 +110,6 @@ export function goToPdfPage(pageNumber) {
     behavior: "smooth"
   });
 }
-
-/* ======================================================
-   GLOBAL CLICK HANDLERS
-====================================================== */
 
 document.addEventListener("click", (e) => {
   if (e.target.id === "closePdfBtn") {
