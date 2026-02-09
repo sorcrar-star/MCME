@@ -1,4 +1,6 @@
-// 🔹 pdf-viewer.component.js optimizado + textLayer funcional + scroll fluido
+/* =====================================================
+    pdf-viewer.component.js optimizado + textLayer seleccionable + scroll flui
+===================================================== */
 
 import * as pdfjsLib from "../vendor/pdfjs/build/pdf.mjs";
 import { openNotesPanel } from "./book-notes.component.js";
@@ -42,7 +44,7 @@ export async function openPdfModal(book) {
 
     pdfDoc = await pdfjsLib.getDocument(book.pdfUrl).promise;
 
-    // Crear placeholders ligeros
+    // Crear placeholders
     for (let i = 1; i <= pdfDoc.numPages; i++) {
       const placeholder = document.createElement("div");
       placeholder.className = "pdf-page";
@@ -106,7 +108,7 @@ async function lazyRenderPages() {
 }
 
 /* =====================================================
-   RENDER PAGE (NO BLOQUEA SCROLL)
+   RENDER PAGE (CON SELECCIÓN FUNCIONAL)
 ===================================================== */
 
 async function renderPage(pageNum, placeholder) {
@@ -120,17 +122,19 @@ async function renderPage(pageNum, placeholder) {
     wrapper.style.height = `${viewport.height}px`;
     wrapper.style.margin = "0 auto";
 
-    // Canvas
+    // 🔹 Canvas (SOLO VISUAL - no debe capturar eventos)
     const canvas = document.createElement("canvas");
     canvas.width = viewport.width;
     canvas.height = viewport.height;
+    canvas.style.pointerEvents = "none";
+    canvas.style.userSelect = "none";
 
     const ctx = canvas.getContext("2d");
     await page.render({ canvasContext: ctx, viewport }).promise;
 
     wrapper.appendChild(canvas);
 
-    // TextLayer correctamente posicionada
+    // 🔹 TextLayer (INTERACTIVA)
     const textLayerDiv = document.createElement("div");
     textLayerDiv.className = "textLayer";
     textLayerDiv.style.position = "absolute";
@@ -139,6 +143,8 @@ async function renderPage(pageNum, placeholder) {
     textLayerDiv.style.width = `${viewport.width}px`;
     textLayerDiv.style.height = `${viewport.height}px`;
     textLayerDiv.style.pointerEvents = "auto";
+    textLayerDiv.style.userSelect = "text";
+    textLayerDiv.style.cursor = "text";
 
     wrapper.appendChild(textLayerDiv);
 
@@ -153,7 +159,7 @@ async function renderPage(pageNum, placeholder) {
       viewport,
     });
 
-    // aplicar highlights después de que textLayer exista
+    // Reaplicar highlights después de renderizar
     setTimeout(() => {
       applyHighlights();
     }, 80);
@@ -164,7 +170,7 @@ async function renderPage(pageNum, placeholder) {
 }
 
 /* =====================================================
-   PAGE DETECTION EN TIEMPO REAL
+   PAGE DETECTION
 ===================================================== */
 
 export function detectCurrentPage() {
