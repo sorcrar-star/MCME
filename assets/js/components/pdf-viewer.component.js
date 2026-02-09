@@ -1,3 +1,4 @@
+// 🔹 pdf-viewer.component.js optimizado con toggle dinámico
 import * as pdfjsLib from "../vendor/pdfjs/build/pdf.mjs";
 import { openNotesPanel } from "./book-notes.component.js";
 
@@ -29,7 +30,7 @@ export async function openPdfModal(book) {
     title.textContent = book.title;
     viewer.classList.remove("hidden");
 
-    // 🔹 Agregar botón de modo lector
+    // 🔹 Agregar botón de modo lector antes de los otros botones
     addDarkModeToggle(viewer);
 
     pdfDoc = await pdfjsLib.getDocument(book.pdfUrl).promise;
@@ -53,8 +54,10 @@ export async function openPdfModal(book) {
     // Aplicar dark mode inicial si está activo
     if (document.body.classList.contains("dark-mode")) {
       viewer.classList.add("dark-mode");
+      updateDarkModeButton(viewer, true);
     } else {
       viewer.classList.remove("dark-mode");
+      updateDarkModeButton(viewer, false);
     }
 
   } catch (err) {
@@ -160,6 +163,8 @@ document.addEventListener("click", (e) => {
 
   if (e.target.id === "togglePdfDarkMode") {
     viewer.classList.toggle("dark-mode");
+    const isDark = viewer.classList.contains("dark-mode");
+    updateDarkModeButton(viewer, isDark);
   }
 });
 
@@ -171,5 +176,22 @@ function addDarkModeToggle(viewer) {
   const btn = document.createElement("button");
   btn.id = "togglePdfDarkMode";
   btn.textContent = "🌙 Modo lector";
-  header.appendChild(btn);
+
+  // Insertar antes de los botones existentes
+  if (header.firstChild) {
+    header.insertBefore(btn, header.firstChild);
+  } else {
+    header.appendChild(btn);
+  }
+}
+
+// 🔹 Actualizar texto y emoji según el modo
+function updateDarkModeButton(viewer, isDarkMode) {
+  const btn = viewer.querySelector("#togglePdfDarkMode");
+  if (!btn) return;
+  if (isDarkMode) {
+    btn.textContent = "☀️ Modo normal";
+  } else {
+    btn.textContent = "🌙 Modo lector";
+  }
 }
