@@ -40,6 +40,7 @@ export async function openPdfModal(book) {
 
     pdfDoc = await pdfjsLib.getDocument(book.pdfUrl).promise;
 
+    // Crear placeholders
     for (let i = 1; i <= pdfDoc.numPages; i++) {
       const placeholder = document.createElement("div");
       placeholder.className = "pdf-page";
@@ -102,7 +103,7 @@ async function lazyRenderPages() {
 }
 
 /* =====================================================
-   RENDER PAGE (CORRECTO v5)
+   RENDER PAGE (PDFJS v5 CORRECTO)
 ===================================================== */
 
 async function renderPage(pageNum, placeholder) {
@@ -116,13 +117,14 @@ async function renderPage(pageNum, placeholder) {
     wrapper.style.height = `${viewport.height}px`;
     wrapper.style.margin = "0 auto";
 
+    // ===== CANVAS =====
     const canvas = document.createElement("canvas");
     canvas.width = viewport.width;
     canvas.height = viewport.height;
     const ctx = canvas.getContext("2d");
-
     wrapper.appendChild(canvas);
 
+    // ===== TEXT LAYER =====
     const textLayerDiv = document.createElement("div");
     textLayerDiv.className = "textLayer";
     wrapper.appendChild(textLayerDiv);
@@ -130,19 +132,18 @@ async function renderPage(pageNum, placeholder) {
     placeholder.innerHTML = "";
     placeholder.appendChild(wrapper);
 
-    await page.render({
+    // ⚠️ Forma correcta en v5
+    const renderTask = page.render({
       canvasContext: ctx,
-      viewport
-    }).promise;
-
-    const textContent = await page.getTextContent();
-
-    await pdfjsLib.renderTextLayer({
-      textContentSource: textContent,
-      container: textLayerDiv,
-      viewport
+      viewport,
+      textLayer: {
+        container: textLayerDiv
+      }
     });
 
+    await renderTask.promise;
+
+    // Reaplicar subrayados
     setTimeout(() => applyHighlights(), 80);
 
   } catch (err) {
