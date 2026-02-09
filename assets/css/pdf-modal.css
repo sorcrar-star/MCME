@@ -278,8 +278,11 @@
 
 .textLayer {
   pointer-events: auto;
+  user-select: text;
 }
 
 .textLayer span {
+  user-select: text;
   cursor: text;
 }
+
