@@ -1,10 +1,7 @@
 import * as pdfjsLib from "../vendor/pdfjs/build/pdf.mjs";
 import { openNotesPanel } from "./book-notes.component.js";
-import { 
-  initUnderlineTool, 
-  applyHighlights,
-  applyCurrentSelection 
-} from "./pdf-underline.component.js";
+import { initUnderlineTool,applyHighlights,applyCurrentSelection,toggleEraseMode,isEraseModeActive} from "./pdf-underline.component.js";
+
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
   "../vendor/pdfjs/build/pdf.worker.mjs",
@@ -227,6 +224,26 @@ export function goToPdfPage(pageNumber) {
 function addHeaderButtons(viewer) {
   const header = viewer.querySelector(".pdf-modal-header .actions");
   if (!header) return;
+
+  if (!header.querySelector("#eraseHighlightBtn")) {
+  const eraseBtn = document.createElement("button");
+  eraseBtn.id = "eraseHighlightBtn";
+  eraseBtn.textContent = "🧽 Borrar";
+
+  eraseBtn.onclick = () => {
+    toggleEraseMode();
+
+    if (isEraseModeActive()) {
+      eraseBtn.textContent = "❌ Salir borrado";
+    } else {
+      eraseBtn.textContent = "🧽 Borrar";
+    }
+
+    applyHighlights();
+  };
+
+  header.prepend(eraseBtn);
+}
 
   if (!header.querySelector("#togglePdfDarkMode")) {
     const darkBtn = document.createElement("button");
