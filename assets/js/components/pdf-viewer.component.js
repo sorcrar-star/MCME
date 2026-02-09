@@ -1,7 +1,7 @@
-// 🔹 pdf-viewer.component.js optimizado con toggle dinámico + subrayado
+// 🔹 pdf-viewer.component.js con textLayer y subrayado
 import * as pdfjsLib from "../vendor/pdfjs/build/pdf.mjs";
 import { openNotesPanel } from "./book-notes.component.js";
-import { initUnderlineTool, applyHighlights } from "./pdf-underline.component.js"; // 🔹 IMPORT SUBRAYADO
+import { initUnderlineTool, applyHighlights, getCurrentPdfPage } from "./pdf-underline.component.js";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
   "../vendor/pdfjs/build/pdf.worker.mjs",
@@ -12,7 +12,7 @@ let pdfDoc = null;
 let currentPage = 1;
 let currentBook = null;
 const renderedPages = new Set();
-const PAGE_BUFFER = 2; // páginas antes y después de la visible
+const PAGE_BUFFER = 2;
 
 export async function openPdfModal(book) {
   try {
@@ -23,7 +23,6 @@ export async function openPdfModal(book) {
     const container = document.querySelector(".pdf-canvas-container");
     const title = document.getElementById("pdfTitle");
 
-    // Limpiar contenido y scroll
     container.innerHTML = "";
     container.scrollTop = 0;
     container.removeEventListener("scroll", lazyRenderPages);
@@ -31,7 +30,6 @@ export async function openPdfModal(book) {
     title.textContent = book.title;
     viewer.classList.remove("hidden");
 
-    // 🔹 Agregar botón de modo lector antes de los otros botones
     addDarkModeToggle(viewer);
 
     pdfDoc = await pdfjsLib.getDocument(book.pdfUrl).promise;
@@ -41,18 +39,15 @@ export async function openPdfModal(book) {
       const placeholder = document.createElement("div");
       placeholder.className = "pdf-page";
       placeholder.dataset.page = i;
-      placeholder.style.minHeight = "600px"; // altura estimada
+      placeholder.style.minHeight = "600px"; 
       container.appendChild(placeholder);
     }
 
-    // Listener de scroll para renderizar solo páginas cercanas
     container.addEventListener("scroll", lazyRenderPages);
-
-    // Renderizar las primeras páginas visibles
     lazyRenderPages();
     detectCurrentPage();
 
-    // Aplicar dark mode inicial si está activo
+    // Dark mode inicial
     if (document.body.classList.contains("dark-mode")) {
       viewer.classList.add("dark-mode");
       updateDarkModeButton(viewer, true);
@@ -61,7 +56,7 @@ export async function openPdfModal(book) {
       updateDarkModeButton(viewer, false);
     }
 
-    // 🔹 Inicializar herramienta de subrayado
+    // 🔹 Inicializar subrayado
     initUnderlineTool(book.id);
 
   } catch (err) {
@@ -69,7 +64,7 @@ export async function openPdfModal(book) {
   }
 }
 
-// Función para renderizar solo páginas visibles + buffer
+// Lazy render páginas + textLayer
 async function lazyRenderPages() {
   const container = document.querySelector(".pdf-canvas-container");
   if (!container || !pdfDoc) return;
@@ -83,26 +78,39 @@ async function lazyRenderPages() {
     const top = placeholder.offsetTop;
     const bottom = top + placeholder.clientHeight;
 
-    // Si está en buffer de visibilidad y no se ha renderizado
     if (!renderedPages.has(pageNum) &&
         (bottom >= scrollTop - clientHeight*PAGE_BUFFER && top <= scrollTop + clientHeight*(PAGE_BUFFER+1))
     ) {
       const page = await pdfDoc.getPage(pageNum);
       const viewport = page.getViewport({ scale: 1.5 });
 
+      // Canvas
       const canvas = document.createElement("canvas");
       canvas.width = viewport.width;
       canvas.height = viewport.height;
-
       const ctx = canvas.getContext("2d");
       await page.render({ canvasContext: ctx, viewport }).promise;
 
-      // Reemplazar placeholder por canvas
+      // Reemplazar placeholder por canvas + textLayer
       placeholder.innerHTML = "";
       placeholder.appendChild(canvas);
+
+      // 🔹 TextLayer
+      const textLayerDiv = document.createElement("div");
+      textLayerDiv.className = "textLayer";
+      placeholder.appendChild(textLayerDiv);
+
+      const textContent = await page.getTextContent();
+      pdfjsLib.renderTextLayer({
+        textContent,
+        container: textLayerDiv,
+        viewport,
+        textDivs: [],
+      });
+
       renderedPages.add(pageNum);
 
-      // 🔹 Reaplicar subrayados en la página recién renderizada
+      // 🔹 Aplicar subrayados guardados
       applyHighlights();
     }
   }
@@ -110,7 +118,6 @@ async function lazyRenderPages() {
   detectCurrentPage();
 }
 
-// Detectar página visible
 export function detectCurrentPage() {
   const container = document.querySelector(".pdf-canvas-container");
   if (!container) return;
@@ -122,21 +129,13 @@ export function detectCurrentPage() {
   pages.forEach(page => {
     const top = page.offsetTop;
     const bottom = top + page.clientHeight;
-    if (middle >= top && middle < bottom) {
-      detected = Number(page.dataset.page);
-    }
+    if (middle >= top && middle < bottom) detected = Number(page.dataset.page);
   });
 
   if (detected !== currentPage) {
     currentPage = detected;
-    document.dispatchEvent(
-      new CustomEvent("pdf:pageChanged", { detail: { page: currentPage } })
-    );
+    document.dispatchEvent(new CustomEvent("pdf:pageChanged", { detail: { page: currentPage } }));
   }
-}
-
-export function getCurrentPdfPage() {
-  return currentPage;
 }
 
 export function goToPdfPage(pageNumber) {
@@ -146,17 +145,12 @@ export function goToPdfPage(pageNumber) {
   const target = container.querySelector(`.pdf-page[data-page="${pageNumber}"]`);
   if (!target) return;
 
-  container.scrollTo({
-    top: target.offsetTop,
-    behavior: "smooth"
-  });
-
-  lazyRenderPages(); // asegurarnos de renderizarla
+  container.scrollTo({ top: target.offsetTop, behavior: "smooth" });
+  lazyRenderPages();
 }
 
 document.addEventListener("click", (e) => {
   const viewer = document.getElementById("pdfViewer");
-
   if (e.target.id === "closePdfBtn") {
     viewer?.classList.add("hidden");
     currentBook = null;
@@ -175,7 +169,6 @@ document.addEventListener("click", (e) => {
   }
 });
 
-// 🔹 Botón dark mode en el header
 function addDarkModeToggle(viewer) {
   const header = viewer.querySelector(".pdf-modal-header .actions");
   if (!header || header.querySelector("#togglePdfDarkMode")) return;
@@ -183,22 +176,11 @@ function addDarkModeToggle(viewer) {
   const btn = document.createElement("button");
   btn.id = "togglePdfDarkMode";
   btn.textContent = "🌙 Modo lector";
-
-  // Insertar antes de los botones existentes
-  if (header.firstChild) {
-    header.insertBefore(btn, header.firstChild);
-  } else {
-    header.appendChild(btn);
-  }
+  header.firstChild ? header.insertBefore(btn, header.firstChild) : header.appendChild(btn);
 }
 
-// 🔹 Actualizar texto y emoji según el modo
 function updateDarkModeButton(viewer, isDarkMode) {
   const btn = viewer.querySelector("#togglePdfDarkMode");
   if (!btn) return;
-  if (isDarkMode) {
-    btn.textContent = "☀️ Modo normal";
-  } else {
-    btn.textContent = "🌙 Modo lector";
-  }
+  btn.textContent = isDarkMode ? "☀️ Modo normal" : "🌙 Modo lector";
 }
