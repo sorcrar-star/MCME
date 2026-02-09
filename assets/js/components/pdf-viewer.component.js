@@ -9,6 +9,8 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
 let pdfDoc = null;
 let currentPage = 1;
 let currentBook = null;
+const renderedPages = new Set();
+const PAGE_BUFFER = 2; // páginas antes y después de la visible
 
 export async function openPdfModal(book) {
   try {
@@ -19,42 +21,36 @@ export async function openPdfModal(book) {
     const container = document.querySelector(".pdf-canvas-container");
     const title = document.getElementById("pdfTitle");
 
-    // 🔹 Limpiar contenido y scroll
+    // Limpiar contenido y scroll
     container.innerHTML = "";
     container.scrollTop = 0;
-    container.removeEventListener("scroll", detectCurrentPage);
+    container.removeEventListener("scroll", lazyRenderPages);
 
     title.textContent = book.title;
     viewer.classList.remove("hidden");
 
+    // 🔹 Agregar botón de modo lector
+    addDarkModeToggle(viewer);
+
     pdfDoc = await pdfjsLib.getDocument(book.pdfUrl).promise;
 
-    // 🔹 Render secuencial seguro
+    // Crear placeholders para cada página
     for (let i = 1; i <= pdfDoc.numPages; i++) {
-      const page = await pdfDoc.getPage(i);
-      const viewport = page.getViewport({ scale: 1.5 });
-
-      const canvas = document.createElement("canvas");
-      canvas.className = "pdf-page";
-      canvas.dataset.page = i;
-
-      const ctx = canvas.getContext("2d");
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
-
-      // 🔹 Esperar render antes de añadir
-      await page.render({ canvasContext: ctx, viewport }).promise;
-      container.appendChild(canvas);
+      const placeholder = document.createElement("div");
+      placeholder.className = "pdf-page";
+      placeholder.dataset.page = i;
+      placeholder.style.minHeight = "600px"; // altura estimada
+      container.appendChild(placeholder);
     }
 
-    // 🔹 Scroll inicial seguro a página 1
-    container.scrollTo({ top: 0, behavior: "auto" });
+    // Listener de scroll para renderizar solo páginas cercanas
+    container.addEventListener("scroll", lazyRenderPages);
 
-    // 🔹 Listener para detectar página visible
-    container.addEventListener("scroll", detectCurrentPage);
+    // Renderizar las primeras páginas visibles
+    lazyRenderPages();
     detectCurrentPage();
 
-    // 🔹 Aplicar modo oscuro si estaba activado
+    // Aplicar dark mode inicial si está activo
     if (document.body.classList.contains("dark-mode")) {
       viewer.classList.add("dark-mode");
     } else {
@@ -66,6 +62,45 @@ export async function openPdfModal(book) {
   }
 }
 
+// Función para renderizar solo páginas visibles + buffer
+async function lazyRenderPages() {
+  const container = document.querySelector(".pdf-canvas-container");
+  if (!container || !pdfDoc) return;
+
+  const scrollTop = container.scrollTop;
+  const clientHeight = container.clientHeight;
+
+  const pages = container.querySelectorAll(".pdf-page");
+  for (let placeholder of pages) {
+    const pageNum = Number(placeholder.dataset.page);
+    const top = placeholder.offsetTop;
+    const bottom = top + placeholder.clientHeight;
+
+    // Si está en buffer de visibilidad y no se ha renderizado
+    if (!renderedPages.has(pageNum) &&
+        (bottom >= scrollTop - clientHeight*PAGE_BUFFER && top <= scrollTop + clientHeight*(PAGE_BUFFER+1))
+    ) {
+      const page = await pdfDoc.getPage(pageNum);
+      const viewport = page.getViewport({ scale: 1.5 });
+
+      const canvas = document.createElement("canvas");
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+
+      const ctx = canvas.getContext("2d");
+      await page.render({ canvasContext: ctx, viewport }).promise;
+
+      // Reemplazar placeholder por canvas
+      placeholder.innerHTML = "";
+      placeholder.appendChild(canvas);
+      renderedPages.add(pageNum);
+    }
+  }
+
+  detectCurrentPage();
+}
+
+// Detectar página visible
 export function detectCurrentPage() {
   const container = document.querySelector(".pdf-canvas-container");
   if (!container) return;
@@ -84,11 +119,8 @@ export function detectCurrentPage() {
 
   if (detected !== currentPage) {
     currentPage = detected;
-
     document.dispatchEvent(
-      new CustomEvent("pdf:pageChanged", {
-        detail: { page: currentPage }
-      })
+      new CustomEvent("pdf:pageChanged", { detail: { page: currentPage } })
     );
   }
 }
@@ -108,6 +140,8 @@ export function goToPdfPage(pageNumber) {
     top: target.offsetTop,
     behavior: "smooth"
   });
+
+  lazyRenderPages(); // asegurarnos de renderizarla
 }
 
 document.addEventListener("click", (e) => {
@@ -116,10 +150,26 @@ document.addEventListener("click", (e) => {
   if (e.target.id === "closePdfBtn") {
     viewer?.classList.add("hidden");
     currentBook = null;
+    renderedPages.clear();
   }
 
   if (e.target.id === "openNotesFromPdf") {
     if (!currentBook) return;
     openNotesPanel(currentBook, currentPage);
   }
+
+  if (e.target.id === "togglePdfDarkMode") {
+    viewer.classList.toggle("dark-mode");
+  }
 });
+
+// 🔹 Botón dark mode en el header
+function addDarkModeToggle(viewer) {
+  const header = viewer.querySelector(".pdf-modal-header .actions");
+  if (!header || header.querySelector("#togglePdfDarkMode")) return;
+
+  const btn = document.createElement("button");
+  btn.id = "togglePdfDarkMode";
+  btn.textContent = "🌙 Modo lector";
+  header.appendChild(btn);
+}
