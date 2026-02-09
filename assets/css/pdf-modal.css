@@ -166,3 +166,26 @@
 .pdf-modal.dark-mode .pdf-page {
   background: #f8fafc;
 }
+
+/* =====================================================
+   DARK MODE HEADER FIX
+===================================================== */
+
+.pdf-modal.dark-mode .pdf-modal-header {
+  background: linear-gradient(to right, #111827, #1f2937);
+  color: #e5e7eb;
+}
+
+.pdf-modal.dark-mode #pdfTitle {
+  color: #e5e7eb;
+}
+
+.pdf-modal.dark-mode .pdf-modal-header button {
+  background: rgba(255, 255, 255, 0.08);
+  color: #e5e7eb;
+}
+
+.pdf-modal.dark-mode .pdf-modal-header button:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
