@@ -1,6 +1,7 @@
-// 🔹 pdf-viewer.component.js optimizado con toggle dinámico
+// 🔹 pdf-viewer.component.js optimizado con toggle dinámico + subrayado
 import * as pdfjsLib from "../vendor/pdfjs/build/pdf.mjs";
 import { openNotesPanel } from "./book-notes.component.js";
+import { initUnderlineTool, applyHighlights } from "./pdf-underline.component.js"; // 🔹 IMPORT SUBRAYADO
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
   "../vendor/pdfjs/build/pdf.worker.mjs",
@@ -60,6 +61,9 @@ export async function openPdfModal(book) {
       updateDarkModeButton(viewer, false);
     }
 
+    // 🔹 Inicializar herramienta de subrayado
+    initUnderlineTool(book.id);
+
   } catch (err) {
     console.error("Error PDF:", err);
   }
@@ -97,6 +101,9 @@ async function lazyRenderPages() {
       placeholder.innerHTML = "";
       placeholder.appendChild(canvas);
       renderedPages.add(pageNum);
+
+      // 🔹 Reaplicar subrayados en la página recién renderizada
+      applyHighlights();
     }
   }
 
