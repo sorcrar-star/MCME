@@ -274,3 +274,12 @@
     font-size: 14px;
   }
 }
+
+
+.textLayer {
+  pointer-events: auto;
+}
+
+.textLayer span {
+  cursor: text;
+}
