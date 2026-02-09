@@ -1,16 +1,9 @@
-/* =====================================================
-   PDF UNDERLINE / HIGHLIGHT TOOL (FIXED VERSION)
-   ✔ No reemplaza nodos
-   ✔ No rompe layout
-   ✔ Solo agrega clases a spans existentes
-===================================================== */
-
 const STORAGE_KEY_UNDERLINE = "mcme_pdf_highlights";
 
 let currentBookId = null;
 let selectionPopup = null;
 let linkPopup = null;
-let selectedColor = "yellow";
+let selectedColor = "rgba(255,230,0,0.6)";
 
 /* =====================================================
    INIT
@@ -30,7 +23,7 @@ export function initUnderlineTool(bookId) {
   container.removeEventListener("mouseup", handleTextSelection);
   container.addEventListener("mouseup", handleTextSelection);
 
-  setTimeout(() => applyHighlights(), 400);
+  setTimeout(() => applyHighlights(), 300);
 }
 
 /* =====================================================
@@ -67,10 +60,10 @@ function createSelectionPopup() {
 
   selectionPopup.innerHTML = `
     <div class="color-picker">
-      <button class="color-option" data-color="yellow" style="background:yellow"></button>
-      <button class="color-option" data-color="lightgreen" style="background:lightgreen"></button>
-      <button class="color-option" data-color="cyan" style="background:cyan"></button>
-      <button class="color-option" data-color="pink" style="background:pink"></button>
+      <button class="color-option" data-color="rgba(255,230,0,0.6)" style="background:yellow"></button>
+      <button class="color-option" data-color="rgba(144,238,144,0.6)" style="background:lightgreen"></button>
+      <button class="color-option" data-color="rgba(0,255,255,0.6)" style="background:cyan"></button>
+      <button class="color-option" data-color="rgba(255,182,193,0.6)" style="background:pink"></button>
     </div>
     <button id="highlightBtn">Subrayar</button>
   `;
@@ -115,7 +108,6 @@ function handleTextSelection() {
   if (!selection || selection.isCollapsed) return;
 
   const range = selection.getRangeAt(0);
-
   const container = document.querySelector(".pdf-canvas-container");
   if (!container.contains(range.commonAncestorContainer)) return;
 
@@ -140,7 +132,7 @@ function saveHighlights(highlights) {
 }
 
 /* =====================================================
-   APPLY SELECTION (FIXED CORE)
+   APPLY SELECTION
 ===================================================== */
 
 export function applyCurrentSelection() {
@@ -148,37 +140,37 @@ export function applyCurrentSelection() {
   if (!selection || selection.isCollapsed) return;
 
   const range = selection.getRangeAt(0);
-
   const container = document.querySelector(".pdf-canvas-container");
   if (!container.contains(range.commonAncestorContainer)) return;
 
   const pageNumber = detectCurrentPageNumber();
-
   const spans = container.querySelectorAll(".textLayer span");
 
   const highlights = getHighlights();
 
   spans.forEach(span => {
     if (range.intersectsNode(span)) {
-      span.classList.add("pdf-highlight");
-      span.style.backgroundColor = selectedColor;
 
-      highlights.push({
-        bookId: currentBookId,
-        page: pageNumber,
-        text: span.textContent,
-        color: selectedColor
-      });
+      if (!span.classList.contains("pdf-highlight")) {
+        span.classList.add("pdf-highlight");
+        span.style.backgroundColor = selectedColor;
+
+        highlights.push({
+          bookId: currentBookId,
+          page: pageNumber,
+          text: span.textContent.trim(),
+          color: selectedColor
+        });
+      }
     }
   });
 
   saveHighlights(highlights);
-
   selection.removeAllRanges();
 }
 
 /* =====================================================
-   REAPPLY HIGHLIGHTS (SAFE)
+   REAPPLY
 ===================================================== */
 
 export function applyHighlights() {
@@ -197,7 +189,7 @@ export function applyHighlights() {
         spans.forEach(span => {
           if (span.textContent.trim() === h.text.trim()) {
             span.classList.add("pdf-highlight");
-            span.style.backgroundColor = h.color || "yellow";
+            span.style.backgroundColor = h.color;
           }
         });
       });
