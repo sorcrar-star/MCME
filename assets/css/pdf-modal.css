@@ -138,16 +138,19 @@
   transform-origin: 0% 0%;
 }
 
+/* 🔒 PDF.js deja el texto invisible */
 .textLayer span {
   color: transparent;
   cursor: text;
 }
 
-/* 🔥 IMPORTANTE: permitir que el highlight sea visible */
+/* ✅ Highlight visible correctamente */
 .textLayer span.pdf-highlight {
+  background: rgba(255, 230, 0, 0.7) !important;
   color: black !important;
+  mix-blend-mode: multiply;
+  border-radius: 2px;
 }
-
 
 .textLayer span::selection {
   background: rgba(15, 76, 129, 0.35);
