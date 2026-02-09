@@ -32,11 +32,11 @@
 
 /* Subrayado en el texto */
 .pdf-highlight {
-  background-color: yellow;
   cursor: pointer;
   border-radius: 2px;
   transition: background-color 0.2s ease;
 }
+
 
 /* Mini panel al pasar sobre subrayado con enlace */
 .underline-link-popup {
