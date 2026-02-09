@@ -4,6 +4,8 @@ let currentBookId = null;
 let selectionPopup = null;
 let selectedColor = "#ffe600";
 
+let eraseMode = false;
+
 /* =====================================================
    INIT
 ===================================================== */
@@ -21,6 +23,23 @@ export function initUnderlineTool(bookId) {
   container.addEventListener("mouseup", handleTextSelection);
 
   setTimeout(() => applyHighlights(), 300);
+}
+
+/* =====================================================
+   ERASE MODE
+===================================================== */
+
+export function toggleEraseMode() {
+  eraseMode = !eraseMode;
+
+  const container = document.querySelector(".pdf-canvas-container");
+  if (!container) return;
+
+  container.classList.toggle("erase-mode", eraseMode);
+}
+
+export function isEraseModeActive() {
+  return eraseMode;
 }
 
 /* =====================================================
@@ -42,6 +61,8 @@ function createSelectionPopup() {
 }
 
 function showSelectionPopup(x, y) {
+  if (eraseMode) return;
+
   selectionPopup.style.top = `${y + window.scrollY}px`;
   selectionPopup.style.left = `${x + window.scrollX}px`;
   selectionPopup.classList.add("visible");
@@ -57,6 +78,8 @@ function hideSelectionPopup() {
 ===================================================== */
 
 function handleTextSelection() {
+  if (eraseMode) return;
+
   const selection = window.getSelection();
   if (!selection || selection.isCollapsed) return;
 
@@ -85,10 +108,12 @@ function saveHighlights(data) {
 }
 
 /* =====================================================
-   APPLY SELECTION (MERGED RECT SYSTEM)
+   APPLY SELECTION
 ===================================================== */
 
 export function applyCurrentSelection() {
+  if (eraseMode) return;
+
   const selection = window.getSelection();
   if (!selection || selection.isCollapsed) return;
 
@@ -104,7 +129,6 @@ export function applyCurrentSelection() {
 
   if (!rawRects.length) return;
 
-  // Convertir a coordenadas relativas
   let boxes = rawRects.map(r => ({
     top: r.top - pageRect.top,
     left: r.left - pageRect.left,
@@ -112,10 +136,8 @@ export function applyCurrentSelection() {
     height: r.height
   }));
 
-  // Ordenar por línea
   boxes.sort((a, b) => a.top - b.top || a.left - b.left);
 
-  // 🔥 FUSIONAR rectángulos que estén en la misma línea
   const merged = [];
 
   boxes.forEach(box => {
@@ -123,8 +145,8 @@ export function applyCurrentSelection() {
 
     if (
       last &&
-      Math.abs(last.top - box.top) < 3 && // misma línea
-      box.left <= last.right + 2         // se tocan
+      Math.abs(last.top - box.top) < 3 &&
+      box.left <= last.right + 2
     ) {
       last.right = Math.max(last.right, box.right);
     } else {
@@ -136,6 +158,7 @@ export function applyCurrentSelection() {
 
   merged.forEach(box => {
     highlights.push({
+      id: crypto.randomUUID(),
       bookId: currentBookId,
       page: Number(page.dataset.page),
       top: box.top,
@@ -152,7 +175,18 @@ export function applyCurrentSelection() {
 }
 
 /* =====================================================
-   RENDER HIGHLIGHTS (CLEAN OVERLAY)
+   REMOVE HIGHLIGHT
+===================================================== */
+
+function removeHighlight(id) {
+  let highlights = getHighlights();
+  highlights = highlights.filter(h => h.id !== id);
+  saveHighlights(highlights);
+  applyHighlights();
+}
+
+/* =====================================================
+   RENDER HIGHLIGHTS
 ===================================================== */
 
 export function applyHighlights() {
@@ -162,7 +196,6 @@ export function applyHighlights() {
   const highlights = getHighlights();
 
   container.querySelectorAll(".pdf-page").forEach(page => {
-    // Limpiar overlays previos
     page.querySelectorAll(".pdf-overlay-highlight").forEach(el => el.remove());
 
     highlights
@@ -170,16 +203,24 @@ export function applyHighlights() {
       .forEach(h => {
         const overlay = document.createElement("div");
         overlay.className = "pdf-overlay-highlight";
+        overlay.dataset.id = h.id;
 
         overlay.style.position = "absolute";
         overlay.style.top = `${h.top}px`;
         overlay.style.left = `${h.left}px`;
         overlay.style.width = `${h.width}px`;
         overlay.style.height = `${h.height}px`;
-
         overlay.style.background = h.color || "#ffe600";
-        overlay.style.opacity = "0.45"; // más natural
-        overlay.style.pointerEvents = "none";
+        overlay.style.opacity = "0.45";
+        overlay.style.mixBlendMode = "multiply";
+
+        overlay.style.pointerEvents = eraseMode ? "auto" : "none";
+        overlay.style.cursor = eraseMode ? "pointer" : "default";
+
+        overlay.onclick = () => {
+          if (!eraseMode) return;
+          removeHighlight(h.id);
+        };
 
         page.appendChild(overlay);
       });
