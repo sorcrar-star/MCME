@@ -36,8 +36,6 @@ export async function openPdfModal(book) {
     title.textContent = book.title;
     viewer.classList.remove("hidden");
 
-    addHeaderButtons(viewer);
-
     pdfDoc = await pdfjsLib.getDocument(book.pdfUrl).promise;
 
     for (let i = 1; i <= pdfDoc.numPages; i++) {
@@ -48,6 +46,7 @@ export async function openPdfModal(book) {
       container.appendChild(placeholder);
     }
 
+    container.removeEventListener("scroll", handleScroll);
     container.addEventListener("scroll", handleScroll);
 
     await lazyRenderPages();
@@ -101,7 +100,7 @@ async function lazyRenderPages() {
 }
 
 /* =====================================================
-   RENDER PAGE (CORRECTO)
+   RENDER PAGE (API CORRECTA v5)
 ===================================================== */
 
 async function renderPage(pageNum, placeholder) {
@@ -115,15 +114,15 @@ async function renderPage(pageNum, placeholder) {
     wrapper.style.height = `${viewport.height}px`;
     wrapper.style.margin = "0 auto";
 
+    // ===== CANVAS =====
     const canvas = document.createElement("canvas");
     canvas.width = viewport.width;
     canvas.height = viewport.height;
-
     const ctx = canvas.getContext("2d");
-    await page.render({ canvasContext: ctx, viewport }).promise;
 
     wrapper.appendChild(canvas);
 
+    // ===== TEXT LAYER =====
     const textLayerDiv = document.createElement("div");
     textLayerDiv.className = "textLayer";
     wrapper.appendChild(textLayerDiv);
@@ -131,13 +130,15 @@ async function renderPage(pageNum, placeholder) {
     placeholder.innerHTML = "";
     placeholder.appendChild(wrapper);
 
-    const textContent = await page.getTextContent();
-
-    await pdfjsLib.renderTextLayer({
-      textContent,
-      container: textLayerDiv,
+    const renderTask = page.render({
+      canvasContext: ctx,
       viewport,
+      textLayer: {
+        container: textLayerDiv
+      }
     });
+
+    await renderTask.promise;
 
     setTimeout(() => applyHighlights(), 50);
 
@@ -162,6 +163,7 @@ export function detectCurrentPage() {
   pages.forEach(page => {
     const top = page.offsetTop;
     const bottom = top + page.clientHeight;
+
     if (middle >= top && middle < bottom) {
       detected = Number(page.dataset.page);
     }
@@ -169,6 +171,7 @@ export function detectCurrentPage() {
 
   if (detected !== currentPage) {
     currentPage = detected;
+
     document.dispatchEvent(
       new CustomEvent("pdf:pageChanged", {
         detail: { page: currentPage }
@@ -204,36 +207,43 @@ export function goToPdfPage(pageNumber) {
 }
 
 /* =====================================================
-   HEADER BUTTONS
+   GLOBAL BUTTON EVENTS
 ===================================================== */
 
-function addHeaderButtons(viewer) {
-  const header = viewer.querySelector(".pdf-modal-header .actions");
-  if (!header) return;
+document.addEventListener("click", (e) => {
+  const viewer = document.getElementById("pdfViewer");
 
-  if (!header.querySelector("#togglePdfDarkMode")) {
-    const darkBtn = document.createElement("button");
-    darkBtn.id = "togglePdfDarkMode";
-    darkBtn.textContent = "🌙 Modo lector";
-    header.prepend(darkBtn);
+  if (!viewer) return;
+
+  if (e.target.id === "closePdfBtn") {
+    viewer.classList.add("hidden");
+    currentBook = null;
+    renderedPages.clear();
   }
 
-  if (!header.querySelector("#underlineInfoBtn")) {
-    const underlineBtn = document.createElement("button");
-    underlineBtn.id = "underlineInfoBtn";
-    underlineBtn.textContent = "✏ Subrayar";
-    underlineBtn.onclick = () => {
-      alert("Selecciona texto dentro del PDF para subrayar.");
-    };
-    header.prepend(underlineBtn);
+  if (e.target.id === "openNotesFromPdf") {
+    if (!currentBook) return;
+    openNotesPanel(currentBook, currentPage);
   }
-}
+
+  if (e.target.id === "togglePdfDarkMode") {
+    viewer.classList.toggle("dark-mode");
+    updateDarkModeButton(viewer);
+  }
+});
+
+/* =====================================================
+   DARK MODE
+===================================================== */
 
 function updateDarkModeButton(viewer) {
   const btn = viewer.querySelector("#togglePdfDarkMode");
   if (!btn) return;
+
   const isDark = viewer.classList.contains("dark-mode");
-  btn.textContent = isDark ? "☀️ Modo normal" : "🌙 Modo lector";
+  btn.textContent = isDark
+    ? "☀️ Modo normal"
+    : "🌙 Modo lector";
 }
 
 function syncDarkMode(viewer) {
