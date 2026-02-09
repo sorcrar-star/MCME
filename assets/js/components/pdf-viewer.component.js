@@ -19,8 +19,9 @@ export async function openPdfModal(book) {
     const container = document.querySelector(".pdf-canvas-container");
     const title = document.getElementById("pdfTitle");
 
-    // 🔥 Limpieza total
+    // 🔹 Limpiar canvas y scroll
     container.innerHTML = "";
+    container.scrollTop = 0;
     container.removeEventListener("scroll", detectCurrentPage);
 
     title.textContent = book.title;
@@ -28,7 +29,7 @@ export async function openPdfModal(book) {
 
     pdfDoc = await pdfjsLib.getDocument(book.pdfUrl).promise;
 
-    // 🔥 Render secuencial limpio
+    // 🔹 Render secuencial
     for (let i = 1; i <= pdfDoc.numPages; i++) {
       const page = await pdfDoc.getPage(i);
       const viewport = page.getViewport({ scale: 1.5 });
@@ -41,39 +42,33 @@ export async function openPdfModal(book) {
       canvas.width = viewport.width;
       canvas.height = viewport.height;
 
-      container.appendChild(canvas); // 👈 Se agrega antes de renderizar
-
+      container.appendChild(canvas); // Primero agregamos
       await page.render({ canvasContext: ctx, viewport }).promise;
     }
 
-    // 🔥 Esperar a que el DOM termine de acomodarse
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        container.addEventListener("scroll", detectCurrentPage);
-        detectCurrentPage();
-      });
-    });
+    // 🔹 Forzar scroll inicial a página 1
+    container.scrollTo({ top: 0, behavior: "auto" });
+
+    // 🔹 Agregar listener y calcular página visible
+    container.addEventListener("scroll", detectCurrentPage);
+    detectCurrentPage();
 
   } catch (err) {
     console.error("Error PDF:", err);
   }
 }
 
-
 export function detectCurrentPage() {
   const container = document.querySelector(".pdf-canvas-container");
   if (!container) return;
 
   const pages = container.querySelectorAll(".pdf-page");
-
   const middle = container.scrollTop + container.clientHeight / 2;
 
   let detected = 1;
-
   pages.forEach(page => {
     const top = page.offsetTop;
     const bottom = top + page.clientHeight;
-
     if (middle >= top && middle < bottom) {
       detected = Number(page.dataset.page);
     }
@@ -82,7 +77,6 @@ export function detectCurrentPage() {
   if (detected !== currentPage) {
     currentPage = detected;
 
-    // 🔥 Disparar evento para el panel
     document.dispatchEvent(
       new CustomEvent("pdf:pageChanged", {
         detail: { page: currentPage }
@@ -99,10 +93,7 @@ export function goToPdfPage(pageNumber) {
   const container = document.querySelector(".pdf-canvas-container");
   if (!container) return;
 
-  const target = container.querySelector(
-    `.pdf-page[data-page="${pageNumber}"]`
-  );
-
+  const target = container.querySelector(`.pdf-page[data-page="${pageNumber}"]`);
   if (!target) return;
 
   container.scrollTo({
