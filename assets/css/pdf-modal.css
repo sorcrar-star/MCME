@@ -196,3 +196,10 @@
 .pdf-modal.dark-mode .pdf-modal-header button:hover {
   background: rgba(255, 255, 255, 0.18);
 }
+
+
+.pdf-overlay-highlight {
+  position: absolute;
+  border-radius: 2px;
+  z-index: 5;
+}
