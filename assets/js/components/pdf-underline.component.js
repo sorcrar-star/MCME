@@ -4,7 +4,6 @@ let currentBookId = null;
 let selectionPopup = null;
 let selectedColor = "#ffe600";
 
-
 /* =====================================================
    INIT
 ===================================================== */
@@ -86,7 +85,7 @@ function saveHighlights(data) {
 }
 
 /* =====================================================
-   APPLY SELECTION (PRO VERSION)
+   APPLY SELECTION (MERGED RECT SYSTEM)
 ===================================================== */
 
 export function applyCurrentSelection() {
@@ -97,37 +96,63 @@ export function applyCurrentSelection() {
   const container = document.querySelector(".pdf-canvas-container");
   if (!container.contains(range.commonAncestorContainer)) return;
 
-  const rects = Array.from(range.getClientRects());
-
   const page = range.startContainer.parentElement.closest(".pdf-page");
   if (!page) return;
 
   const pageRect = page.getBoundingClientRect();
+  const rawRects = Array.from(range.getClientRects());
+
+  if (!rawRects.length) return;
+
+  // Convertir a coordenadas relativas
+  let boxes = rawRects.map(r => ({
+    top: r.top - pageRect.top,
+    left: r.left - pageRect.left,
+    right: r.right - pageRect.left,
+    height: r.height
+  }));
+
+  // Ordenar por línea
+  boxes.sort((a, b) => a.top - b.top || a.left - b.left);
+
+  // 🔥 FUSIONAR rectángulos que estén en la misma línea
+  const merged = [];
+
+  boxes.forEach(box => {
+    const last = merged[merged.length - 1];
+
+    if (
+      last &&
+      Math.abs(last.top - box.top) < 3 && // misma línea
+      box.left <= last.right + 2         // se tocan
+    ) {
+      last.right = Math.max(last.right, box.right);
+    } else {
+      merged.push({ ...box });
+    }
+  });
 
   const highlights = getHighlights();
 
-  rects.forEach(r => {
-    const highlight = {
+  merged.forEach(box => {
+    highlights.push({
       bookId: currentBookId,
       page: Number(page.dataset.page),
-      top: r.top - pageRect.top + page.scrollTop,
-      left: r.left - pageRect.left,
-      width: r.width,
-      height: r.height,
+      top: box.top,
+      left: box.left,
+      width: box.right - box.left,
+      height: box.height,
       color: selectedColor
-    };
-
-    highlights.push(highlight);
+    });
   });
 
   saveHighlights(highlights);
   selection.removeAllRanges();
-
   applyHighlights();
 }
 
 /* =====================================================
-   RENDER HIGHLIGHTS (OVERLAY SYSTEM)
+   RENDER HIGHLIGHTS (CLEAN OVERLAY)
 ===================================================== */
 
 export function applyHighlights() {
@@ -137,6 +162,7 @@ export function applyHighlights() {
   const highlights = getHighlights();
 
   container.querySelectorAll(".pdf-page").forEach(page => {
+    // Limpiar overlays previos
     page.querySelectorAll(".pdf-overlay-highlight").forEach(el => el.remove());
 
     highlights
@@ -150,9 +176,9 @@ export function applyHighlights() {
         overlay.style.left = `${h.left}px`;
         overlay.style.width = `${h.width}px`;
         overlay.style.height = `${h.height}px`;
+
         overlay.style.background = h.color || "#ffe600";
-        overlay.style.mixBlendMode = "multiply";
-        overlay.style.opacity = "0.55";
+        overlay.style.opacity = "0.45"; // más natural
         overlay.style.pointerEvents = "none";
 
         page.appendChild(overlay);
