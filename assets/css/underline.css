@@ -67,3 +67,15 @@
   border: 2px solid white;
   cursor: pointer;
 }
+
+/* =====================================================
+   ERASE MODE
+===================================================== */
+
+.pdf-canvas-container.erase-mode {
+  cursor: crosshair;
+}
+
+.pdf-canvas-container.erase-mode .pdf-overlay-highlight:hover {
+  outline: 2px solid red;
+}
