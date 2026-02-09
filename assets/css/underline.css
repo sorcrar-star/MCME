@@ -56,3 +56,18 @@
   opacity: 1;
 }
 
+.color-picker {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 6px;
+}
+
+.color-option {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid white;
+  cursor: pointer;
+}
+
+
