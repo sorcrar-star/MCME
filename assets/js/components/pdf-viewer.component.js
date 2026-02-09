@@ -10,7 +10,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
 let pdfDoc = null;
 let currentPage = 1;
 let currentBook = null;
-let modalRoot = null; // 👈 referencia fija al modal
+let modalRoot = null;
 
 const renderedPages = new Set();
 const PAGE_BUFFER = 1.5;
@@ -103,7 +103,7 @@ async function lazyRenderPages() {
 }
 
 /* =====================================================
-   RENDER PAGE
+   RENDER PAGE (CORRECTO PARA PDFJS v5)
 ===================================================== */
 
 async function renderPage(pageNum, placeholder) {
@@ -125,20 +125,31 @@ async function renderPage(pageNum, placeholder) {
 
     const textLayerDiv = document.createElement("div");
     textLayerDiv.className = "textLayer";
+    textLayerDiv.style.position = "absolute";
+    textLayerDiv.style.left = 0;
+    textLayerDiv.style.top = 0;
+    textLayerDiv.style.width = "100%";
+    textLayerDiv.style.height = "100%";
     wrapper.appendChild(textLayerDiv);
 
     placeholder.innerHTML = "";
     placeholder.appendChild(wrapper);
 
-    const renderTask = page.render({
+    // Render canvas
+    await page.render({
       canvasContext: ctx,
-      viewport,
-      textLayer: {
-        container: textLayerDiv
-      }
-    });
+      viewport
+    }).promise;
 
-    await renderTask.promise;
+    // Render text layer manual (FORMA CORRECTA)
+    const textContent = await page.getTextContent();
+
+    await pdfjsLib.renderTextLayer({
+      textContentSource: textContent,
+      container: textLayerDiv,
+      viewport: viewport,
+      textDivs: []
+    });
 
     setTimeout(() => applyHighlights(), 80);
 
@@ -217,7 +228,6 @@ function addHeaderButtons(viewer) {
   if (!header.querySelector("#togglePdfDarkMode")) {
     const darkBtn = document.createElement("button");
     darkBtn.id = "togglePdfDarkMode";
-    darkBtn.textContent = "🌙 Modo lector";
     header.prepend(darkBtn);
   }
 
@@ -229,6 +239,8 @@ function addHeaderButtons(viewer) {
       alert("Selecciona texto dentro del PDF para subrayar.");
     header.prepend(underlineBtn);
   }
+
+  updateDarkModeButton();
 }
 
 /* =====================================================
