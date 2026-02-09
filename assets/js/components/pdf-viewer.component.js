@@ -1,4 +1,5 @@
-// 🔹 pdf-viewer.component.js con textLayer y subrayado
+// 🔹 pdf-viewer.component.js optimizado + textLayer funcional + scroll fluido
+
 import * as pdfjsLib from "../vendor/pdfjs/build/pdf.mjs";
 import { openNotesPanel } from "./book-notes.component.js";
 import { initUnderlineTool, applyHighlights } from "./pdf-underline.component.js";
@@ -11,8 +12,9 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
 let pdfDoc = null;
 let currentPage = 1;
 let currentBook = null;
+
 const renderedPages = new Set();
-const PAGE_BUFFER = 2;
+const PAGE_BUFFER = 1.5;
 
 /* =====================================================
    OPEN MODAL
@@ -31,40 +33,31 @@ export async function openPdfModal(book) {
 
     container.innerHTML = "";
     container.scrollTop = 0;
-    container.removeEventListener("scroll", lazyRenderPages);
     renderedPages.clear();
 
     title.textContent = book.title;
     viewer.classList.remove("hidden");
 
-    addDarkModeToggle(viewer);
+    addHeaderButtons(viewer);
 
     pdfDoc = await pdfjsLib.getDocument(book.pdfUrl).promise;
 
-    // Crear placeholders
+    // Crear placeholders ligeros
     for (let i = 1; i <= pdfDoc.numPages; i++) {
       const placeholder = document.createElement("div");
       placeholder.className = "pdf-page";
       placeholder.dataset.page = i;
-      placeholder.style.minHeight = "600px";
+      placeholder.style.minHeight = "800px";
       container.appendChild(placeholder);
     }
 
-    container.addEventListener("scroll", lazyRenderPages);
+    container.addEventListener("scroll", handleScroll);
 
     await lazyRenderPages();
     detectCurrentPage();
 
-    // Sincronizar dark mode
-    if (document.body.classList.contains("dark-mode")) {
-      viewer.classList.add("dark-mode");
-      updateDarkModeButton(viewer, true);
-    } else {
-      viewer.classList.remove("dark-mode");
-      updateDarkModeButton(viewer, false);
-    }
+    syncDarkMode(viewer);
 
-    // Inicializar subrayado
     initUnderlineTool(book.id);
 
   } catch (err) {
@@ -73,7 +66,16 @@ export async function openPdfModal(book) {
 }
 
 /* =====================================================
-   LAZY RENDER + TEXT LAYER
+   SCROLL HANDLER
+===================================================== */
+
+function handleScroll() {
+  lazyRenderPages();
+  detectCurrentPage();
+}
+
+/* =====================================================
+   LAZY RENDER OPTIMIZADO
 ===================================================== */
 
 async function lazyRenderPages() {
@@ -87,54 +89,82 @@ async function lazyRenderPages() {
 
   for (let placeholder of pages) {
     const pageNum = Number(placeholder.dataset.page);
+    if (renderedPages.has(pageNum)) continue;
+
     const top = placeholder.offsetTop;
     const bottom = top + placeholder.clientHeight;
 
-    const isInView =
+    const isVisible =
       bottom >= scrollTop - clientHeight * PAGE_BUFFER &&
       top <= scrollTop + clientHeight * (PAGE_BUFFER + 1);
 
-    if (!renderedPages.has(pageNum) && isInView) {
-      const page = await pdfDoc.getPage(pageNum);
-      const viewport = page.getViewport({ scale: 1.5 });
+    if (!isVisible) continue;
 
-      // Canvas
-      const canvas = document.createElement("canvas");
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
-      const ctx = canvas.getContext("2d");
-
-      await page.render({ canvasContext: ctx, viewport }).promise;
-
-      placeholder.innerHTML = "";
-      placeholder.appendChild(canvas);
-
-      // TextLayer
-      const textLayerDiv = document.createElement("div");
-      textLayerDiv.className = "textLayer";
-      placeholder.appendChild(textLayerDiv);
-
-      const textContent = await page.getTextContent();
-
-      pdfjsLib.renderTextLayer({
-        textContent,
-        container: textLayerDiv,
-        viewport,
-        textDivs: [],
-      });
-
-      renderedPages.add(pageNum);
-
-      // Reaplicar subrayados después de renderizar
-      applyHighlights();
-    }
+    renderedPages.add(pageNum);
+    renderPage(pageNum, placeholder);
   }
-
-  detectCurrentPage();
 }
 
 /* =====================================================
-   PAGE DETECTION
+   RENDER PAGE (NO BLOQUEA SCROLL)
+===================================================== */
+
+async function renderPage(pageNum, placeholder) {
+  try {
+    const page = await pdfDoc.getPage(pageNum);
+    const viewport = page.getViewport({ scale: 1.4 });
+
+    const wrapper = document.createElement("div");
+    wrapper.style.position = "relative";
+    wrapper.style.width = `${viewport.width}px`;
+    wrapper.style.height = `${viewport.height}px`;
+    wrapper.style.margin = "0 auto";
+
+    // Canvas
+    const canvas = document.createElement("canvas");
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+
+    const ctx = canvas.getContext("2d");
+    await page.render({ canvasContext: ctx, viewport }).promise;
+
+    wrapper.appendChild(canvas);
+
+    // TextLayer correctamente posicionada
+    const textLayerDiv = document.createElement("div");
+    textLayerDiv.className = "textLayer";
+    textLayerDiv.style.position = "absolute";
+    textLayerDiv.style.top = "0";
+    textLayerDiv.style.left = "0";
+    textLayerDiv.style.width = `${viewport.width}px`;
+    textLayerDiv.style.height = `${viewport.height}px`;
+    textLayerDiv.style.pointerEvents = "auto";
+
+    wrapper.appendChild(textLayerDiv);
+
+    placeholder.innerHTML = "";
+    placeholder.appendChild(wrapper);
+
+    const textContent = await page.getTextContent();
+
+    pdfjsLib.renderTextLayer({
+      textContent,
+      container: textLayerDiv,
+      viewport,
+    });
+
+    // aplicar highlights después de que textLayer exista
+    setTimeout(() => {
+      applyHighlights();
+    }, 80);
+
+  } catch (err) {
+    console.error("Render page error:", err);
+  }
+}
+
+/* =====================================================
+   PAGE DETECTION EN TIEMPO REAL
 ===================================================== */
 
 export function detectCurrentPage() {
@@ -144,7 +174,7 @@ export function detectCurrentPage() {
   const pages = container.querySelectorAll(".pdf-page");
   const middle = container.scrollTop + container.clientHeight / 2;
 
-  let detected = 1;
+  let detected = currentPage;
 
   pages.forEach(page => {
     const top = page.offsetTop;
@@ -212,33 +242,51 @@ document.addEventListener("click", (e) => {
 
   if (e.target.id === "togglePdfDarkMode") {
     viewer.classList.toggle("dark-mode");
-    const isDark = viewer.classList.contains("dark-mode");
-    updateDarkModeButton(viewer, isDark);
+    updateDarkModeButton(viewer);
   }
 });
 
 /* =====================================================
-   DARK MODE BUTTON
+   HEADER BUTTONS
 ===================================================== */
 
-function addDarkModeToggle(viewer) {
+function addHeaderButtons(viewer) {
   const header = viewer.querySelector(".pdf-modal-header .actions");
-  if (!header || header.querySelector("#togglePdfDarkMode")) return;
+  if (!header) return;
 
-  const btn = document.createElement("button");
-  btn.id = "togglePdfDarkMode";
-  btn.textContent = "🌙 Modo lector";
+  if (!header.querySelector("#togglePdfDarkMode")) {
+    const darkBtn = document.createElement("button");
+    darkBtn.id = "togglePdfDarkMode";
+    darkBtn.textContent = "🌙 Modo lector";
+    header.prepend(darkBtn);
+  }
 
-  header.firstChild
-    ? header.insertBefore(btn, header.firstChild)
-    : header.appendChild(btn);
+  if (!header.querySelector("#underlineInfoBtn")) {
+    const underlineBtn = document.createElement("button");
+    underlineBtn.id = "underlineInfoBtn";
+    underlineBtn.textContent = "✏ Subrayar";
+    underlineBtn.onclick = () => {
+      alert("Selecciona texto dentro del PDF para subrayar.");
+    };
+    header.prepend(underlineBtn);
+  }
 }
 
-function updateDarkModeButton(viewer, isDarkMode) {
+function updateDarkModeButton(viewer) {
   const btn = viewer.querySelector("#togglePdfDarkMode");
   if (!btn) return;
 
-  btn.textContent = isDarkMode
+  const isDark = viewer.classList.contains("dark-mode");
+  btn.textContent = isDark
     ? "☀️ Modo normal"
     : "🌙 Modo lector";
+}
+
+function syncDarkMode(viewer) {
+  if (document.body.classList.contains("dark-mode")) {
+    viewer.classList.add("dark-mode");
+  } else {
+    viewer.classList.remove("dark-mode");
+  }
+  updateDarkModeButton(viewer);
 }
