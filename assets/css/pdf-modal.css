@@ -12,7 +12,7 @@
   background: rgba(15, 23, 42, 0.65);
   backdrop-filter: blur(8px);
   padding: 2rem;
-  transition: opacity 0.25s ease;
+  transition: background 0.25s ease, opacity 0.25s ease;
 }
 
 .pdf-modal.hidden {
@@ -55,7 +55,6 @@
   font-size: 16px;
   font-weight: 600;
   letter-spacing: 0.02em;
-  color: white;
 }
 
 .pdf-modal-header .actions {
@@ -100,6 +99,7 @@
 ===================================================== */
 
 .pdf-page {
+  position: relative;
   display: block;
   margin: 0 auto 2rem auto;
   background: #ffffff;
@@ -107,17 +107,18 @@
   box-shadow:
     0 8px 30px rgba(0, 0, 0, 0.18),
     0 2px 10px rgba(0, 0, 0, 0.08);
-  cursor: default;
 }
 
 .pdf-page canvas {
   display: block;
   pointer-events: none;
   user-select: none;
+  position: relative;
+  z-index: 1;
 }
 
 /* =====================================================
-   TEXT LAYER — CONFIGURACIÓN OFICIAL CORRECTA
+   TEXT LAYER
 ===================================================== */
 
 .textLayer {
@@ -125,8 +126,9 @@
   inset: 0;
   overflow: hidden;
   line-height: 1;
-  pointer-events: auto;   /* 👈 IMPORTANTE */
-  user-select: text;      /* 👈 IMPORTANTE */
+  pointer-events: auto;
+  user-select: text;
+  z-index: 2;
 }
 
 .textLayer span,
@@ -137,7 +139,7 @@
 }
 
 .textLayer span {
-  color: transparent; /* invisible pero seleccionable */
+  color: transparent;
   cursor: text;
 }
 
@@ -150,7 +152,7 @@
 ===================================================== */
 
 .pdf-modal.dark-mode {
-  background: rgba(2, 6, 23, 0.85);
+  background: rgba(2, 6, 23, 0.9);
 }
 
 .pdf-modal.dark-mode .pdf-modal-content {
