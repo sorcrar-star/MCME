@@ -1,1 +1,58 @@
+/* =====================================================
+   UNDERLINE TOOL — PDF
+===================================================== */
+
+/* Panel flotante al seleccionar texto */
+.underline-popup {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: #0f4c81;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+
+  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+  z-index: 1500;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+/* Mostrar popup */
+.underline-popup.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Subrayado en el texto */
+.pdf-highlight {
+  background-color: yellow;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background-color 0.2s ease;
+}
+
+/* Mini panel al pasar sobre subrayado con enlace */
+.underline-link-popup {
+  position: absolute;
+  padding: 4px 8px;
+  background: #1e6091;
+  color: #fff;
+  font-size: 12px;
+  border-radius: 6px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  z-index: 1600;
+}
+
+.underline-link-popup.visible {
+  opacity: 1;
+}
 
