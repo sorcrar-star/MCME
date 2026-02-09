@@ -3,23 +3,61 @@
 ===================================================== */
 
 const STORAGE_KEY_UNDERLINE = "mcme_pdf_highlights";
+
 let currentBookId = null;
 let selectionPopup = null;
 let linkPopup = null;
 let currentRange = null;
 
+/* =====================================================
+   INIT
+===================================================== */
+
 export function initUnderlineTool(bookId) {
   currentBookId = bookId;
+
   if (!selectionPopup) createSelectionPopup();
   if (!linkPopup) createLinkPopup();
 
   hideSelectionPopup();
 
-  document.querySelector(".pdf-canvas-container")
-    .addEventListener("mouseup", handleTextSelection);
+  const container = document.querySelector(".pdf-canvas-container");
+  if (!container) return;
 
-  setTimeout(() => applyHighlights(), 500);
+  container.removeEventListener("mouseup", handleTextSelection);
+  container.addEventListener("mouseup", handleTextSelection);
+
+  // Reaplicar después de pequeño delay (lazy render)
+  setTimeout(() => applyHighlights(), 400);
 }
+
+/* =====================================================
+   PAGE DETECTION (LOCAL)
+===================================================== */
+
+function detectCurrentPageNumber() {
+  const container = document.querySelector(".pdf-canvas-container");
+  if (!container) return 1;
+
+  const pages = container.querySelectorAll(".pdf-page");
+  const middle = container.scrollTop + container.clientHeight / 2;
+
+  let detected = 1;
+
+  pages.forEach(page => {
+    const top = page.offsetTop;
+    const bottom = top + page.clientHeight;
+    if (middle >= top && middle < bottom) {
+      detected = Number(page.dataset.page);
+    }
+  });
+
+  return detected;
+}
+
+/* =====================================================
+   POPUPS
+===================================================== */
 
 function createSelectionPopup() {
   selectionPopup = document.createElement("div");
@@ -34,6 +72,7 @@ function createSelectionPopup() {
     applyCurrentSelection();
     hideSelectionPopup();
   };
+
   selectionPopup.querySelector("#highlightLinkBtn").onclick = () => {
     const url = prompt("Ingresa el enlace:");
     if (!url) return;
@@ -49,107 +88,150 @@ function createLinkPopup() {
 }
 
 function showSelectionPopup(x, y) {
-  selectionPopup.style.top = `${y}px`;
-  selectionPopup.style.left = `${x}px`;
+  selectionPopup.style.top = `${y + window.scrollY}px`;
+  selectionPopup.style.left = `${x + window.scrollX}px`;
   selectionPopup.classList.add("visible");
+
   setTimeout(() => hideSelectionPopup(), 5000);
 }
 
 function hideSelectionPopup() {
+  if (!selectionPopup) return;
   selectionPopup.classList.remove("visible");
 }
 
-function handleTextSelection(e) {
+/* =====================================================
+   TEXT SELECTION
+===================================================== */
+
+function handleTextSelection() {
   const selection = window.getSelection();
   if (!selection || selection.isCollapsed) return;
 
   const range = selection.getRangeAt(0);
-  if (!range.startContainer.closest(".textLayer")) return;
+
+  // Solo permitir dentro del PDF
+  const container = document.querySelector(".pdf-canvas-container");
+  if (!container.contains(range.commonAncestorContainer)) return;
 
   currentRange = range;
+
   const rect = range.getBoundingClientRect();
   showSelectionPopup(rect.right, rect.top - 40);
 }
 
-function getHighlights(bookId) {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY_UNDERLINE)) || []; } 
-  catch { return []; }
+/* =====================================================
+   STORAGE
+===================================================== */
+
+function getHighlights() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY_UNDERLINE)) || [];
+  } catch {
+    return [];
+  }
 }
 
 function saveHighlights(highlights) {
   localStorage.setItem(STORAGE_KEY_UNDERLINE, JSON.stringify(highlights));
 }
 
+/* =====================================================
+   APPLY SELECTION
+===================================================== */
+
 export function applyCurrentSelection(link = null) {
   if (!currentRange || currentRange.collapsed) return;
 
+  const selectedText = currentRange.toString();
+  if (!selectedText.trim()) return;
+
   const span = document.createElement("span");
   span.className = "pdf-highlight";
-  span.textContent = currentRange.toString();
+  span.textContent = selectedText;
   if (link) span.dataset.link = link;
 
   currentRange.deleteContents();
   currentRange.insertNode(span);
 
-  const highlights = getHighlights(currentBookId);
+  const highlights = getHighlights();
   highlights.push({
     bookId: currentBookId,
-    page: getCurrentPdfPage(),
-    text: span.textContent,
-    color: "yellow",
+    page: detectCurrentPageNumber(),
+    text: selectedText,
     link: link || null
   });
+
   saveHighlights(highlights);
 
   currentRange = null;
   window.getSelection().removeAllRanges();
 }
 
+/* =====================================================
+   REAPPLY HIGHLIGHTS
+===================================================== */
+
 export function applyHighlights() {
-  const highlights = getHighlights(currentBookId);
+  const highlights = getHighlights();
   const container = document.querySelector(".pdf-canvas-container");
   if (!container) return;
 
   container.querySelectorAll(".pdf-page").forEach(pageDiv => {
     const pageNum = Number(pageDiv.dataset.page);
-    const textLayer = pageDiv.querySelector(".textLayer");
-    if (!textLayer) return;
 
     highlights
-      .filter(h => h.page === pageNum)
+      .filter(h => h.bookId === currentBookId && h.page === pageNum)
       .forEach(h => {
-        Array.from(textLayer.childNodes).forEach(node => {
-          if (node.nodeType !== Node.TEXT_NODE) return;
-          if (node.textContent.includes(h.text)) {
-            const span = document.createElement("span");
-            span.className = "pdf-highlight";
-            if (h.link) span.dataset.link = h.link;
-            span.textContent = h.text;
+        const walker = document.createTreeWalker(
+          pageDiv,
+          NodeFilter.SHOW_TEXT,
+          null,
+          false
+        );
 
-            const parts = node.textContent.split(h.text);
-            const frag = document.createDocumentFragment();
-            frag.append(parts[0] ? document.createTextNode(parts[0]) : null);
-            frag.appendChild(span);
-            frag.append(parts[1] ? document.createTextNode(parts[1]) : null);
+        let node;
+        while (node = walker.nextNode()) {
+          if (!node.nodeValue.includes(h.text)) continue;
 
-            node.replaceWith(frag);
-          }
-        });
+          const span = document.createElement("span");
+          span.className = "pdf-highlight";
+          if (h.link) span.dataset.link = h.link;
+          span.textContent = h.text;
+
+          const parts = node.nodeValue.split(h.text);
+          const fragment = document.createDocumentFragment();
+
+          fragment.appendChild(document.createTextNode(parts[0]));
+          fragment.appendChild(span);
+          fragment.appendChild(document.createTextNode(parts[1] || ""));
+
+          node.parentNode.replaceChild(fragment, node);
+        }
       });
   });
 }
 
-// Mini link popup
+/* =====================================================
+   LINK MINI POPUP
+===================================================== */
+
 document.addEventListener("mouseover", (e) => {
+  if (!linkPopup) return;
+
   if (e.target.classList.contains("pdf-highlight") && e.target.dataset.link) {
     linkPopup.textContent = e.target.dataset.link;
+
     const rect = e.target.getBoundingClientRect();
-    linkPopup.style.top = `${rect.top - 30}px`;
-    linkPopup.style.left = `${rect.left}px`;
+    linkPopup.style.top = `${rect.top + window.scrollY - 30}px`;
+    linkPopup.style.left = `${rect.left + window.scrollX}px`;
     linkPopup.classList.add("visible");
   }
 });
+
 document.addEventListener("mouseout", (e) => {
+  if (!linkPopup) return;
+
   if (e.target.classList.contains("pdf-highlight")) {
     linkPopup.classList.remove("visible");
   }
