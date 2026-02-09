@@ -125,6 +125,8 @@
   inset: 0;
   overflow: hidden;
   line-height: 1;
+  pointer-events: auto;   /* 👈 IMPORTANTE */
+  user-select: text;      /* 👈 IMPORTANTE */
 }
 
 .textLayer span,
