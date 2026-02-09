@@ -143,6 +143,12 @@
   cursor: text;
 }
 
+/* 🔥 IMPORTANTE: permitir que el highlight sea visible */
+.textLayer span.pdf-highlight {
+  color: black !important;
+}
+
+
 .textLayer span::selection {
   background: rgba(15, 76, 129, 0.35);
 }
@@ -188,4 +194,3 @@
 .pdf-modal.dark-mode .pdf-modal-header button:hover {
   background: rgba(255, 255, 255, 0.18);
 }
-
