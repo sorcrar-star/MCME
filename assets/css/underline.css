@@ -32,9 +32,15 @@
 
 /* Subrayado en el texto */
 .pdf-highlight {
+  position: relative;
+  z-index: 5;
   cursor: pointer;
   border-radius: 2px;
   transition: background-color 0.2s ease;
+}
+
+.textLayer {
+  z-index: 10;
 }
 
 
