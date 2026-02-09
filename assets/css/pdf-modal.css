@@ -200,6 +200,10 @@
 
 .pdf-overlay-highlight {
   position: absolute;
-  border-radius: 2px;
+  border-radius: 3px;
   z-index: 5;
+  background: #ffe600;
+  opacity: 0.55;
+  mix-blend-mode: multiply;
+  pointer-events: none;
 }
