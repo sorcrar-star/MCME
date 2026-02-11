@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aplicaciones – MCME</title>
+
+  <link rel="stylesheet" href="assets/css/reset.css" />
+  <link rel="stylesheet" href="assets/css/variables.css" />
+  <link rel="stylesheet" href="assets/css/base.css" />
+  <link rel="stylesheet" href="assets/css/layout.css" />
+  <link rel="stylesheet" href="assets/css/header.css" />
+  <link rel="stylesheet" href="assets/css/sidebar.css" />
+
+  <link rel="stylesheet" href="assets/css/aplicaciones.css" />
+</head>
+
+<body>
+
+<header id="app-header">
+
+  <div class="header-left">
+    <img
+      src="assets/images/mcme-logo.svg"
+      alt="MCME"
+      class="app-logo"
+    />
+  </div>
+
+  <nav class="header-nav">
+    <a href="index.html">Inicio</a>
+    <a href="index.html">Biblioteca</a>
+    <a href="aplicaciones.html" class="active">Aplicaciones</a>
+  </nav>
+
+  <div class="header-right">
+    <span>usuario@mcme.mx</span>
+    <button type="button" id="logoutBtn">
+      Cerrar sesión
+    </button>
+  </div>
+
+</header>
+
+<div class="app-container">
+
+  <aside id="app-sidebar"></aside>
+
+  <main class="app-main">
+
+    <section class="apps-header">
+      <h1>Aplicaciones Clínicas</h1>
+      <p>Herramientas diseñadas para estudio y práctica médica avanzada.</p>
+    </section>
+
+    <section class="apps-grid">
+
+      <div class="app-card" id="openStopwatch">
+        <div class="app-icon">⏱</div>
+        <h3>Código Azul – RCP & ACLS</h3>
+        <p>Temporizador avanzado para paro cardiorrespiratorio.</p>
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+<script type="module" src="assets/js/aplicaciones.js"></script>
+</body>
+</html>
