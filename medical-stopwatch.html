@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Código Azul – MCME</title>
+
+  <link rel="stylesheet" href="assets/css/reset.css" />
+  <link rel="stylesheet" href="assets/css/variables.css" />
+  <link rel="stylesheet" href="assets/css/base.css" />
+  <link rel="stylesheet" href="assets/css/layout.css" />
+  <link rel="stylesheet" href="assets/css/header.css" />
+  <link rel="stylesheet" href="assets/css/sidebar.css" />
+  <link rel="stylesheet" href="assets/css/medical-stopwatch.css" />
+</head>
+
+<body>
+
+<header id="app-header">
+  <div class="header-left">
+    <img src="assets/images/mcme-logo.svg" alt="MCME" class="app-logo" />
+  </div>
+
+  <nav class="header-nav">
+    <a href="index.html">Inicio</a>
+    <a href="index.html">Biblioteca</a>
+    <a href="aplicaciones.html" class="active">Aplicaciones</a>
+  </nav>
+
+  <div class="header-right">
+    <span>usuario@mcme.mx</span>
+    <button type="button" id="logoutBtn">
+      Cerrar sesión
+    </button>
+  </div>
+</header>
+
+<div class="app-container">
+
+  <aside id="app-sidebar"></aside>
+
+  <main class="app-main">
+
+    <section class="stopwatch-container">
+
+      <h1>Código Azul – RCP & ACLS</h1>
+
+      <div class="timer-display" id="timerDisplay">
+        00:00
+      </div>
+
+      <div class="timer-controls">
+        <button id="startBtn" class="primary">Iniciar</button>
+        <button id="pauseBtn">Pausar</button>
+        <button id="resetBtn">Reset</button>
+      </div>
+
+      <div class="event-buttons">
+
+        <button data-event="paro">⏱ Tiempo de Paro</button>
+        <button data-event="rcp">💓 Ciclos RCP</button>
+        <button data-event="epi">💉 Epinefrina</button>
+        <button data-event="defib">⚡ Desfibrilación</button>
+
+      </div>
+
+      <div class="event-log" id="eventLog">
+        <h3>Eventos Activos</h3>
+        <ul id="logList"></ul>
+      </div>
+
+    </section>
+
+  </main>
+</div>
+
+<script type="module" src="assets/js/medical-stopwatch.js"></script>
+</body>
+</html>
