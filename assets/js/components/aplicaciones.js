@@ -10,22 +10,25 @@ if (!user) {
 }
 
 /* ===============================
-   Redirección a herramienta
+   DOM Ready
 =============================== */
-
 document.addEventListener("DOMContentLoaded", () => {
-  const stopwatchCard = document.getElementById("openStopwatch");
 
-  if (stopwatchCard) {
-    stopwatchCard.addEventListener("click", () => {
-      window.location.href = "./medical-stopwatch.html";
+  /* ===============================
+     Navegación a aplicaciones
+  =============================== */
+  document.querySelectorAll(".btn-open-app").forEach(button => {
+    button.addEventListener("click", () => {
+      const appUrl = button.dataset.app;
+      if (appUrl) {
+        window.location.href = appUrl;
+      }
     });
-  }
+  });
 
   /* ===============================
      Usuario + logout
   =============================== */
-
   const userSpan = document.querySelector("#app-header .header-right span");
   const logoutBtn = document.getElementById("logoutBtn");
 
