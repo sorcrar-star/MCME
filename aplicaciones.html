@@ -11,14 +11,12 @@
   <link rel="stylesheet" href="assets/css/layout.css" />
   <link rel="stylesheet" href="assets/css/header.css" />
   <link rel="stylesheet" href="assets/css/sidebar.css" />
-
   <link rel="stylesheet" href="assets/css/aplicaciones.css" />
 </head>
 
 <body>
 
 <header id="app-header">
-
   <div class="header-left">
     <img
       src="assets/images/mcme-logo.svg"
@@ -39,7 +37,6 @@
       Cerrar sesión
     </button>
   </div>
-
 </header>
 
 <div class="app-container">
@@ -55,10 +52,19 @@
 
     <section class="apps-grid">
 
-      <div class="app-card" id="openStopwatch">
+      <div class="app-card">
         <div class="app-icon">⏱</div>
         <h3>Código Azul – RCP & ACLS</h3>
         <p>Temporizador avanzado para paro cardiorrespiratorio.</p>
+
+        <div class="app-card-actions">
+          <button 
+            type="button"
+            class="btn-open-app"
+            data-app="medical-stopwatch.html">
+            Abrir aplicación
+          </button>
+        </div>
       </div>
 
     </section>
