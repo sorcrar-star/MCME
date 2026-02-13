@@ -25,11 +25,11 @@
   background: var(--color-white);
   border-radius: var(--card-radius);
   padding: 1.8rem;
-  cursor: pointer;
-
   box-shadow: var(--shadow-soft);
   transition: var(--transition-normal);
   border: var(--border-light);
+  display: flex;
+  flex-direction: column;
 }
 
 .app-card:hover {
@@ -50,4 +50,28 @@
 .app-card p {
   font-size: 14px;
   color: var(--color-muted);
+}
+
+/* ================= BOTÓN ================= */
+
+.app-card-actions {
+  margin-top: auto;
+  padding-top: 1.5rem;
+}
+
+.btn-open-app {
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-weight: 500;
+  transition: var(--transition-normal);
+}
+
+.btn-open-app:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
 }
