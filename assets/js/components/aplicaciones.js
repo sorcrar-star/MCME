@@ -10,25 +10,36 @@ if (!user) {
 }
 
 /* ===============================
-   DOM Ready
+   Inicialización
 =============================== */
-document.addEventListener("DOMContentLoaded", () => {
 
+function initAplicaciones() {
   /* ===============================
      Navegación a aplicaciones
   =============================== */
-  document.querySelectorAll(".btn-open-app").forEach(button => {
-    button.addEventListener("click", () => {
-      const appUrl = button.dataset.app;
-      if (appUrl) {
-        window.location.href = appUrl;
-      }
+
+  const buttons = document.querySelectorAll(".btn-open-app");
+
+  if (buttons.length > 0) {
+    buttons.forEach(button => {
+      button.addEventListener("click", function () {
+        const appUrl = this.getAttribute("data-app");
+
+        if (appUrl) {
+          window.location.href = appUrl;
+        } else {
+          console.warn("No se encontró data-app en el botón");
+        }
+      });
     });
-  });
+  } else {
+    console.warn("No se encontraron botones .btn-open-app");
+  }
 
   /* ===============================
      Usuario + logout
   =============================== */
+
   const userSpan = document.querySelector("#app-header .header-right span");
   const logoutBtn = document.getElementById("logoutBtn");
 
@@ -42,4 +53,14 @@ document.addEventListener("DOMContentLoaded", () => {
       window.location.href = "login.html";
     });
   }
-});
+}
+
+/* ===============================
+   Ejecutar cuando el DOM esté listo
+=============================== */
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initAplicaciones);
+} else {
+  initAplicaciones();
+}
