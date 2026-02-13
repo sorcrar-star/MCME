@@ -1,11 +1,11 @@
 // assets/js/aplicaciones.js
 
-import { isAuthenticated } from "./services/auth.service.js";
-
 /* ===============================
-   Protección de ruta
+   Protección de ruta simple
 =============================== */
-if (!isAuthenticated()) {
+const user = JSON.parse(localStorage.getItem("user"));
+
+if (!user) {
   window.location.href = "login.html";
 }
 
@@ -13,29 +13,30 @@ if (!isAuthenticated()) {
    Redirección a herramienta
 =============================== */
 
-const stopwatchCard = document.getElementById("openStopwatch");
+document.addEventListener("DOMContentLoaded", () => {
+  const stopwatchCard = document.getElementById("openStopwatch");
 
-if (stopwatchCard) {
-  stopwatchCard.addEventListener("click", () => {
-    window.location.href = "medical-stopwatch.html";
-  });
-}
+  if (stopwatchCard) {
+    stopwatchCard.addEventListener("click", () => {
+      window.location.href = "./medical-stopwatch.html";
+    });
+  }
 
-/* ===============================
-   Usuario + logout
-=============================== */
-const userData = JSON.parse(localStorage.getItem("user"));
+  /* ===============================
+     Usuario + logout
+  =============================== */
 
-const userSpan = document.querySelector("#app-header .header-right span");
-const logoutBtn = document.getElementById("logoutBtn");
+  const userSpan = document.querySelector("#app-header .header-right span");
+  const logoutBtn = document.getElementById("logoutBtn");
 
-if (userSpan && userData) {
-  userSpan.textContent = userData.name || userData.email;
-}
+  if (userSpan && user) {
+    userSpan.textContent = user.name || user.email;
+  }
 
-if (logoutBtn) {
-  logoutBtn.addEventListener("click", () => {
-    localStorage.removeItem("user");
-    window.location.href = "login.html";
-  });
-}
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      localStorage.removeItem("user");
+      window.location.href = "login.html";
+    });
+  }
+});
