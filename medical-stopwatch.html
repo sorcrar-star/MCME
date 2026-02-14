@@ -35,71 +35,103 @@
 
 <div class="app-container">
 
+  <!-- SIDEBAR CLÍNICO -->
   <aside id="app-sidebar">
     <div class="sidebar-presets">
-      <h3>Escenarios RCP/ACLS</h3>
-      <button id="preset0" class="preset-btn">Inicio RCP (0:00)</button>
+      <h3>🩺 Escenarios ACLS</h3>
+
+      <button id="preset0" class="preset-btn">Inicio RCP</button>
       <button id="preset120" class="preset-btn">2:00 – Cambio compresor</button>
       <button id="preset180" class="preset-btn">3:00 – Epinefrina</button>
-      <button id="preset240" class="preset-btn">4:00 – Chequeo vías aéreas</button>
+      <button id="preset240" class="preset-btn">4:00 – Chequeo vía aérea</button>
       <button id="preset300" class="preset-btn">5:00 – 2ª Epinefrina</button>
-      <button id="preset420" class="preset-btn">7:00 – Check desfibrilador</button>
+      <button id="preset420" class="preset-btn">7:00 – Preparar Shock</button>
       <button id="preset480" class="preset-btn">8:00 – 3ª Epinefrina</button>
       <button id="preset600" class="preset-btn">10:00 – Intubación</button>
-      <button id="preset900" class="preset-btn">15:00 – Informe</button>
-      <button id="preset1800" class="preset-btn">30:00 – Tiempo crítico</button>
+      <button id="preset900" class="preset-btn">15:00 – Informe equipo</button>
+      <button id="preset1800" class="preset-btn critical">30:00 – Tiempo crítico</button>
     </div>
   </aside>
 
   <main class="app-main">
+
     <section class="stopwatch-container">
+
       <h1>Código Azul – RCP & ACLS</h1>
 
-      <div class="controls-top">
-        <label>
-          Modo:
-          <select id="modeSelect">
-            <option value="countup">Contador ascendente</option>
-            <option value="countdown">Cuenta regresiva</option>
-          </select>
-        </label>
-        <label>
-          Duración (MM:SS):
-          <input id="durationInput" type="text" placeholder="05:00" />
-        </label>
-        <label>
-          Mensaje al 0:
-          <input id="zeroMessage" type="text" placeholder="Paciente no responde" />
-        </label>
-        <label title="Alterna sonido de alertas">
-          <input id="soundToggle" type="checkbox" /> Sonido
-        </label>
+      <!-- PANEL SUPERIOR MEJORADO -->
+      <div class="control-card">
+        <div class="control-grid">
+
+          <div class="control-field">
+            <label>Modo</label>
+            <select id="modeSelect">
+              <option value="countup">Contador ascendente</option>
+              <option value="countdown">Cuenta regresiva</option>
+            </select>
+          </div>
+
+          <div class="control-field">
+            <label>Duración (MM:SS)</label>
+            <input id="durationInput" type="text" placeholder="05:00" />
+          </div>
+
+          <div class="control-field">
+            <label>Mensaje al 0</label>
+            <input id="zeroMessage" type="text" placeholder="Paciente no responde" />
+          </div>
+
+          <div class="control-field toggle">
+            <label>
+              <input id="soundToggle" type="checkbox" />
+              Activar sonido
+            </label>
+          </div>
+
+        </div>
       </div>
 
-      <div class="timer-display" id="timerDisplay" aria-live="polite">
+      <!-- CRONÓMETRO -->
+      <div class="timer-display" id="timerDisplay">
         00:00
       </div>
 
+      <!-- CONTROLES -->
       <div class="timer-controls">
         <button id="startBtn" class="primary">Iniciar</button>
         <button id="pauseBtn">Pausar</button>
         <button id="resetBtn">Reset</button>
-        <button id="markBtn">Marcar tiempo</button>
-        <button id="exportLogBtn">Exportar log</button>
+        <button id="markBtn">Marcar</button>
+        <button id="exportLogBtn">Exportar</button>
       </div>
 
-      <div class="event-buttons">
-        <button data-event="paro" class="event-btn">⏱ Tiempo de Paro</button>
-        <button data-event="rcp" class="event-btn">💓 Ciclos RCP</button>
-        <button data-event="epi" class="event-btn">💉 Epinefrina</button>
-        <button data-event="defib" class="event-btn">⚡ Desfibrilación</button>
+      <!-- TARJETAS EVENTOS -->
+      <div class="event-cards">
+        <button data-event="paro" class="event-card paro">
+          ⏱ Tiempo de Paro
+        </button>
+        <button data-event="rcp" class="event-card rcp">
+          💓 Ciclos RCP
+        </button>
+        <button data-event="epi" class="event-card epi">
+          💉 Epinefrina
+        </button>
+        <button data-event="defib" class="event-card defib">
+          ⚡ Desfibrilación
+        </button>
       </div>
 
-      <div class="event-log" id="eventLog">
-        <h3>Registro de Eventos</h3>
+      <!-- LOG MEJORADO -->
+      <div class="event-log">
+        <div class="log-header">
+          <h3>Registro Clínico</h3>
+          <span class="log-count" id="logCount">0 eventos</span>
+        </div>
         <ul id="logList"></ul>
       </div>
+
     </section>
+
   </main>
 
 </div>
