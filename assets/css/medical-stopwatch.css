@@ -1,6 +1,6 @@
 /* medical-stopwatch.css
-   Estilos limpios, aireados, con modo oscuro.
-   Usa variables de variables.css para colores de marca.
+   Versión corregida: fija modo oscuro global (sobrescribe variables globales)
+   Mantiene UX, estados y animaciones.
 */
 
 /* ===== Layout base ===== */
@@ -11,18 +11,50 @@
   --brand: var(--color-primary);
   --accent: var(--color-accent);
   --card-radius: 14px;
+  --page-text: var(--color-text);
+  --page-bg: var(--color-bg);
+  --header-bg: var(--bg-header);
+  --sidebar-bg: var(--bg-sidebar);
+  --border-strong: rgba(15,76,129,0.06);
 }
 
-/* Dark theme variables */
+/* ===== Dark theme: override global variables used por other CSS =====
+   Important: set the SAME variable names that header.css & layout.css expect.
+   This makes the whole page switch, not only tarjetas.
+*/
 body.dark {
-  --panel-bg: #0b1220;
-  --mcme-bg: #05060a;
-  --muted: #9aa3b2;
-  --brand: #8fb8e6;
-  --accent: #4fd1c5;
+  /* primary page-level colors */
+  --page-bg: #060812;           /* body background */
+  --mcme-bg: #060812;
+  --color-bg: #060812;          /* used in some files */
+  --bg-app: #060812;
+  --bg-header: #071422;         /* header background */
+  --bg-sidebar: #071622;        /* sidebar background */
+  --panel-bg: #071022;          /* card/panel background */
+  --bg-card: #071022;
+
+  /* text and muted */
+  --color-text: #cde8ff;
+  --page-text: #cde8ff;
+  --color-muted: #93a6bf;
+  --muted: #93a6bf;
+
+  /* brand / accents */
+  --color-primary: #7fb7e8;
+  --color-accent: #4fd1c5;
+
+  /* borders and shadows */
+  --border-light: 1px solid rgba(255,255,255,0.04);
+  --border-softer: 1px solid rgba(255,255,255,0.02);
+  --shadow-soft: 0 8px 24px rgba(2,8,20,0.5);
+  --shadow-hover: 0 12px 32px rgba(2,8,20,0.6);
+  --shadow-header: 0 2px 8px rgba(0,0,0,0.6);
+
+  /* header accent line (invert / soften) */
+  --header-accent-line: linear-gradient(90deg, rgba(79,209,197,0.14), rgba(126,193,228,0.12), rgba(15,76,129,0.18));
 }
 
-/* Container */
+/* Container grid (kept consistent with layout.css) */
 .app-container {
   display: grid;
   grid-template-columns: 260px 1fr;
@@ -31,7 +63,7 @@ body.dark {
   min-height: calc(100vh - var(--header-height,72px));
 }
 
-/* Sidebar */
+/* Sidebar styles (adapts to dark via variables) */
 #app-sidebar {
   padding: 18px;
   background: linear-gradient(180deg, #f7fbff, #eef6ff);
@@ -39,6 +71,7 @@ body.dark {
 }
 body.dark #app-sidebar {
   background: linear-gradient(180deg, #071022, #07162a);
+  border-right: 1px solid rgba(255,255,255,0.04);
 }
 
 /* Preset buttons */
@@ -49,23 +82,25 @@ body.dark #app-sidebar {
   padding: 10px 12px;
   margin-bottom: 8px;
   border-radius: 10px;
-  border: 1px solid rgba(15,76,129,0.06);
+  border: 1px solid var(--border-light);
   background: var(--panel-bg);
   text-align: left;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 6px 18px rgba(11,35,84,0.04);
+  box-shadow: var(--shadow-soft);
   transition: transform .14s ease, box-shadow .14s ease;
 }
-.preset-btn:hover { transform: translateY(-4px); box-shadow: 0 12px 36px rgba(11,35,84,0.09); }
+.preset-btn:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
 .preset-btn.critical { background: #fff3f3; color: #991b1b; }
+body.dark .preset-btn.critical { background:#2a0b0b; color:#ffd6d6; }
 
 /* Main card */
 .stopwatch-container {
   max-width: 980px;
   margin: 0 auto;
   padding: 22px 28px;
-  color: var(--color-text);
+  color: var(--page-text);
+  background: transparent;
 }
 
 /* Title */
@@ -80,7 +115,7 @@ body.dark #app-sidebar {
   background: var(--panel-bg);
   padding: 14px;
   border-radius: 14px;
-  box-shadow: 0 10px 30px rgba(11,35,84,0.06);
+  box-shadow: var(--shadow-soft);
   margin-bottom: 18px;
 }
 .control-left { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
@@ -89,10 +124,10 @@ body.dark #app-sidebar {
 .field { display:flex; flex-direction:column; min-width:160px; }
 .field-label { font-size:12px; color:var(--muted); margin-bottom:6px; font-weight:600; }
 .form-input, .form-select {
-  padding:8px 10px; border-radius:8px; border:1px solid rgba(15,76,129,0.06); background: #fff;
-  font-size:14px;
+  padding:8px 10px; border-radius:8px; border:1px solid var(--border-light); background: var(--bg-card);
+  font-size:14px; color: var(--page-text);
 }
-.form-input:focus, .form-select:focus { outline: none; border-color: var(--brand); box-shadow: 0 6px 18px rgba(15,76,129,0.06); }
+.form-input:focus, .form-select:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 6px 18px rgba(15,76,129,0.06); }
 
 /* toggles */
 .toggle { display:flex; align-items:center; gap:8px; font-weight:600; color:var(--muted); }
@@ -109,7 +144,7 @@ body.dark #app-sidebar {
   font-size: 64px;
   font-weight:800;
   box-shadow: 0 18px 48px rgba(11,35,84,0.06);
-  color: var(--color-text);
+  color: var(--page-text);
 }
 body.dark .timer-display {
   background: linear-gradient(145deg,#071422,#051027);
@@ -132,10 +167,14 @@ body.dark .timer-display {
 /* Controls */
 .timer-controls { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
 .btn { padding:10px 14px; border-radius:10px; border:none; cursor:pointer; font-weight:700; background:#eef2f7; color:#0f2138; box-shadow: 0 6px 18px rgba(11,35,84,0.04);}
-.btn.ghost { background:transparent; border:1px solid rgba(15,76,129,0.06); font-weight:600; }
+.btn.ghost { background:transparent; border:1px solid var(--border-light); font-weight:600; }
 .btn.primary { background: var(--brand); color:#fff; box-shadow: 0 10px 30px rgba(15,76,129,0.12); }
+body.dark .btn { background: rgba(255,255,255,0.03); color: var(--page-text); border: 1px solid rgba(255,255,255,0.03); }
+body.dark .btn.primary { box-shadow: 0 8px 28px rgba(31,98,148,0.12); }
+
+/* Buttons as cards */
 .btn-card { padding: 14px; border-radius: 12px; width: 100%; background: var(--panel-bg); text-align:left; display:flex; gap:12px; align-items:center; box-shadow: var(--shadow-soft); border: 1px solid rgba(15,76,129,0.03); cursor:pointer; }
-.btn-card .icon { font-size:22px; width:40px; height:40px; display:flex; align-items:center; justify-content:center; border-radius:8px; background: rgba(0,0,0,0.03); }
+.btn-card .icon { font-size:22px; width:40px; height:40px; display:flex; align-items:center; justify-content:center; border-radius:8px; background: rgba(0,0,0,0.03); color:inherit; }
 .btn-card .title { font-weight:700; font-size:15px; }
 .btn-card .desc { font-size:12px; color:var(--muted); }
 
@@ -155,8 +194,8 @@ body.dark .timer-display {
 .log-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
 .log-list { list-style:none; padding:0; margin:0; max-height: 360px; overflow:auto; display:flex; flex-direction:column; gap:8px; }
 .log-list li { display:flex; justify-content:space-between; gap:12px; align-items:center; padding:10px; border-radius:10px; background: rgba(245,247,250,1); border:1px solid rgba(15,76,129,0.02);}
-body.dark .log-list li { background: rgba(9,14,22,.5); border:1px solid rgba(255,255,255,0.03); }
-.log-list li .text { font-weight:600; }
+body.dark .log-list li { background: rgba(9,14,22,.45); border:1px solid rgba(255,255,255,0.03); }
+.log-list li .text { font-weight:600; color:var(--page-text); }
 .log-list li .time { color: var(--muted); font-size:12px; }
 
 /* small */
@@ -168,4 +207,15 @@ body.dark .log-list li { background: rgba(9,14,22,.5); border:1px solid rgba(255
   .app-container { grid-template-columns: 1fr; }
   #app-sidebar { display:none; }
   .control-panel { flex-direction:column; align-items:stretch; }
+}
+
+/* ===== Header adjustments on dark to remove white plate artifact ===== */
+body.dark #app-header {
+  background: var(--bg-header);
+  border-bottom: var(--border-light);
+  box-shadow: var(--shadow-header);
+}
+body.dark .header-left::before {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  box-shadow: none;
 }
