@@ -45,7 +45,31 @@
 
       <h1>Código Azul – RCP & ACLS</h1>
 
-      <div class="timer-display" id="timerDisplay">
+      <div class="controls-top">
+        <label>
+          Modo:
+          <select id="modeSelect">
+            <option value="countup">Contador ascendente</option>
+            <option value="countdown">Cuenta regresiva</option>
+          </select>
+        </label>
+
+        <label>
+          Duración (MM:SS):
+          <input id="durationInput" type="text" placeholder="05:00" />
+        </label>
+
+        <label>
+          Mensaje al 0:
+          <input id="zeroMessage" type="text" placeholder="Paciente muerto / Fin del tiempo" />
+        </label>
+
+        <label title="Alterna sonido de alertas">
+          <input id="soundToggle" type="checkbox" /> Sonido
+        </label>
+      </div>
+
+      <div class="timer-display" id="timerDisplay" aria-live="polite">
         00:00
       </div>
 
@@ -53,14 +77,16 @@
         <button id="startBtn" class="primary">Iniciar</button>
         <button id="pauseBtn">Pausar</button>
         <button id="resetBtn">Reset</button>
+        <button id="markBtn">Marcar tiempo</button>
+        <button id="exportLogBtn">Exportar log</button>
       </div>
 
       <div class="event-buttons">
 
-        <button data-event="paro">⏱ Tiempo de Paro</button>
-        <button data-event="rcp">💓 Ciclos RCP</button>
-        <button data-event="epi">💉 Epinefrina</button>
-        <button data-event="defib">⚡ Desfibrilación</button>
+        <button data-event="paro" class="event-btn">⏱ Tiempo de Paro</button>
+        <button data-event="rcp" class="event-btn">💓 Ciclos RCP</button>
+        <button data-event="epi" class="event-btn">💉 Epinefrina</button>
+        <button data-event="defib" class="event-btn">⚡ Desfibrilación</button>
 
       </div>
 
@@ -74,7 +100,6 @@
   </main>
 </div>
 
-<script type="module" src="assets/js/components/medical-stopwatch.js"></script>
-
+<script src="assets/js/medical-stopwatch.js"></script>
 </body>
 </html>
