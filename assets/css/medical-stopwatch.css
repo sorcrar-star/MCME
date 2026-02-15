@@ -1,6 +1,6 @@
 /* medical-stopwatch.css
-   Versión corregida: fija modo oscuro global (sobrescribe variables globales)
-   Mantiene UX, estados y animaciones.
+   Versión final: modo oscuro global + cronómetro "monitor pro".
+   Reemplaza por completo el archivo actual.
 */
 
 /* ===== Layout base ===== */
@@ -18,24 +18,25 @@
   --border-strong: rgba(15,76,129,0.06);
 }
 
-/* ===== Dark theme: override global variables used por other CSS =====
-   Important: set the SAME variable names that header.css & layout.css expect.
-   This makes the whole page switch, not only tarjetas.
-*/
+/* ===== Dark theme: override global variables used by layout/header/etc ===== */
 body.dark {
-  /* primary page-level colors */
-  --page-bg: #060812;           /* body background */
+  /* page-level */
+  --page-bg: #060812;
   --mcme-bg: #060812;
-  --color-bg: #060812;          /* used in some files */
+  --color-bg: #060812;
   --bg-app: #060812;
-  --bg-header: #071422;         /* header background */
-  --bg-sidebar: #071622;        /* sidebar background */
-  --panel-bg: #071022;          /* card/panel background */
+
+  /* header / sidebar */
+  --bg-header: #071422;
+  --bg-sidebar: #071622;
+
+  /* panels / cards */
+  --panel-bg: #071022;
   --bg-card: #071022;
 
-  /* text and muted */
-  --color-text: #cde8ff;
-  --page-text: #cde8ff;
+  /* text / muted */
+  --color-text: #cfeeff;
+  --page-text: #cfeeff;
   --color-muted: #93a6bf;
   --muted: #93a6bf;
 
@@ -43,18 +44,18 @@ body.dark {
   --color-primary: #7fb7e8;
   --color-accent: #4fd1c5;
 
-  /* borders and shadows */
+  /* borders / shadows */
   --border-light: 1px solid rgba(255,255,255,0.04);
   --border-softer: 1px solid rgba(255,255,255,0.02);
   --shadow-soft: 0 8px 24px rgba(2,8,20,0.5);
   --shadow-hover: 0 12px 32px rgba(2,8,20,0.6);
   --shadow-header: 0 2px 8px rgba(0,0,0,0.6);
 
-  /* header accent line (invert / soften) */
+  /* header accent line softer in dark */
   --header-accent-line: linear-gradient(90deg, rgba(79,209,197,0.14), rgba(126,193,228,0.12), rgba(15,76,129,0.18));
 }
 
-/* Container grid (kept consistent with layout.css) */
+/* ===== Container grid ===== */
 .app-container {
   display: grid;
   grid-template-columns: 260px 1fr;
@@ -63,14 +64,14 @@ body.dark {
   min-height: calc(100vh - var(--header-height,72px));
 }
 
-/* Sidebar styles (adapts to dark via variables) */
+/* ===== Sidebar ===== */
 #app-sidebar {
   padding: 18px;
   background: linear-gradient(180deg, #f7fbff, #eef6ff);
   border-right: 1px solid rgba(15,76,129,0.06);
 }
 body.dark #app-sidebar {
-  background: linear-gradient(180deg, #071022, #07162a);
+  background: linear-gradient(180deg,#071022,#07162a);
   border-right: 1px solid rgba(255,255,255,0.04);
 }
 
@@ -94,7 +95,7 @@ body.dark #app-sidebar {
 .preset-btn.critical { background: #fff3f3; color: #991b1b; }
 body.dark .preset-btn.critical { background:#2a0b0b; color:#ffd6d6; }
 
-/* Main card */
+/* ===== Main card ===== */
 .stopwatch-container {
   max-width: 980px;
   margin: 0 auto;
@@ -106,7 +107,7 @@ body.dark .preset-btn.critical { background:#2a0b0b; color:#ffd6d6; }
 /* Title */
 .stopwatch-container h1 { color: var(--brand); margin-bottom: 12px; }
 
-/* Control panel */
+/* ===== Control panel ===== */
 .control-panel {
   display: flex;
   gap: 18px;
@@ -133,25 +134,36 @@ body.dark .preset-btn.critical { background:#2a0b0b; color:#ffd6d6; }
 .toggle { display:flex; align-items:center; gap:8px; font-weight:600; color:var(--muted); }
 .toggle input { width:18px; height:18px; }
 
-/* Timer display */
+/* ===== Cronómetro: MONITOR PRO ===== */
+/* mayor presencia: font-size aumentado, letter-spacing y padding */
 .timer-display {
   margin: 18px 0;
-  padding: 36px;
+  padding: 48px 36px; /* un poco más de padding */
   border-radius: 18px;
   background: linear-gradient(135deg, #ffffff, #f6fbff);
   text-align:center;
   font-family: 'Courier New', monospace;
-  font-size: 64px;
-  font-weight:800;
-  box-shadow: 0 18px 48px rgba(11,35,84,0.06);
+  font-size: 80px;          /* monitor pro */
+  letter-spacing: 4px;      /* monitor feel */
+  font-weight:900;
+  box-shadow: 0 20px 60px rgba(11,35,84,0.08);
   color: var(--page-text);
-}
-body.dark .timer-display {
-  background: linear-gradient(145deg,#071422,#051027);
-  color: #cfeeff;
+  transition: all .25s ease;
 }
 
-/* persistent states */
+/* ajuste para pantallas más pequeñas */
+@media (max-width: 640px) {
+  .timer-display { font-size: 44px; letter-spacing: 2px; padding: 22px; }
+}
+
+/* dark adjustments for display */
+body.dark .timer-display {
+  background: linear-gradient(145deg,#071522,#051127);
+  color: #dff6ff;
+  box-shadow: 0 12px 40px rgba(2,8,20,0.6);
+}
+
+/* ===== persistent states (colors) ===== */
 .timer-status-red { background: linear-gradient(90deg,#ffecec,#fff0f0); color:#8b1a1a; box-shadow: 0 10px 30px rgba(203,41,41,0.06); }
 .timer-status-orange { background: linear-gradient(90deg,#fff7ed,#fffdf2); color:#7a4b00; box-shadow: 0 10px 30px rgba(218,125,3,0.06); }
 .timer-status-yellow { background: linear-gradient(90deg,#fffbe6,#fffdf2); color:#715a00; box-shadow: 0 10px 30px rgba(204,153,0,0.05); }
@@ -164,58 +176,107 @@ body.dark .timer-display {
 }
 .timer-flash { animation: flash .9s ease; }
 
-/* Controls */
+/* ===== Controls ===== */
 .timer-controls { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
-.btn { padding:10px 14px; border-radius:10px; border:none; cursor:pointer; font-weight:700; background:#eef2f7; color:#0f2138; box-shadow: 0 6px 18px rgba(11,35,84,0.04);}
+.btn { padding:10px 14px; border-radius:10px; border:none; cursor:pointer; font-weight:700; background:#eef2f7; color:#0f2138; box-shadow: 0 6px 18px rgba(11,35,84,0.04); }
 .btn.ghost { background:transparent; border:1px solid var(--border-light); font-weight:600; }
 .btn.primary { background: var(--brand); color:#fff; box-shadow: 0 10px 30px rgba(15,76,129,0.12); }
+
+/* dark button tweaks */
 body.dark .btn { background: rgba(255,255,255,0.03); color: var(--page-text); border: 1px solid rgba(255,255,255,0.03); }
 body.dark .btn.primary { box-shadow: 0 8px 28px rgba(31,98,148,0.12); }
 
-/* Buttons as cards */
+/* ===== Event cards (visual, contrast) ===== */
 .btn-card { padding: 14px; border-radius: 12px; width: 100%; background: var(--panel-bg); text-align:left; display:flex; gap:12px; align-items:center; box-shadow: var(--shadow-soft); border: 1px solid rgba(15,76,129,0.03); cursor:pointer; }
-.btn-card .icon { font-size:22px; width:40px; height:40px; display:flex; align-items:center; justify-content:center; border-radius:8px; background: rgba(0,0,0,0.03); color:inherit; }
-.btn-card .title { font-weight:700; font-size:15px; }
+.btn-card .icon { font-size:22px; width:44px; height:44px; display:flex; align-items:center; justify-content:center; border-radius:10px; background: rgba(0,0,0,0.03); color:inherit; }
+.btn-card .title { font-weight:800; font-size:15px; }
 .btn-card .desc { font-size:12px; color:var(--muted); }
 
-/* event colors for cards */
-.btn-card[aria-pressed="true"] { transform: translateY(-6px); box-shadow: 0 20px 46px rgba(11,35,84,0.08); }
+/* event icon colors */
 .btn-card[data-event="paro"] .icon { background:#fff0f0; color:#b91c1c; border:1px solid rgba(185,28,28,0.06); }
 .btn-card[data-event="rcp"] .icon { background: rgba(15,76,129,0.06); color:var(--brand); }
 .btn-card[data-event="epi"] .icon { background:#fff6eb; color:#b45309; }
 .btn-card[data-event="defib"] .icon { background:#fff9e6; color:#b28600; }
 
+.btn-card[aria-pressed="true"] { transform: translateY(-6px); box-shadow: 0 20px 46px rgba(11,35,84,0.08); }
+
 /* layout for events row */
 .event-row { display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; margin-bottom: 18px; }
 @media (max-width:980px) { .event-row { grid-template-columns: repeat(2,1fr); } }
 
-/* log card */
+/* ===== Log card ===== */
 .log-card { background: var(--panel-bg); padding: 14px; border-radius: 14px; box-shadow: var(--shadow-soft); }
 .log-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
 .log-list { list-style:none; padding:0; margin:0; max-height: 360px; overflow:auto; display:flex; flex-direction:column; gap:8px; }
-.log-list li { display:flex; justify-content:space-between; gap:12px; align-items:center; padding:10px; border-radius:10px; background: rgba(245,247,250,1); border:1px solid rgba(15,76,129,0.02);}
+.log-list li { display:flex; justify-content:space-between; gap:12px; align-items:center; padding:10px; border-radius:10px; background: rgba(245,247,250,1); border:1px solid rgba(15,76,129,0.02); }
 body.dark .log-list li { background: rgba(9,14,22,.45); border:1px solid rgba(255,255,255,0.03); }
-.log-list li .text { font-weight:600; color:var(--page-text); }
+.log-list li .text { font-weight:700; color:var(--page-text); }
 .log-list li .time { color: var(--muted); font-size:12px; }
 
-/* small */
+/* ===== Small helpers ===== */
 .muted { color:var(--muted); font-size:13px; }
 .small-help { font-size:13px; color:var(--muted); }
 
-/* responsive */
+/* ===== Responsive ===== */
 @media (max-width: 900px) {
   .app-container { grid-template-columns: 1fr; }
   #app-sidebar { display:none; }
   .control-panel { flex-direction:column; align-items:stretch; }
 }
 
-/* ===== Header adjustments on dark to remove white plate artifact ===== */
+/* ===== Header dark fixes (remove white plate artifact) ===== */
 body.dark #app-header {
   background: var(--bg-header);
   border-bottom: var(--border-light);
   box-shadow: var(--shadow-header);
 }
 body.dark .header-left::before {
+  /* make the logo plate subtle in dark */
   background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
   box-shadow: none;
+}
+
+/* ===== Contraste for elements that could still be dark due to base.css =====
+   These enforce readable colors inside the stopwatch module when dark is active.
+*/
+body.dark .stopwatch-container,
+body.dark .control-panel,
+body.dark .log-card,
+body.dark .btn-card,
+body.dark .preset-btn {
+  color: var(--page-text);
+}
+
+/* Enforce button text contrast for controls inside module */
+body.dark .timer-controls .btn,
+body.dark .timer-controls .btn.ghost {
+  color: var(--page-text);
+}
+
+/* Enforce cronómetro background stronger in dark */
+body.dark .timer-display {
+  background: linear-gradient(145deg,#071522,#051127);
+  color: #dff6ff;
+}
+
+/* Ensure form inputs readable in dark */
+body.dark .form-input,
+body.dark .form-select {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.04);
+  color: var(--page-text);
+}
+
+/* ===== Final micro-adjustments ===== */
+/* Slightly reduce brightness on hovered preset in dark */
+body.dark .preset-btn:hover { box-shadow: 0 10px 28px rgba(2,8,20,0.5); transform: translateY(-3px); }
+
+/* Ensure link-like header nav items are visible in dark */
+body.dark .header-nav a { color: rgba(255,255,255,0.75); }
+body.dark .header-nav a.active { color: var(--color-primary); }
+
+/* Small accessibility: increase hit area for cards on mobile */
+@media (max-width:640px) {
+  .btn-card { padding: 16px; }
+  .preset-btn { padding: 12px; }
 }
